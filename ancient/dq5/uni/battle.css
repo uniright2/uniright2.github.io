@@ -1,0 +1,125 @@
+/*
+<link rel="stylesheet" type="text/css" href="battle.css">
+*/
+
+h3{background-color:silver; text-align:left; padding-left: 10px;}
+i{color:green;}
+td,th{font-size:0.8em;line-height:1em;}
+
+table{empty-cells:show;}
+table,tr,td{border-collapse:collapse;}
+
+table.senpu{border : 2px black solid;}	
+table.senpu tr{height:1.3em;}
+table.senpu td{border-width:1px; border-style:solid solid none solid;}
+
+table.senpu td.side{background-color:white; border-color:black; 
+					width:20px; text-align:center;}
+table.senpu td.pre{background-color:white; border-color:black;}
+
+table.senpu td.dead{background-color:white ! important;
+		border-color:black; !important;
+		border-style:solid none none none ! important;}
+/*table.senpu td.alive{}*/
+
+
+table.senpu td.l{min-width:70px; border-right-style:solid;}  /*!solid or none*/
+table.senpu td.r{min-width:40px; border-left-style:none;}
+
+div.n{text-align:center;}
+div.s{text-align:right;}
+div.l{text-align:left;  position:relative; bottom:0.0em;}
+div.r{text-align:right; position:relative; top:0.3em;}
+
+/* character color setting */
+
+/*dq8*/
+/*
+td.sh_n{background-color:#ffdd88; border-color:#cc9900;}
+td.sh_s{background-color:#ffdd88; border-color:#cc9900;}
+td.sh_a{background-color:#ffeebb; border-color:#cc9900;}
+
+td.ya_n{background-color:#cc8866; border-color:#662200;}
+td.ya_s{background-color:#cc8866; border-color:#662200;}
+td.ya_a{background-color:#ffddbb; border-color:#662200;}
+
+td.ze_n{background-color:#aaddff; border-color:#006688;}
+td.ze_s{background-color:#aaddff; border-color:#006688;}
+td.ze_a{background-color:#cceeff; border-color:#006688;}
+
+td.ku_n{background-color:#ffbbbb; border-color:#ff0000;}
+td.ku_s{background-color:#ffbbbb; border-color:#ff0000;}
+td.ku_a{background-color:#ffdddd; border-color:#ff0000;}
+
+td.ch_n{background-color:#aaffaa; border-color:#00bb00;}
+td.ch_s{background-color:#aaffaa; border-color:#00bb00;}
+td.ch_a{background-color:#ddffdd; border-color:#00bb00;}
+*/
+
+/*dq5*/
+td.sh_n{background-color:#cc88ff; border-color:#8800ff;}
+td.sh_s{background-color:#cc88ff; border-color:#8800ff;}
+td.sh_a{background-color:#eeccff; border-color:#8800ff;}
+
+
+td.bi_n{background-color:#ffff88; border-color:#aaaa00;}	
+td.bi_s{background-color:#ffff88; border-color:#aaaa00;}
+td.bi_a{background-color:#ffffcc; border-color:#aaaa00;}
+
+td.pa_n{background-color:#cc8866; border-color:#662200;}
+td.pa_s{background-color:#cc8866; border-color:#662200;}
+td.pa_a{background-color:#ffddbb; border-color:#662200;}
+
+td.sa_n{background-color:#cc8866; border-color:#662200;}
+td.sa_s{background-color:#cc8866; border-color:#662200;}
+td.sa_a{background-color:#ffddbb; border-color:#662200;}
+
+td.bo_n{background-color:#ffdd88; border-color:#cc9900;}
+td.bo_s{background-color:#ffdd88; border-color:#cc9900;}
+td.bo_a{background-color:#ffeebb; border-color:#cc9900;}
+
+td.be_n{background-color:#ccff88; border-color:#66bb00;}
+td.be_s{background-color:#ccff88; border-color:#66bb00;}
+td.be_a{background-color:#eeffbb; border-color:#66bb00;}
+
+td.he_n{background-color:#ccff88; border-color:#66bb00;}
+td.he_s{background-color:#ccff88; border-color:#66bb00;}
+td.he_a{background-color:#eeffbb; border-color:#66bb00;}
+
+td.ap_n{background-color:#ffbbbb; border-color:#ff0000;}
+td.ap_s{background-color:#ffbbbb; border-color:#ff0000;}
+td.ap_a{background-color:#ffdddd; border-color:#ff0000;}
+
+td.pi_n{background-color:#aaffaa; border-color:#00bb00;}
+td.pi_s{background-color:#aaffaa; border-color:#00bb00;}
+td.pi_a{background-color:#ddffdd; border-color:#00bb00;}
+
+td.re_n{background-color:#aaddff; border-color:#006688;}
+td.re_s{background-color:#aaddff; border-color:#006688;}
+td.re_a{background-color:#cceeff; border-color:#006688;}
+
+td.ta_n{background-color:#ff88cc; border-color:#880044;}
+td.ta_s{background-color:#ff88cc; border-color:#880044;}
+td.ta_a{background-color:#ffbbee; border-color:#880044;}
+
+/*enemy class*/
+td.e1_n{background-color:#cccccc; border-color:#666666;}
+td.e1_s{background-color:#cccccc; border-color:#666666;}
+td.e1_a{background-color:#eeeeee; border-color:#666666;}
+
+td.e2_n{background-color:#888888; border-color:#333333;}
+td.e2_s{background-color:#888888; border-color:#333333;}
+td.e2_a{background-color:#aaaaaa; border-color:#333333;}
+
+td.e3_n{background-color:#aaaaaa; border-color:#555555;}
+td.e3_s{background-color:#aaaaaa; border-color:#555555;}
+td.e3_a{background-color:#cccccc; border-color:#555555;}
+
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}
+td._n{background-color:#; border-color:#;}

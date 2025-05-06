@@ -1,0 +1,26 @@
+/*
+<link rel="stylesheet" type="text/css" href="second.css">
+*/
+
+body{font-size:0.9em;line-height:1.3em;margin:20px;}
+body{background-color:#eeeeff;color:#000000;}
+pre{font-size:0.9em;line-height:1.2em;margin:10px;}
+table{empty-cells:show;}
+table,tr,td{border-collapse:collapse;}
+table{border:0px solid black;}
+table td{border:0px solid black;}
+table th{border:0px solid black;}
+table.simple{background-color:white; border:2px solid black;font-size:1em;line-height:1.2em;}
+table.simple td{border:1px solid black; text-align:center;}
+table.simple th{border:1px solid black;}
+
+table.timetable{background-color:white; border:2px solid black;font-size:0.8em;line-height:1.1em;}
+table.timetable td{border:1px solid black; text-align:center;}
+table.timetable th{border:1px solid black;}
+
+table.none{border:0px solid black; font-size:1em;line-height:1.3em;}
+table.none td{border:0px solid black;}
+table.none th{border:0px solid black;}
+h2{width:100%; background-color:#bbbbff;padding:10px; color:#000088;}
+h3{width:100%; background-color:#bbbbff;padding:4px; color:#000088;}
+div.r{text-align:right;}
