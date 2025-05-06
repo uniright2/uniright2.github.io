@@ -1,0 +1,714 @@
+﻿<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<meta name="keywords" content="連射,コントローラ,パッド,ドラクエ">
+<meta name="author" content="右弐">
+<meta name="description" content="ドラクエの短時間攻略に役立つコントローラを紹介">
+
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+	font-size:0.9em;
+	line-height:1.5em;
+ 	padding:10px;
+ 	background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+	background-color:#ffe5ff;
+	font-size:0.9em;
+	line-height:1.5em;
+/*	text-align:center;*/
+}
+
+td,th{
+	font-size:0.9em;
+}
+
+a{
+	text-decoration:none;
+}
+a:hover{
+	color:#00aa44;
+	text-decoration:underline;
+}
+
+
+p{
+	margin:10px 10px 10px 10px;
+	padding:3px 5px 3px 5px;
+}
+
+li{
+	margin:0px 10px 0px 0px;
+	padding:3px 5px 3px 5px;
+	
+}
+
+pre{font-size:100%;
+	padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+	text-align:left; 
+	width:850px;
+	margin: 0px auto 0px auto ;
+	padding: 4px 4px 4px 4px ;
+	background-color:white;
+	border:1px solid #000088;
+}
+
+div.frame2{
+	text-align:left; 
+	background-color:white;
+	border:1px solid #8844ff; 
+	padding:5px 10px 5px 10px;
+	margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ font-size:0.75em;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+	text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.9em;
+	line-height:1.1em;	
+}
+
+table.timetable td{
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.timetable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.itemtable td{
+	padding:3px 0px 1px 1px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.itemtable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.gold td{
+	padding:3px 2px 1px 2px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+	background-color:#ffcccc;
+	color:#330000 !important;
+	border-style:solid;
+	border-color:#882233;
+}
+
+h1{	font-size:1.5em;
+	padding:6px 15px 4px 15px; 
+	margin-top:2px;
+	margin-bottom:0px;
+	border-width:0px 0px 1px 3px;	
+}
+
+div.under{
+	background-color:white;
+	padding:2px 15px 2px 15px;
+	border-width:1px 0px 1px 3px;
+	text-align:right;
+	margin-top:0px;
+	margin-right:0px;
+	margin-bottom:2px;
+	font-size:80%;
+}
+
+h2{	font-size:1.2em;
+	padding:6px 10px 4px 10px; 
+	border-width:0px 0px 1px 3px;
+	margin-top:5px;
+}
+
+h3{	font-size:1.0em;	
+	background-color:white;
+	padding:2px 10px 2px 10px;
+	border-width:0px 0px 1px 3px;
+	width:60%;
+}	
+
+span.r{
+	float:right;
+	text-align:center;
+}
+
+div.under a{
+	text-decoration:none;
+}
+
+td.sp{
+	text-align:center;
+	font-size:80%;
+	background-color:#ffffff;
+	width:468px;
+}
+
+div.update{
+	text-align:right;
+	font-size:90%;
+	line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;font-size:0.9em;}
+.r {text-align:right;}
+
+.add {background-color:#ddddff;}
+.add2 {color:#004400;}
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+
+<title>
+ドラクエ5　向きの連射コントローラ/パッド/アダプタ　PS2　DQ5
+</title>	
+
+</head>
+
+
+<body class="sub">
+<div class="frame1">
+<h1 id="top">
+おすすめ連射パッド・コントローラ・アダプタ　ドラクエ5　PS2版対応
+</h1>
+<div class="under">調査・執筆 ： <a href="../index.html">右弐</a>　　/　　作成 ： 2013.03.29　　/
+　　最終更新 ： 2013.03.30
+</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+<br>
+　<a href="./diary/diary.html">▲　ふつうの日記へ戻る</a><br>
+　<a href="./diary/dq5diary.html">▲　ドラクエ5日記へ戻る</a><br>
+　<a href="./index.html">▲　メインページへ戻る</a><br>
+<br>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+
+</tr>
+</table>
+
+<h2 id="01"><a href="#01">
+結論
+</a></h2>
+<p>
+
+<span style="float:right;">
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B001DWETPG&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0009Q0E60&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+</span>
+
+
+本ページを読む時間がない方のために、結論を冒頭にまとめておきます。<br>
+<br>
+プレイステーション2で発売されているドラクエ5で短時間攻略を目指す場合は、次の連射用アダプタのいずれかの使用をおすすめします。<br>
+<br>
+○　<a href="http://www.amazon.co.jp/gp/product/ASIN/B001DWETPG" target="_blank">PS1/PS2用コントローラに連射/マクロ機能を付加させる変換コンバータ </a><br>	
+　　（MAYFLASH製）　￥1,800(Amazon2013.03.29現在)<br>
+<br>
+○　<a href="http://www.amazon.co.jp/gp/product/B0009Q0E60?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0009Q0E60" target="_blank">連射まんまミーヤ!2</a>
+（ゲームテック製）　定価￥4,200<br>
+<br>
+
+
+これらは、連射以外にもコマンド入力を記憶・再生する機能を持っています。<br>
+「コントローラ」の形状をしたものではなく、<br>
+　PS2本体　－　アダプタ　－　コントローラ<br>
+と接続して使用します。<br>
+<br>
+次の項からは、なぜこれらのアダプタがおすすめなのかの理由を述べていきます。
+</p>
+<p>
+※2013年3月現在、これらの機器は極めて品薄となっているようです。店舗等で定価で見かけた場合には、即購入をおすすめします。<br>
+※このページは、筆者の「連射パッド紹介」ページの3代目にあたります。<a href="control_pad_old.html" target="_blank">2006年作成の旧案内</a>・
+<a href="control_pad_old2.html" target="_blank">2007年作成の旧案内</a>も残してあります。
+</p>
+
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2 id="02"><a href="#02">
+はじめに
+</a></h2>
+
+<h3>このページの目的</h3>
+
+<p>
+このページは、プレイステーション2（PS2）で発売されたドラクエ5(DQ5)に適した連射機能を持つコントローラはどの機器なのかを調査・研究したものです。
+短時間攻略（タイムアタック）に適しているかどうかを優劣の基準としています。<br>
+なお、私が実際に使用したコントローラの中で優劣をつけたので、私の知らない、より良いコントローラが世の中には存在している可能性もあります。さらにこの調査は2013年3月現在のもので、閲覧時には新製品により状況が変わっているかもしれません。ご注意ください。</p>
+
+<h3>機器をえらぶポイントは何か？</h3>
+<p>	
+短時間攻略の観点から見ると、「設定できる連射速度」が最重要ポイントです。<br>
+<br>
+問題はこの連射速度。速ければ速いほど良いのではないか」と思われるかもしれませんが、事はそう単純ではありません。<strong>早く連射しすぎると、ソフトが連射と認識できない」という問題が起こるのです。</strong>
+つまり、「ソフトが連射と認識してくれる範囲内でなるべく速い連射速度」を設定できるコントローラが優れていることになるわけです。<br>
+</p>
+<p>
+以上のように、連射速度がコントローラの良し悪しを決める決定的な要因になるわけですが、他に見るべきポイントとしては、次の2点があります。<br>
+・連射固定機能（ボタンを押してなくても連射のままにできる機能）<br>
+・連射設定できるボタンが多い<br>
+これらの機能があると、プレイ中でもボタン連打していれば進む場面で休憩できるようになるので、RTA(リアルタイムアタック）をやる際には特に有利になります。<br>
+<br>
+連射固定機能は「セロテープなどでボタンを物理的に固定」すれば代用が効くので、必要な機能というわけではありません。ただし、物理的な固定は「外れてはいないか」という心配事を1つ増やし、休憩中の精神状態に影響を与えるので、長時間のプレイの助けになることは確かです。<br>
+<br>
+連射速度を含めて、以上3点が、コントローラの見るべきポイントです。<br>
+形状による操作性等の問題もありますが、プレーヤー個人による好みの差、慣れの問題も大きいので、ここでは除外します。</p>
+
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+
+<h2 id="03"><a href="#03">
+製品比較
+</a></h2>
+
+<h3>
+スペック一覧
+</h3>
+<p>
+私が使ったことのあるコントローラ・アダプタを上から順にならべ、機能を比較してみました。<br>
+
+「連射速度」の欄の<b><font color="crimson">赤文字</font></b>の数字が、<b>ソフトが認識する最大の設定連射速度</b>です。<br />
+（なお、灰色の項目は製品を選ぶ上で優先順位の低い情報です。）<br /><br />
+</p>
+<center>
+<table class="simple">
+<col span="1">
+<col span="1" style="background-color:#ffdddd">
+<col span="6">
+<col span="3" style="background-color:#dddddd">
+<tr>
+<th rowspan="2">品名
+<th rowspan="2">実測最適<br />連射速度<br />[回/秒]
+<th rowspan="2">公称<br />連射速度<br />[回/秒]
+<th colspan="3">連射設定可能なボタン
+<th rowspan="2">連射<br />固定機能
+<th rowspan="2">アナログ<br />スティック<br />感度調節
+<th colspan="2">キーの形状
+<th rowspan="2">メーカー
+<th rowspan="2">Amazonでの<br>
+定価<br>(2013.03.29時点)
+
+<tr>
+<th>〇×<br />△□
+<th>L1,2,3,<br />R1,2,3
+<th>十字キー
+<th>十字キー
+<th>アナログ<br />スティック
+
+
+<tr>
+<td><a href="http://www.amazon.co.jp/exec/obidos/ASIN/B00005OUPK/uniright2-22" target="_blank">ソニー純正<br>
+コントローラ</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&amp;l=ur2&amp;o=9" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>－
+<td>－
+<td>不可
+<td>不可
+<td>不可
+<td>不可
+<td>不可
+<td>4分割型
+<td>直径20mm
+<td>SONY
+<td>￥2,400
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/gp/product/B0002XVD9W?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0002XVD9W" target="_blank">アナログ振動<br>
+パッド2 TURBO</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0002XVD9W" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>10.0
+<td>5,<font color="crimson"><b>12</b></font>,20
+<td>可
+<td>可
+<td>不可
+<td>可
+<td>3段階
+<td>十字<br>
+1ボタン型
+<td>直径13mm
+<td>ホリ
+<td>￥1,973
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/exec/obidos/redirect?link_code=ur2&tag=uniright2-22&camp=247&creative=1211&path=ASIN%2FB000B8FBA0%2Fqid%3D1136490365%2Fsr%3D1-4%2Fref%3Dsr_1_2_4" target="_blank">アナログ連射<br>
+コントローラ「極」 </a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&amp;l=ur2&amp;o=9" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>11.9
+<td>7,<font color="crimson"><b>15</b></font>,30
+<td>可
+<td>可
+<td>可
+<td>可
+<td>3段階
+<td>十字<br>
+1ボタン型
+<td>直径17mm
+<td>フジワーク
+<td>Amazon取扱<br>
+定価新品なし
+
+
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.co.jp%2F%25E3%2582%25B5%25E3%2582%25A4%25E3%2583%2590%25E3%2583%25BC%25E3%2582%25AC%25E3%2582%25B8%25E3%2582%25A7%25E3%2583%2583%25E3%2583%2588-CYBER%25E3%2583%25BB%25E3%2582%25A2%25E3%2583%258A%25E3%2583%25AD%25E3%2582%25B0%25E9%2580%25A3%25E5%25B0%2584%25E3%2582%25B3%25E3%2583%25B3%25E3%2583%2588%25E3%2583%25AD%25E3%2583%25BC%25E3%2583%25A9-%25E3%2583%2596%25E3%2583%25AB%25E3%2583%25BC-%25E3%2582%25B7%25E3%2583%25AB%25E3%2583%2590%25E3%2583%25BC%2Fdp%2FB000C1V61E%3Fie%3DUTF8%26s%3Dvideogames%26qid%3D1193673839%26sr%3D1-1&tag=uniright2-22&linkCode=ur2&camp=247&creative=1211" target="_blank">CYBER・アナログ<br>
+連射コントローラ</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&amp;l=ur2&amp;o=9" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>9.6
+<td>? ,<font color="crimson"><b> ? </b></font>,24
+<td>可
+<td>可
+<td>可
+<td>可
+<td>3段階
+<td>円盤型
+<td>直径19mm
+<td>サイバー<br>
+ガジェット
+<td>Amazon取扱<br>
+定価新品なし
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/gp/product/B000CCTGHO?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B000CCTGHO" target="_blank">バトルパッド<br>
+ターボ2（BPT2）</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B000CCTGHO" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>12.5
+<td><font color="crimson"><b>16</b></font>
+<td>可
+<td>可
+<td>不可
+<td>不可
+<td>不可
+<td>八角形型
+<td>直径20mm
+<td>ゲーム<br>
+テック
+<td>Amazon取扱<br>
+定価新品なし
+
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/gp/product/B0009Q0E60?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0009Q0E60" target="_blank">連射まんま<br>
+ミーヤ!2</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0009Q0E60" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<td>12.5
+<td>4,8,<font color="crimson"><b>16</b></font>,32
+<td>可
+<td>可
+<td>可
+<td>可
+<td>不可
+<td>－
+<td>－
+<td>ゲーム<br>
+テック
+<td>Amazon取扱<br>
+定価新品なし
+
+<tr>
+<td>
+<a href="http://www.amazon.co.jp/gp/product/ASIN/B001DWETPG" target="_blank">PS1/PS2用<br>
+コントローラに<br>
+連射/マクロ機能を<br>
+付加させる<br>
+変換コンバータ </a>
+<td>12.4
+<td>…,遅,中,<font color="crimson"><b>速</b></font>,…<br>
+(何段階か不明)
+<td>可
+<td>L1,R1<br>のみ<br>可
+<td>不可
+<td>不可
+<td>不可
+<td>－
+<td>－
+<td>MAYFLASH
+<td>￥1,800
+
+</table>
+
+
+<br />
+＊「L3、R3」は、それぞれ左スティック、右スティックを上から押し込む操作に相当します。
+</center>
+<p>
+「<a href="http://www.amazon.co.jp/gp/product/ASIN/B001DWETPG" target="_blank">PS1/PS2用コントローラに
+連射/マクロ機能を付加させる
+変換コンバータ </a>」
+「
+<a href="http://www.amazon.co.jp/gp/product/B0009Q0E60?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0009Q0E60" target="_blank">連射まんまミーヤ!2</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0009Q0E60" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+」
+
+「
+<a href="http://www.amazon.co.jp/gp/product/B000CCTGHO?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B000CCTGHO" target="_blank">バトルパッドターボ2（BPT2）</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B000CCTGHO" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+」
+の3製品が優れていることがわかります。<br />
+<br>
+ちなみに、連射速度「12回/秒」と「10回/秒」とでは、見ていてはっきりと違いがわかりますが、「12.5回/秒」と「12回/秒」ではそこまでの違いはありません。「12.5回/秒」と、「12.4回/秒」は見分けがつきません。（測定誤差の程度であり、実際は優劣がない可能性もあります）
+</p>
+<p>
+なお、連射速度の「実測」は、ドラクエ5にて、戦闘中に「そうがえ」を選択して△ボタンを連射し、<br>
+「そうがえ」⇒キャラ4人選択⇒・・・とループすることを利用して測定しました。<br>
+50ループ（＝250打）の所要タイムを測定し、3回の試行を行い平均を算出したものです。</p>
+
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+<h3>アダプタが理想　コントローラは消耗する</h3>
+<p>
+コントローラは、長年使うことによってボタンが磨耗して効きが悪くなることがあります。つまり、消耗品ということができます。<br>
+このため、理想的な連射速度は「アダプタ」に依存する環境にしたほうが好ましいといえます。自分にあう操作感のコントローラでプレイできるというメリットもあります。
+</p>
+<p>
+このため、現時点ですでに相当に品薄となっていますが、次の2つの連射アダプタのいずれかを入手をおすすめします。<br>
+「<a href="http://www.amazon.co.jp/gp/product/ASIN/B001DWETPG" target="_blank">PS1/PS2用コントローラに
+連射/マクロ機能を付加させる
+変換コンバータ </a>」
+「
+<a href="http://www.amazon.co.jp/gp/product/B0009Q0E60?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0009Q0E60" target="_blank">連射まんまミーヤ!2</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0009Q0E60" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+」<br>
+なお、連射速度こそ遜色ありませんが、連射機能・リプレイ機能ともに、「連射まんまミーヤ!2」のほうが高機能です。ただし、リプレイ機能などは通常の短時間攻略(RTA)では使用しないのが通例となっているようです。
+</p>
+
+<h3>コントローラの操作感</h3>
+<p>
+さて、連射はアダプタを使うとした場合、残る問題はコントローラとしてどの製品を使うかです。<br>
+すでに手に入る機器が限られていますが、手に入りやすい製品を、操作感の面から比較してみます。
+なお、この項目は筆者の主観や個人的な感覚に基づくところが大きいので、ご注意ください。<br>
+
+
+<span style="float:right;">
+
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVD9W&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
+</span><br />
+<b>ソニー純正コントローラ</b><br />
+・軽い。<br />
+・十字キーがふかふかしている感が否めない。押したつもりが認識されていないケースがある。<br />
+・アナログスティックが若干大きい。個人的には邪魔になる大きさ。<br />
+・今後、継続的に手に入る可能性がもっとも高い。慣れておく価値があるかも。<br />
+<br />
+<b>アナログ振動パッド2 TURBO</b><br />
+・アナログスティックが小さい。<br />
+　慣れると「倒す角度」の微調整が必要ないゲームには使いやすい。<br />
+　「倒す角度」の微調整が必要なゲーム（パワプロ等）には使いづらい。<br />
+　十字キー操作時に邪魔になることがない。<br />
+・全体的にしっかりとした作り。悪いところが見当たらない。<br />
+・塗装に高級感があります。<br />
+・筆者個人的には、操作感最良のコントローラです。<br />
+</p>
+
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2 id="05">
+<a href="#05">おすすめ製品まとめ　/　Amazon在庫チェック早見表</a>
+</h2>
+
+<p>
+
+
+以上から、「連射機能」のためには<br>
+　<a href="http://www.amazon.co.jp/gp/product/ASIN/B001DWETPG" target="_blank">PS1/PS2用コントローラに
+連射/マクロ機能を付加させる
+変換コンバータ </a><br>
+　
+<a href="http://www.amazon.co.jp/gp/product/B0009Q0E60?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0009Q0E60" target="_blank">連射まんまミーヤ!2</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0009Q0E60" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<br>
+「コントローラ」として
+<br>
+　<a href="http://www.amazon.co.jp/gp/product/B0002XVD9W?ie=UTF8&tag=uniright2-22&linkCode=as2&camp=247&creative=1211&creativeASIN=B0002XVD9W" target="_blank">アナログ振動パッド2 TURBO</a><img src="http://www.assoc-amazon.jp/e/ir?t=uniright2-22&l=as2&o=9&a=B0002XVD9W" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+<br>
+<br>
+を使用することをおすすめします。
+</p>
+
+<table class="none">
+<tr>
+<th>連射機能<th><th>ブラック<th>レッド<th>ブルー<th>シルバー<th>ホワイト
+<tr><td>
+<span style="float:right;">
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B001DWETPG&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td><font size="+2">＋</font>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVD9W&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVDAG&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVDA6&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVDB0&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0002XVDAQ&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+</tr>
+<tr>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0009Q0E60&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td><td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0007IGVPI&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=8&l=as1&asins=B0007IGVP8&fc1=000000&IS2=1&lt1=_blank&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+<td colspan="2">
+←こちらは<br />
+サウンドレッド・サウンドブルー<br />
+コントローラにヘッドホンを挿すことができる。
+</tr>
+</table>
+
+<p>
+Amazonなどの通販でも品薄ですが、すでにPS2がゲーム市場で過去のハードとなりつつある現在、小売店ではさらに見つかりにくいです。定期的に上の表をチェックして、在庫のあるタイミングでの発注をおすすめします。お役立ていただければ幸いです。</p>
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2>おわりに　調査後記</h2>
+<p>
+今回、再調査とページ改訂に至ったきっかけはもちろん、「連射速度が優れた新しいアダプタ」を、筆者が発見したことです。ただ、PS2版ドラクエ5が依然としてRTAとして活発にプレイされていることも影響しています。まだこのページの更新にも少なからず意味があるかと思いました。<br>
+このような経緯のため、従来行ってきたドラクエ8については調査を割愛しています。また、「アダプタとコントローラを実際に接続しての動作確認」は、「アナログ振動パッド2TARBO」のみ行っています。他のコントローラを接続する場合はこの連射速度で動作するのか、確かめてはいませんので、ご注意ください。<br>
+<br>
+ちなみに、筆者の知る限りで、PS2の連射パッドをめぐる歴史を簡単にまとめると、<br>
+「極がよい」→「極の販売差し止め」→「連射まんまミーヤがよい」→「品切れでオークション価格が急騰」→「極が販売再開するも、全体的にPS2連射パッドが品薄で入手困難」→「アナログ振動パッド2TARBOのみは手に入る状況」→「新しいアダプタの発見」<br>
+となります。改めて、歴史を感じます。<br>
+<br>
+最後に、このページに直接来た方のために、調査員：右弐については<a href="http://uniright2.fc2web.com/diary/diary.html#bottom">日記の自己紹介部分</a>をご参照ください。<br>	
+では、ここまでお読みいただいてありがとうございました。　　　　　右弐　　2013.03.29
+
+<h3>免責事項</h3>
+<p>記載した情報は、すべて筆者自身が調査・実行したことに基づいていますが、再現性を保証するものではありません。情報の利用はあくまで自己責任でお願いします。
+</p>
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+
+<hr>
+
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="./diary/diary.html">▲　ふつうの日記へ戻る</a><br>
+　<a href="./diary/dq5diary.html">▲　ドラクエ5日記へ戻る</a><br>
+　<a href="./index.html">▲　メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br>
+　※当ページへのリンクは歓迎です。<br>
+<td>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+</tr>
+</table>
+</div>
+</body>
+</html>
+
+

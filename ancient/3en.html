@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<meta name="keywords" content="対数, 貨幣, 3円玉">
+<meta name="author" content="右弐(うに)">
+<meta name="description" content="日々の考察　ドラクエの短時間攻略プレイヤー">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+	font-size:0.9em;
+	line-height:1.5em;
+ 	padding:10px;
+ 	background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+	background-color:#ffdddd;
+	font-size:0.9em;
+	line-height:1.5em;
+/*	text-align:center;*/
+}
+
+
+a{
+	text-decoration:none;
+}
+a:hover{
+	color:#00aa44;
+	text-decoration:underline;
+}
+
+
+p{
+	margin:10px 10px 10px 10px;
+	padding:3px 5px 3px 5px;
+}
+
+ul li{
+	margin:10px 10px 10px 5px;
+	padding:3px 5px 3px 5px;
+}
+
+pre{font-size:100%;
+	padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+	text-align:left; 
+	width:800px;
+	margin: 0px auto 0px auto ;
+	padding: 4px 4px 4px 4px ;
+	background-color:white;
+	border:1px solid #ff6666;
+}
+
+div.frame2{
+	text-align:left; 
+	background-color:white;
+	border:1px solid #8844ff; 
+	padding:5px 10px 5px 10px;
+	margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+	text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.9em;
+	line-height:1.1em;	
+}
+
+table.timetable td{
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.timetable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.itemtable td{
+	padding:3px 0px 1px 1px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.itemtable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.gold td{
+	padding:3px 2px 1px 2px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+	background-color:#ffdddd;
+	color:#663322 !important;
+	border-style:solid;
+	border-color:#662222;
+}
+
+h1{	font-size:1.5em;
+	padding:6px 15px 4px 15px; 
+	margin-top:2px;
+	margin-bottom:0px;
+	border-width:0px 0px 1px 3px;	
+}
+
+div.under{
+	background-color:white;
+	padding:2px 15px 2px 15px;
+	border-width:1px 0px 1px 3px;
+	text-align:right;
+	margin-top:0px;
+	margin-right:0px;
+	margin-bottom:2px;
+	font-size:80%;
+}
+
+h2{	font-size:1.2em;
+	padding:6px 10px 4px 10px; 
+	border-width:0px 0px 1px 3px;
+	margin-top:5px;
+}
+
+h3{	font-size:1.0em;	
+	background-color:white;
+	padding:2px 10px 2px 10px;
+	border-width:0px 0px 1px 3px;
+	width:60%;
+}	
+
+span.r{
+	float:right;
+	text-align:center;
+}
+
+div.under a{
+	text-decoration:none;
+}
+
+td.sp{
+	text-align:center;
+	font-size:80%;
+	background-color:#ffeeee;
+	width:468px;
+}
+
+div.update{
+	text-align:right;
+	font-size:90%;
+	line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;}
+.r {text-align:right;}
+
+
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+<title>3円玉について考える</title>
+</head>
+<body class="sub">
+<div class="frame1">
+<h1>3円玉について考える<a name="top"></a></h1>
+<div class="under">執筆 ： <a href="index.html">右弐</a>　　/　　作成 ： 2011.08.01　　/　　最終更新 ： 2011.08.06</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+　<a href="diary/diary.html">▲　日記へ戻る</a><br>
+　<a href="index.html">▲　メインページへ戻る</a><br>
+<td valign="middle" class="sp">
+</tr>
+</table>
+<!--ここから本文-->
+<h2>1円、10円、100円玉はあるとして・・・</h2>
+<p>
+10進法の世界に生きる以上、1円、10円、100円玉は欠かせないだろう。<br>
+<br>
+その中間を補うのは、5円玉、50円玉、500円玉。<br><br>
+
+でも、本当に効率が良いのは、実は3円玉、30円玉、300円玉だ。<br>
+次の表で見てみよう。
+</p>
+<div class="c">表1：中間硬貨が5円玉と3円玉の場合の所持数比較</div>
+<center>
+<table class="simple">
+<tr>
+<td>
+<td>所持金下一ケタ
+<td>0
+<td>1
+<td>2
+<td>3
+<td>4
+<td>5
+<td>6
+<td>7
+<td>8
+<td>9
+<td>枚数の期待値
+<td>合計枚数の期待値
+
+</tr>
+<tr class="yellow">
+<td rowspan="2">5円玉<br>(現行)
+<td>1円玉所持数
+<td>0
+<td>1
+<td>2
+<td>3
+<td>4
+<td>0
+<td>1
+<td>2
+<td>3
+<td>4
+<td>2.0
+<td rowspan="2">2.5
+</tr>
+<tr class="yellow">
+<td>5円玉所持数
+<td>0
+<td>0
+<td>0
+<td>0
+<td>0
+<td>1
+<td>1
+<td>1
+<td>1
+<td>1
+<td>0.5
+</tr>
+<tr class="green">
+<td rowspan="2">3円玉<br>(新案)
+<td>1円玉所持数
+<td>0
+<td>1
+<td>2
+<td>0
+<td>1
+<td>2
+<td>0
+<td>1
+<td>2
+<td>0
+<td>0.9
+<td rowspan="2">2.1
+</tr>
+<tr class="green">
+<td>3円玉所持数
+<td>0
+<td>0
+<td>0
+<td>1
+<td>1
+<td>1
+<td>2
+<td>2
+<td>2
+<td>3
+<td>1.2
+</tr>
+</table>
+</center>
+
+</p>
+<p>
+上の表から、1のケタだけで、財布の中の硬貨が平均0.4枚も少なくなることがわかる。<br>
+仮に下3けたの金額000～999が等確率で起きるとするなら、平均で1.2枚も少なくなるということだ。
+
+</p>
+<h3>なんで「３」なのか？</h3>
+<p>
+1と10のあいだの数として適切なのが、5ではなく、3だからです。<br>
+<br>
+あいだが5の場合は、<br>
+　1　→　5　→　10　　　と増えるとき、5倍、2倍　と量が増えており、増加率が一定でない。<br>
+<br>
+これに対して、あいだが3の場合は、<br>
+　1　→　3　→　10　　　と増えるとき、3倍、3.3倍　と増加率がほぼ一定となる。<br>
+<br>
+1と10の2つの数に対して、5は「相加平均」に近い値、3は「相乗平均」に近い値で、<br>
+間にひとつ値をとるなら、相乗平均に近い値を選ぶと、増加率が一定に近くなります。<br>
+増加率が一定に近づけば、それぞれの硬貨の守備範囲の広さが均等に近づき、効率的になります。<br>
+<br>
+分銅で重さをはかる場合、1g,　2g,　4g,　8g　・・・と、2倍ずつのものがあれば、効率よく重さを作れるのに似ています。
+</p>
+<h3>おまけ</h3>
+<p>
+・・・と、なんでこんなことを考えたのかというと、先ほどコンビニで買い物した際、惜しくも1円足りず、財布の中の小銭が999円になってしまったからです。<br>
+以前から5円玉じゃなくて3円玉だろ！と思ってはいたんですが、<br>
+今日実際に計算してみると、3円玉の導入だけで平均で0.4枚も変わるようで、驚きです。<br>
+なんで採用されていないんだろうか。<br>
+<br>
+アメリカの紙幣は10ドル、20ドル、50ドル、100ドルという感じで、大体2倍ずつに設定されているので合理的です。<br>
+25セント硬貨なんかは日本人から見て違和感がありますが、2枚持つ意味のない50円玉よりは存在意義があります。<br>
+<br>
+2000円札が根付かなかった日本は、5円玉を廃止して3円玉を導入するあたりから始めると面白いのではないかと、勝手に想像しています。<br>
+ちなみに、「5」が節目であり、5円玉がなくなると考えにくくなる、と思うのはたぶん慣れの問題で、最初から3円玉で慣れていれば、そこまで違和感は感じないのだろうと思うのですが、どうなんでしょうね。
+
+<!--
+<h3>３万円札は有効か？</h3>
+<p>
+上の話では、所持金の１のケタは、0～9 の、すべての数が「等確率」で出るということを前提としています。<br>
+1000人連れてきて、財布を見せてもらったら、下一ケタは 0～9 は同じくらいの確率でしょう。<br>
+これについて、「まあそうだろ」と思ってくれるはずです。<br>
+<br>
+でも、1000人の財布に入っている金額の「一番上のケタの数字」になると話は別になります。<br>
+「9万？円」持っている人と、「1万？円」持っている人を比較すると、圧倒的に「1万？円」の人が多いのです。<br>
+「9千？円」と「1千？円」でも同様です。<br>
+一番上のケタの数字は圧倒的に「1」が多くなります。1割ではありません。<br>
+<br>
+実際、世の中に存在する定数は、対数の値が等確率になるので、<br>
+log<sub>10</sub>1 = 0 <br>
+log<sub>10</sub>2 = 0.301<br>
+から、30.1%の数は、最高位の数字が1だということになります。<br>
+<br>
+<a href="http://ja.wikipedia.org/wiki/%E7%89%A9%E7%90%86%E5%AE%9A%E6%95%B0" target="_blank">ウィキペディアの物理定数のページ</a>などを眺めてみると、1で始まる数字が多いことに気づかされるはずです。
+
+
+</p>
+-->
+<p>　<a href="#top">▲　このページのトップへ戻る</a></p>
+<hr>
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="diary/diary.html">▲　日記へ戻る</a><br>
+　<a href="index.html">▲　メインページへ戻る</a><br>
+<td>
+</tr>
+</table>
+</div>
+</body>
+</html>
+
+

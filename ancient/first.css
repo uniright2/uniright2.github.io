@@ -1,0 +1,117 @@
+/*
+<link rel="stylesheet" type="text/css" href="first.css">
+*/
+
+/*行間*/
+body{line-height:1.2em;}
+
+a{
+text-decoration:none;
+}
+a:hover{
+color:00aa44;
+text-decoration:underline;
+}
+
+/*見出し文字設定*/
+font.chap{font-size:1.5em;}
+
+body.blue{color:#eeeeff;}
+body.red{color:#ffeeee;}
+body.green{color:#eeffee;}
+body.magenta{color:#ffeeff;}
+body.yellow{color:#ffffee;}
+body.cyan{color:#eeffff;}
+body.white{color:#eeeeee;}
+
+
+/*文字色の設定*/
+span.blue{color:#000088;}
+span.red{color:#880000;}
+span.green{color:#008800;}
+span.magenta{color:#880088;}
+span.yellow{color:#888800;}
+span.cyan{color:#008888;}
+span.white{color:#666666;}
+
+/*デフォルトの表の設定*/
+table,td{border: 0px solid black;text-align:left;}
+table.cen td{text-align:center;}
+
+table.lined{border: 2px solid gray;}
+td.lined{border: 1px solid gray;}
+th.lined{border: 1px solid gray;}
+
+table.doc{line-height:1.5em;}
+
+table.collapse{border-collapse:collapse;}
+th.collapse{border-collapse:collapse;}
+td.collapse{border-collapse:collapse;}
+
+table.none{
+	border:0px solid black;
+	padding:0; margin:0;
+	text-align:center;
+}
+
+/*表の属性*/
+
+table.blue{border:#000088 2pt solid; background-color:#eeeeff; width:740px;}
+table.red{border:#880000 2pt solid; background-color:#ffeeee; width:740px;}
+table.green{border:#008800 2pt solid; background-color:#eeffee; width:740px;}
+table.magenta{border:#880088 2pt solid; background-color:#ffeeff; width:740px;}
+table.yellow{border:#888800 2pt solid; background-color:#ffffee; width:740px;}
+table.cyan{border:#008888 2pt solid; background-color:#eeffff; width:740px;}
+table.white{border:#666666 2pt solid; background-color:#eeeeee; width:740px;}
+
+table.blue_main{border:#000088 2pt solid; background-color:#eeeeff; width:580px;}
+table.red_main{border:#880000 2pt solid; background-color:#ffeeee; width:580px;}
+table.green_main{border:#008800 2pt solid; background-color:#eeffee; width:580px;}
+table.magenta_main{border:#880088 2pt solid; background-color:#ffeeff; width:580px;}
+table.yellow_main{border:#888800 2pt solid; background-color:#ffffee; width:580px;}
+table.cyan_main{border:#008888 2pt solid; background-color:#eeffff; width:580px;}
+table.white_main{border:#666666 2pt solid; background-color:#eeeeee; width:580px;}
+
+table.blue_sub{border:#000088 2pt solid; background-color:#eeeeff; width:140px; font-size:0.8em;}
+table.red_sub{border:#880000 2pt solid; background-color:#ffeeee; width:140px; font-size:0.8em;}
+table.green_sub{border:#008800 2pt solid; background-color:#eeffee; width:140px; font-size:0.8em;}
+table.magenta_sub{border:#880088 2pt solid; background-color:#ffeeff; width:140px; font-size:0.8em;}
+table.yellow_sub{border:#888800 2pt solid; background-color:#ffffee; width:140px; font-size:0.8em;}
+table.cyan_sub{border:#008888 2pt solid; background-color:#eeffff; width:140px; font-size:0.8em;}
+table.white_sub{border:#666666 2pt solid; background-color:#eeeeee; width:140px; font-size:0.8em;}
+
+table.blue_free{border:#000088 2pt solid; background-color:#eeeeff;}
+table.red_free{border:#880000 2pt solid; background-color:#ffeeee;}
+table.green_free{border:#008800 2pt solid; background-color:#eeffee;}
+table.magenta_free{border:#880088 2pt solid; background-color:#ffeeff;}
+table.yellow_free{border:#888800 2pt solid; background-color:#ffffee;}
+table.cyan_free{border:#008888 2pt solid; background-color:#eeffff;}
+table.white_free{border:#666666 2pt solid; background-color:#eeeeee;}
+/*セルの属性*/
+td.doc{line-height:1.4em;}
+
+td.c1{width:30%; border:none;}
+td.c2{width:70%; font-size:0.8em; border:none;}
+td.sec{font-weight: bold; border:none;}
+
+td.blue{background-color:#bbbbff; color:#000088; border:none;}
+td.red{background-color:#ffbbbb; color:#880000; border:none;}
+td.green{background-color:#bbffbb; color:#008800; border:none;}
+td.magenta{background-color:#ffbbff; color:#880088; border:none;}
+td.cyan{background-color:#bbffff; color:#008888; border:none;}
+td.yellow{background-color:#ffffbb; color:#888800; border:none;}
+td.white{background-color:#ffffff; color:#666666; border:none;}
+
+/*セルの線引き*/
+td.redtop{border-top:2pt solid #ff0000;}
+td.redright{border-right:2pt solid #ff0000;}
+td.redbottom{border-bottom:2pt solid #ff0000;}
+td.redleft{border-left:2pt solid #ff0000;}
+td.greentop{border-top:2pt solid #00aa00;}
+td.greenright{border-right:2pt solid #00aa00;}
+td.greenbottom{border-bottom:2pt solid #00aa00;}
+td.greenleft{border-left:2pt solid #00aa00;}
+td.bluetop{border-top:2pt solid #0000ff;}
+td.blueright{border-right:2pt solid #0000ff;}
+td.bluebottom{border-bottom:2pt solid #0000ff;}
+td.blueleft{border-left:2pt solid #0000ff;}

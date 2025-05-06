@@ -1,0 +1,85 @@
+/*
+<link rel="stylesheet" type="text/css" href="first.css">
+*/
+
+/*行間*/
+body{line-height:1.4em; 
+	font-size:0.9em; 
+}
+
+a{text-decoration:none;}
+a:hover{color:#006600; text-decoration:underline;}
+
+div{padding:3px;margin:10px;}
+
+div.frame{width:720px; border:1px solid black;text-align:left;margin:10px auto 10px auto;
+padding:10px;}
+
+
+/*見出し文字設定*/
+font.chap{font-size:1.5em;}
+
+body.blue{color:#eeeeff;}
+body.red{color:#ffeeee;}
+body.green{color:#eeffee;}
+body.magenta{color:#ffeeff;}
+body.yellow{color:#ffffee;}
+body.cyan{color:#eeffff;}
+body.white{color:#eeeeee;}
+
+
+/*文字色の設定*/
+span.blue{color:#000088;}
+span.red{color:#880000;}
+span.green{color:#008800;}
+span.magenta{color:#880088;}
+span.yellow{color:#888800;}
+span.cyan{color:#008888;}
+span.white{color:#888888;}
+
+/*表の設定*/
+table,td{border: 0px solid black;}
+table.collapse{border-collapse:collapse;}
+th.collapse{border-collapse:collapse;}
+td.collapse{border-collapse:collapse;}
+
+
+/*表の属性*/
+table.general{border:black 2pt colid; background-color:white;}
+
+table.blue{border:#000088 2pt solid; background-color:#eeeeff; width:740px;}
+table.red{border:#880000 2pt solid; background-color:#ffeeee; width:740px;}
+table.green{border:#008800 2pt solid; background-color:#eeffee; width:740px;}
+table.magenta{border:#880088 2pt solid; background-color:#ffeeff; width:740px;}
+table.yellow{border:#888800 2pt solid; background-color:#ffffee; width:740px;}
+table.cyan{border:#008888 2pt solid; background-color:#eeffff; width:740px;}
+table.white{border:#888888 2pt solid; background-color:#eeeeee; width:740px;}
+
+/*セルの属性*/
+td.doc{line-height:1.4em;}
+
+td.c1{width:30%; border:none;}
+td.c2{width:70%; font-size:0.8em; border:none;}
+td.sec{font-weight: bold; border:none;}
+
+.blue{background-color:#eeeeff; border:none;}
+.red{background-color:#ffeeee; border:none;}
+.green{background-color:#ddffdd; border:none;}
+.magenta{background-color:#eeddff; border:none;}
+.cyan{background-color:#aaffff;  border:none;}
+.yellow{background-color:#ffffaa;  border:none;}
+.white{background-color:#ffffff; border:none;}
+
+/*セルの線引き*/
+td.redtop{border-top:2pt solid red;}
+td.redright{border-right:2pt solid red;}
+td.redbottom{border-bottom:2pt solid red;}
+td.redleft{border-left:2pt solid red;}
+td.greentop{border-top:2pt solid green;}
+td.greenright{border-right:2pt solid green;}
+td.greenbottom{border-bottom:2pt solid green;}
+td.greenleft{border-left:2pt solid green;}
+td.bluetop{border-top:2pt solid blue;}
+td.blueright{border-right:2pt solid blue;}
+td.bluebottom{border-bottom:2pt solid blue;}
+td.blueleft{border-left:2pt solid blue;}
