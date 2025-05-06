@@ -1,0 +1,271 @@
+table.status{
+	border:2px solid black;
+	border-collapse:collapse;
+	text-align:left;
+	border:1px solid black; 
+	padding:1px 15px 1px 15px;
+	line-height:80%;
+	font-size:80%;
+}
+
+table.status td{
+	padding:4px 7px 2px 2px;
+	border:1px solid black; 
+	border-collapse:collapse;
+}
+
+table.status th{
+	padding:4px 5px 2px 5px;
+	border:1px solid black;
+	border-collapse:collapse;
+	text-align:center;
+}
+
+table.status td.exp{
+	text-align:right;
+	padding:4px 5px 2px 10px;
+}
+
+table.status td.jmn{
+	text-align:left;
+	font-size:100%;
+	padding:4px 5px 2px 5px;
+}
+
+table.status td.jmni{
+	text-align:left;
+	font-size:80%;
+	padding:4px 2px 2px 2px;
+}
+	
+table.cell{
+	border-width:0px;
+	text-align:right;
+	padding:0px;
+	margin:0xp;
+	border-collapse:collapse;
+}
+
+table.cell td{
+	border-width:0px;
+	width:1.8em;
+	text-align:right;
+	padding:1px;
+	margin:0xp;
+/*	background-color:red;
+*/
+}
+
+td.r0{
+}
+
+td.r1{
+	color:#999999;
+}
+
+td.r2{
+	color:#999999;
+	font-weight:bold;
+}
+
+td.r3{
+	color:#666666;
+	font-weight:bold;
+}
+
+td.r4{
+	font-weight:bold;
+}
+
+td.rk{
+/*	border-color:gray;
+	border-style:solid;
+	border-width:0xp 4px 1px 0px;*/
+	color:#880022;
+	font-weight:bold;	
+}
+
+
+/*character color  */
+
+h2.sh{
+	color:#440088;
+	border-color:#440088;
+	background-color:#d0c0ff;}
+tr.sh_s0 td{background-color:#e8e0ff;}
+tr.sh_i th{background-color:#e0d0ff;}
+tr.sh_s1 th{background-color:#e0d0ff;}
+tr.sh_h th{background-color:#d0c0ff;}
+tr.sh_s0 th{background-color:#d0c0ff;}
+tr.sh_i td{background-color:white;}
+tr.sh_s1 td{background-color:white;}
+
+h2.bi{
+	color:#666600;
+	border-color:#666600;
+	background-color:#ffffb0;}
+tr.bi_s0 td{background-color:#ffffe0;}
+tr.bi_i th{background-color:#ffffd0;}
+tr.bi_s1 th{background-color:#ffffd0;}
+tr.bi_h th{background-color:#ffffb0;}
+tr.bi_s0 th{background-color:#ffffb0;}
+tr.bi_i td{background-color:white;}
+tr.bi_s1 td{background-color:white;}
+
+h2.bis{
+	color:#666600;
+	border-color:#666600;
+	background-color:#ffffb0;}
+tr.bis_s0 td{background-color:#ffffe0;}
+tr.bis_i th{background-color:#ffffd0;}
+tr.bis_s1 th{background-color:#ffffd0;}
+tr.bis_h th{background-color:#ffffb0;}
+tr.bis_s0 th{background-color:#ffffb0;}
+tr.bis_i td{background-color:white;}
+tr.bis_s1 td{background-color:white;}
+
+h2.bo{
+	color:#886600;
+	border-color:#886600;
+	background-color:#ffe8b8;}
+tr.bo_s0 td{background-color:#fff8e0;}
+tr.bo_i th{background-color:#fff8d0;}
+tr.bo_s1 th{background-color:#fff8d0;}
+tr.bo_h th{background-color:#ffe8b0;}
+tr.bo_s0 th{background-color:#ffe8b0;}
+tr.bo_i td{background-color:white;}
+tr.bo_s1 td{background-color:white;}
+
+h2.bos{
+	color:#886600;
+	border-color:#886600;
+	background-color:#ffe8b8;}
+tr.bos_s0 td{background-color:#fff8e0;}
+tr.bos_i th{background-color:#fff8d0;}
+tr.bos_s1 th{background-color:#fff8d0;}
+tr.bos_h th{background-color:#ffe8b0;}
+tr.bos_s0 th{background-color:#ffe8b0;}
+tr.bos_i td{background-color:white;}
+tr.bos_s1 td{background-color:white;}
+
+h2.he{
+	color:#006622;
+	border-color:#006622;
+	background-color:#c0ffd8;}
+tr.he_s0 td{background-color:#e8fff8;}
+tr.he_i th{background-color:#e0ffe8;}
+tr.he_s1 th{background-color:#e0ffe8;}
+tr.he_h th{background-color:#c0ffd8;}
+tr.he_s0 th{background-color:#c0ffd8;}
+tr.he_s1 td{background-color:#white;}
+tr.he_i td{background-color:white;}
+
+h2.pp{
+	color:#004411;
+	border-color:#004411;
+	background-color:#c0ffd8;}
+tr.pp_s0 td{background-color:#e8fff8;}
+tr.pp_i th{background-color:#e0f8e8;}
+tr.pp_s1 th{background-color:#e0f8e8;}
+tr.pp_h th{background-color:#c0f0d8;}
+tr.pp_s0 th{background-color:#c0f0d8;}
+tr.pp_s1 td{background-color:#white;}
+tr.pp_i td{background-color:white;}
+
+h2.sr{
+	color:#004488;
+	border-color:#004488;
+	background-color:#c0d8ff;}
+tr.sr_s0 td{background-color:#e8f0ff;}
+tr.sr_i th{background-color:#d8e8ff;}
+tr.sr_s1 th{background-color:#d8e8ff;}
+tr.sr_h th{background-color:#c0d8ff;}
+tr.sr_s0 th{background-color:#c0d8ff;}
+tr.sr_s1 td{background-color:#white;}
+tr.sr_i td{background-color:white;}
+
+h2.ap{
+	color:#aa2200;
+	border-color:#aa2200;
+	background-color:#ffc8c0;}
+tr.ap_s0 td{background-color:#fff0e8;}
+tr.ap_i th{background-color:#ffe0d8;}
+tr.ap_s1 th{background-color:#ffe0d8;}
+tr.ap_h th{background-color:#ffc8c0;}
+tr.ap_s0 th{background-color:#ffc8c0;}
+tr.ap_s1 td{background-color:#white;}
+tr.ap_i td{background-color:white;}
+
+h2.pi{
+	color:#006600;
+	border-color:#006600;
+	background-color:#c0ffc0;}
+tr.pi_s0 td{background-color:#e8ffe8;}
+tr.pi_i th{background-color:#e0ffe0;}
+tr.pi_s1 th{background-color:#e0ffe0;}
+tr.pi_h th{background-color:#c0ffc0;}
+tr.pi_s0 th{background-color:#c0ffc0;}
+tr.pi_s1 td{background-color:#white;}
+tr.pi_i td{background-color:white;}
+
+h2.re{
+	color:#000088;
+	border-color:#000088;
+	background-color:#c0c0ff;}
+tr.re_s0 td{background-color:#e8e8ff;}
+tr.re_i th{background-color:#d8d8ff;}
+tr.re_s1 th{background-color:#d8d8ff;}
+tr.re_h th{background-color:#c0c0ff;}
+tr.re_s0 th{background-color:#c0c0ff;}
+tr.re_s1 td{background-color:#white;}
+tr.re_i td{background-color:#white;}
+
+
+h2.fl{
+	color:#002288;
+	border-color:#002288;
+	background-color:#c0d8ff;}
+tr.fl_s1 td{background-color:#e0f0ff;}
+tr.fl_i th{background-color:#d8e8ff;}
+tr.fl_s0 th{background-color:#d8e8ff;}
+tr.fl_h th{background-color:#c0d8ff;}
+tr.fl_s1 th{background-color:#c0d8ff;}
+tr.fl_s0 td{background-color:#white;}
+tr.fl_i td{background-color:white;}
+
+h2.de{
+	color:#444444;
+	border-color:#444444;
+	background-color:#ffccdd;}
+tr.de_s1 td{background-color:#ffe0f0;}
+tr.de_i th{background-color:#dddddd;}
+tr.de_s0 th{background-color:#dddddd;}
+tr.de_h th{background-color:#ffccdd;}
+tr.de_s1 th{background-color:#ffccdd;}
+tr.de_i td{background-color:white;}
+tr.de_s0 td{background-color:white;}
+
+h2.ta{
+	color:#880044;
+	border-color:#880044;
+	background-color:#ffccdd;}
+tr.ta_s0 td{background-color:#ffe0f0;}
+tr.ta_i th{background-color:#ffe8f0;}
+tr.ta_s1 th{background-color:#ffd8e8;}
+tr.ta_h th{background-color:#ffccdd;}
+tr.ta_s0 th{background-color:#ffccdd;}
+tr.ta_i td{background-color:white;}
+tr.ta_s1 td{background-color:white;}
+
+h2.sa{
+	color:#662200;
+	border-color:#662200;
+	background-color:#e8c8b8;}
+tr.sa_s1 td{background-color:#f8e8e0;}
+tr.sa_i th{background-color:#f0d8d0;}
+tr.sa_s0 th{background-color:#f0d8d0;}
+tr.sa_h th{background-color:#e8c8b8;}
+tr.sa_s1 th{background-color:#e8c8b8;}
+tr.sa_i td{background-color:white;}
+tr.sa_s0 td{background-color:white;}
+
