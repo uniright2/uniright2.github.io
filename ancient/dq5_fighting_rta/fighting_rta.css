@@ -1,0 +1,35 @@
+/*
+<link rel="stylesheet" type="text/css" href="fighting_rta.css">
+*/
+body{line-height:1.2em;}
+td,th{font-size:0.8em;line-height:1em;}
+span.doc{font-size:0.9em;line-height:1.5em;}
+
+table{empty-cells:show;}
+table,th,td{border-collapse:collapse;}
+
+table{border : 2px black solid;}	
+td{border : 1px black solid;}
+th{border : 1px black solid;}
+
+table.none{border : 0px black solid;}
+table.none td{font-size:1.0em; border :  0px black solid; line-height:1.2em;}
+
+table.jikkyou{width:600px; border : 2px black solid;}
+table.jikkyou td{border : 0px black solid;}
+table.jikkyou th{border : 0px black solid;}
+
+/*ここから下は今回使わないもの。スタイルシートの自分用の例文*/
+
+
+table.senpu tr{height:1.3em;}
+table.senpu td{border-width:1px; border-style:solid solid none solid;}
+table.senpu td.side{background-color:white; border-color:black; 
+					width:20px; text-align:center;}
+table.senpu td.pre{background-color:white; border-color:black;}
+
+table.senpu td.dead{background-color:white ! important;
+		border-color:black; !important;
+		border-style:solid none none none ! important;}
+table.senpu td.l{min-width:40px; border-right-style:none;} /* !solid is for test */
+table.senpu td.r{min-width:30px; border-left-style:none;}
