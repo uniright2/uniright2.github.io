@@ -1,0 +1,22 @@
+/*
+<link rel="stylesheet" type="text/css" href="fighting_rta.css">
+*/
+body{line-height:1.2em;}
+td,th{font-size:0.8em;line-height:1em;}
+span.doc{font-size:0.9em;line-height:1.5em;}
+
+table{empty-cells:show;}
+table,th,td{border-collapse:collapse;}
+
+table{border : 2px black solid;}	
+td{border : 1px black solid;}
+th{border : 1px black solid;}
+
+table.none{border : 0px black solid;}
+table.none td{font-size:1.0em; border :  0px black solid; line-height:1.2em;}
+
+table.jikkyou{width:600px; border : 2px black solid;}
+table.jikkyou td{border : 0px black solid;}
+table.jikkyou th{border : 0px black solid;}
+
+pre{font-size:0.8em;line-heght:1em;}
