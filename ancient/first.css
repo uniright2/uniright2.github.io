@@ -1,8 +1,8 @@
-/*
+ï»¿/*
 <link rel="stylesheet" type="text/css" href="first.css">
 */
 
-/*sŠÔ*/
+/*è¡Œé–“*/
 body{line-height:1.2em;}
 
 a{
@@ -13,7 +13,7 @@ color:00aa44;
 text-decoration:underline;
 }
 
-/*Œ©o‚µ•¶šİ’è*/
+/*è¦‹å‡ºã—æ–‡å­—è¨­å®š*/
 font.chap{font-size:1.5em;}
 
 body.blue{color:#eeeeff;}
@@ -25,7 +25,7 @@ body.cyan{color:#eeffff;}
 body.white{color:#eeeeee;}
 
 
-/*•¶šF‚Ìİ’è*/
+/*æ–‡å­—è‰²ã®è¨­å®š*/
 span.blue{color:#000088;}
 span.red{color:#880000;}
 span.green{color:#008800;}
@@ -34,7 +34,7 @@ span.yellow{color:#888800;}
 span.cyan{color:#008888;}
 span.white{color:#666666;}
 
-/*ƒfƒtƒHƒ‹ƒg‚Ì•\‚Ìİ’è*/
+/*ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®è¡¨ã®è¨­å®š*/
 table,td{border: 0px solid black;text-align:left;}
 table.cen td{text-align:center;}
 
@@ -54,7 +54,7 @@ table.none{
 	text-align:center;
 }
 
-/*•\‚Ì‘®«*/
+/*è¡¨ã®å±æ€§*/
 
 table.blue{border:#000088 2pt solid; background-color:#eeeeff; width:740px;}
 table.red{border:#880000 2pt solid; background-color:#ffeeee; width:740px;}
@@ -87,7 +87,7 @@ table.magenta_free{border:#880088 2pt solid; background-color:#ffeeff;}
 table.yellow_free{border:#888800 2pt solid; background-color:#ffffee;}
 table.cyan_free{border:#008888 2pt solid; background-color:#eeffff;}
 table.white_free{border:#666666 2pt solid; background-color:#eeeeee;}
-/*ƒZƒ‹‚Ì‘®«*/
+/*ã‚»ãƒ«ã®å±æ€§*/
 td.doc{line-height:1.4em;}
 
 td.c1{width:30%; border:none;}
@@ -102,7 +102,7 @@ td.cyan{background-color:#bbffff; color:#008888; border:none;}
 td.yellow{background-color:#ffffbb; color:#888800; border:none;}
 td.white{background-color:#ffffff; color:#666666; border:none;}
 
-/*ƒZƒ‹‚Ìüˆø‚«*/
+/*ã‚»ãƒ«ã®ç·šå¼•ã*/
 td.redtop{border-top:2pt solid #ff0000;}
 td.redright{border-right:2pt solid #ff0000;}
 td.redbottom{border-bottom:2pt solid #ff0000;}
