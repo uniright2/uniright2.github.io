@@ -1,0 +1,78 @@
+/*
+<link rel="stylesheet" type="text/css" href="dqdiary.css">
+*/
+a {
+font-weight:normal;
+color:#0000ff;
+text-decoration:none;
+}
+a:hover{
+text-decoration:underline;
+color:#ff0000;
+}
+
+body{font-size:0.9em;line-height:1.5em;margin:10px 10px 10px 10px;}
+body{background-color:#eeeeff;color:#000000;}
+pre{font-size:0.9em;line-height:1.2em;margin:10px;}
+table{empty-cells:show;}
+table,tr,td{border-collapse:collapse;}
+table{border:0px solid black;}
+table td{border:0px solid black;}
+table th{border:0px solid black;}
+table.simple{background-color:white; border:2px solid black;font-size:1em;line-height:1.2em;}
+table.simple td{border:1px solid black; text-align:center;}
+table.simple th{border:1px solid black;}
+
+table.timetable{background-color:white; border:2px solid black;font-size:0.8em;line-height:1.1em;}
+table.timetable td{border:1px solid black; text-align:center;}
+table.timetable th{border:1px solid black;}
+
+table.none{border:0px solid black; font-size:1em;line-height:1.3em;}
+table.none td{border:0px solid black;}
+table.none th{border:0px solid black;}
+h1{background-color:#bbbbff;padding:10px; color:#000066; font-size:1.4em;}
+h2{background-color:#bbbbff;padding:10px; color:#000066;}
+h3{background-color:#bbbbff;color:#000066;
+	padding:4px;
+	margin-top:3px;
+	margin-bottom:0px;
+}
+
+div.r{text-align:right;}
+
+div.head{
+	width:700px;
+	padding-left:10px;padding-right:10px;
+	padding-top:10px; padding-bottom:10px;
+}
+
+div.diary{
+	width:650px;
+	background-color:white;
+	border:1px solid #000088; 
+	padding-left:10px;padding-right:10px;
+	padding-top:10px; padding-bottom:10px;
+}
+
+div.date{
+	color:#000088;
+	background-color:#eeeeff;
+	/*font-weight:bold;*/
+	margin-bottom:10px;
+	padding-left:10px;
+	padding-top:2px;padding-bottom:2px;
+	padding-left:10px;padding-right:10px;
+	text-align:right;
+}
+
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+
+.str{background-color:#ddffdd; color:#003300;}
+.task{color:#662200;}
+

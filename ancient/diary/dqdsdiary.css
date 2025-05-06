@@ -1,0 +1,50 @@
+/*
+<link rel="stylesheet" type="text/css" href="dqdiary.css">
+*/
+body{font-size:0.9em;line-height:1.3em;margin:20px;}
+body{background-color:#ffeeee;color:#000000;}
+pre{font-size:0.9em;line-height:1.2em;margin:10px;}
+table{empty-cells:show;}
+table,tr,td{border-collapse:collapse;}
+table{border:0px solid black;}
+table td{border:0px solid black;}
+table th{border:0px solid black;}
+table.simple{background-color:white; border:2px solid black;font-size:1em;line-height:1.2em;}
+table.simple td{border:1px solid black; text-align:center;}
+table.simple th{border:1px solid black;}
+
+table.timetable{background-color:white; border:2px solid black;font-size:0.8em;line-height:1.1em;}
+table.timetable td{border:1px solid black; text-align:center;}
+table.timetable th{border:1px solid black;}
+
+table.none{border:0px solid black; font-size:1em;line-height:1.3em;}
+table.none td{border:0px solid black;}
+table.none th{border:0px solid black;}
+h1{background-color:#bbbbbb;padding:10px; color:#444444;}
+h2{background-color:#bbbbbb;padding:10px; color:#444444;}
+h3{background-color:#bbbbbb;color:#444444;
+	padding:4px;
+	margin-top:3px;
+	margin-bottom:0px;
+}
+
+div.r{text-align:right;}
+
+div.diary{
+	width:650px;
+	background-color:white;
+	border:1px solid #444444; 
+	padding-left:10px;padding-right:10px;
+	padding-top:10px; padding-bottom:10px;
+}
+
+div.date{
+	color:#444444;
+	background-color:#eeeeee;
+	/*font-weight:bold;*/
+	margin-bottom:10px;
+	padding-left:10px;
+	padding-top:2px;padding-bottom:2px;
+	padding-left:10px;padding-right:10px;
+	text-align:right;
+}
