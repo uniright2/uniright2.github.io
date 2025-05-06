@@ -1,0 +1,83 @@
+/*
+<link rel="stylesheet" type="text/css" href="fighting_rta.css">
+*/
+a:link{color:#0000ff}
+a:visited{color:#006644}
+
+body{background-color:#ffddee; line-height:1.4em;font-size:0.9em;}
+td,th{font-size:0.9em;line-height:1.4em;}
+span.doc{font-size:0.9em;line-height:1.5em;}
+
+table{empty-cells:show;}
+table,th,td{border-collapse:collapse;}
+/*
+table{border : 2px black solid;}	
+td{border : 1px black solid;}
+th{border : 1px black solid;}
+*/
+table.simple{background-color:white; border:2px solid black;font-size:1em;line-height:1.2em;}
+table.simple td{border:1px solid black; text-align:center;}
+table.simple th{border:1px solid black;}
+
+table.none{border : 0px black solid;}
+table.none td{font-size:1.0em; border :  0px black solid; line-height:1.3em;}
+
+pre{font-size:0.9em;line-height:1.2em;margin:0px;}
+
+h2{width:100%; background-color:#ffbbdd;padding:10px; color:#660022;
+	padding:10px 5px 10px 5px;
+	margin-bottom:0px;
+}
+h3{width:100%; background-color:#ffbbdd;color:#660022;
+	font-size:1.1em;
+	padding:5px 5px 3px 5px;
+	margin-bottom:8px;
+	}
+	
+h4{width:100%; background-color:white;color:#cc0066;
+	padding:2px 4px 2px 4px;
+	margin-top:0px;
+	border:3px double #cc0066;
+}
+h5{width:100%; background-color:white;color:#ff0088;
+	padding:2px 4px 2px 4px;
+	margin-top:0px ;
+	margin-bottom:6px ;	
+	border-color:#ffbbdd;
+	border-style:solid;
+	border-width:2px 2px 2px 2px;
+}
+
+div.w{background-color:white;}
+span.boss{float:left;background-color:#ffaadd;padding:5px;margin:8px;}
+
+
+/*
+h2{width:100%; background-color:#bbbbff;padding:10px; color:#000066;}
+h3{width:100%; background-color:#bbbbff;color:#000066;
+	padding:4px 4px 0px 4px;
+	margin-bottom:0px;
+}
+
+div.r{text-align:right;}
+
+div.diary{
+	width:650px;
+	background-color:white;
+	border:1px solid #000088; 
+	padding-left:10px;padding-right:10px;
+	padding-top:10px; padding-bottom:10px;
+}
+
+div.date{
+	color:#000088;
+	background-color:#eeeeff;
+	/*font-weight:bold;*/
+	margin-bottom:10px;
+	width:100%;
+	padding-left:10px;
+	padding-top:2px;padding-bottom:2px;
+	padding-left:10px;padding-right:10px;
+	text-align:right;
+}
+*/

@@ -1,0 +1,53 @@
+/*
+<link rel="stylesheet" type="text/css" href="fighting_rta.css">
+*/
+a:link{color:#0000ff}
+a:visited{color:#006644}
+
+body{background-color:#f7efff; line-height:1.4em;font-size:0.9em;}
+td,th{font-size:0.9em;line-height:1.4em;}
+span.doc{font-size:0.9em;line-height:1.5em;}
+pre{font-size:1.0em;line-height:1.4em;margin:1.0em;}
+
+table{empty-cells:show;}
+table,th,td{border-collapse:collapse;}
+table.simple{background-color:white; border:2px solid black;font-size:1em;line-height:1.2em;}
+table.simple td{border:1px solid black; text-align:center;}
+table.simple th{border:1px solid black;}
+
+table.none{border : 0px black solid;}
+table.none td{font-size:1.0em; border :  0px black solid; line-height:1.3em;}
+
+h2{width:100%; background-color:#ddbbff;padding:10px; color:#660066;
+	padding:10px 5px 10px 5px;
+	margin-bottom:0px;
+
+}
+h3{width:100%; background-color:#ddbbff;color:#660066;
+	font-size:1.1em;
+	padding:5px 5px 3px 5px;
+	margin-bottom:8px;
+	border-style:solid; 
+	border-color:#660066; 
+	border-width:0px 3px 1px 0px;
+}
+	
+h4{width:100%; background-color:white;color:#660066;
+	padding:2px 4px 2px 4px;
+	margin-top:0px;
+	border:3px double #cc0066;
+	border-style:solid; 
+	border-color:#660066; 
+	border-width:0px 3px 1px 0px;
+}
+h5{width:100%; background-color:white;color:#bb00bb;
+	padding:2px 4px 2px 4px;
+	margin-top:0px ;
+	margin-bottom:6px ;	
+	border-color:#ddbbff;
+	border-style:solid;
+	border-width:2px 2px 2px 2px;
+}
+
+div.w{background-color:white;}
+span.boss{float:left;background-color:#ffaadd;padding:5px;margin:8px;}

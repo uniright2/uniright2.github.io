@@ -1,0 +1,13 @@
+table.status{border:2px solid black;border-collapse:collapse;}
+table.status td{border:1px solid black; text-align:center;
+	 padding-left:5px; padding-right:5px;}
+table.status th{border:1px solid black; text-align:center; 
+ padding-left:5px; padding-right:5px;}
+
+th{background-color:#bbbbff;}
+td{background-color:#eeeeff;}
+tr.i td{background-color:white;}
+tr.s0 th{background-color:#9999ff;}
+tr.s0 td{background-color:#ccccff;}
+tr.s1 th{background-color:#bbbbff;}
+tr.s1 td{background-color:#eeeeff;}
