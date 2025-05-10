@@ -1,1 +1,398 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> <html lang="ja"> <meta http-equiv="Content-Script-Type" content="text/javascript"> <meta http-equiv="Content-Style-Type" content="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"> <meta name="keywords" content="ドラゴンクエスト,ドラクエ,スロット,カジノ,出目,DQ,攻略,短時間,RTA,タイムアタック"> <meta name="author" content="右弐(うに)"> <meta name="description" content="ドラクエ5のスロット出目表を公開しています"> <!--これより上は固定--> <!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->  <style type="text/css"> <!-- body.campus{ 	font-size:0.9em; 	line-height:1.5em;  	padding:10px;  	background-color:#ffffff; }  body.sub{ /* padding:10px;*/ 	background-color:#dddddd; 	font-size:0.9em; 	line-height:1.5em; /*	text-align:center;*/ }   a{ 	text-decoration:none; } a:hover{ 	color:#00aa44; 	text-decoration:underline; }   p{ 	margin:10px 10px 10px 10px; 	padding:3px 5px 3px 5px; }  ul li{ 	margin:10px 10px 10px 5px; 	padding:3px 5px 3px 5px; }  pre{font-size:100%; 	padding:0px 15px 0px 15px; }   div.frame1{ 	text-align:left;  	width:760px; 	margin: 0px auto 0px auto ; 	padding: 4px 4px 4px 4px ; 	background-color:white; 	border:1px solid #999999; }  div.frame2{ 	text-align:left;  	background-color:white; 	border:1px solid #8844ff;  	padding:5px 10px 5px 10px; 	margin:5px 10px 5px 10px; }  span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;} div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}  table.none{  border:none; border-collapse:collapse;  }  table.tab{  border:none; border-collapse:collapse;    }  table.simple{  border:1px solid black; border-collapse:collapse;  }  table.simple td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  padding:0px 5px 0px 5px;  }  table.simpleleft{  border:1px solid black; border-collapse:collapse;  }  tr.c td{ 	text-align:center !important; }  table.simpleleft td,th{  border:1px solid black; border-collapse:collapse;  text-align:left;  padding:0px 5px 0px 5px;  }  table.data{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.data td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.timetable{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.9em; 	line-height:1.1em;	 }  table.timetable td{ 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  table.timetable th{ 	border:1px solid black;border-collapse:collapse; }   table.itemtable{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.8em; 	line-height:1.1em;	 }  table.itemtable td{ 	padding:3px 0px 1px 1px; 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  table.itemtable th{ 	border:1px solid black;border-collapse:collapse; }   table.gold{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.8em; 	line-height:1.1em;	 }  table.gold td{ 	padding:3px 2px 1px 2px; 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }   tr.left td{  text-align:left; }  tr.simple td{  border:1px solid black; border-collapse:collapse;  }   td.simple{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  h1,h2,h3,h4,div.under{ 	background-color:#cccccc; 	color:#333333; 	border-style:solid; 	border-color:#333333; }  h1{	font-size:1.5em; 	padding:6px 15px 4px 15px;  	margin-top:2px; 	margin-bottom:0px; 	border-width:0px 0px 1px 3px;	 }  div.under{ 	background-color:white; 	padding:2px 15px 2px 15px; 	border-width:1px 0px 1px 3px; 	text-align:right; 	margin-top:0px; 	margin-right:0px; 	margin-bottom:2px; 	font-size:80%; }  h2{	font-size:1.2em; 	padding:6px 10px 4px 10px;  	border-width:0px 0px 1px 3px; 	margin-top:5px; }  h3{	font-size:1.0em;	 	background-color:white; 	padding:2px 10px 2px 10px; 	border-width:0px 0px 1px 3px; 	width:60%; }	  span.r{ 	float:right; 	text-align:center; }  div.under a{ 	text-decoration:none; }   td.sp{ 	text-align:center; 	font-size:80%; 	background-color:#eeeeee; 	width:468px; }  div.update{ 	text-align:right; 	font-size:90%; 	line-height:1.2em; }  .l {text-align:left;} .c {text-align:center;font-size:0.9em;} .r {text-align:right;}  .add {background-color:#ddddff;} .add2 {color:#004400;} .red {background-color:#ffdddd;} .red2 {background-color:#ffeeee;} .blue {background-color:#ddddff;} .green {background-color:#ddffdd;} .yellow {background-color:#ffffdd;} .white {background-color:#ffffff;} .gray {background-color:#dddddd;} --> </style>   <title> スロット回転速度・乱数消費速度　　ドラクエ5　PS2版</title> </head> <body class="sub"> <div class="frame1"> <h1 id="top"> スロット回転速度・乱数消費速度　　ドラクエ5　PS2版</title> <a name="top"></a></h1> <div class="under">調査・分析・執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2012.11.05</div> <table width="100%" class="none"> <col><col width="20"><col> <tr> <td valign="middle"> 　<a href="./slot_jackpot.html">▲　出目表のページへ戻る</a><br> 　<a href="./random01.html">▲　乱数制御研究のページへ戻る</a><br> <td valign="middle" class="sp"> スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> <!--ここから本文-->  <h2><a name="1" href="#1">はじめに</a></h2> <h3>スロットの待ち時間の重要性</h3> <p> ドラゴンクエスト5　（プレイステーション2版）では、通称「カジノ技」と呼ばれる乱数制御技が存在します。2004年に<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">miya氏により解明</a>され、RTA（短時間攻略）など、各種の攻略に利用されてきました。</p> <p> スロットの出目は、スロットをプレイしていない間も進んでいきます。この「待ち時間」の回転速度、乱数消費速度に関して、これまでは、「1秒でスロット約6回転」「1秒で乱数約30個」ということが知られていました。 しかし実際には、この速度はプレイ状況に依存して変化します。本ページでは、この調査結果を公開しています。</p> <h3>このページを読むとどうなるか</h3> <p> カジノ技を使う際に精度が向上するため「当たり直前」に入れる確率も上がります。また、今まで「ちゃんと時間を計ったのになぜか当たりを通り過ぎていた」という経験のある方は、本ページの内容を踏まえて計算すれば改善されます。<br> ただし、調査事項の性質から考えて、使用機器や環境により差異が生じる可能性は十分に予想されます。再現性を保証するものではないことをあらかじめお断りいたします。 </p> <h2><a name="2" href="#2">調査データ</a></h2> <h3>1.スロット回転速度　（5倍するとスロット乱数消費速度）</h3> <p> 	待ち時間のプレイ状況によって変化します。以下のタイプが確認されています。								</p>	 <div class="c">表1：スロット回転速度　待ち時間状況タイプ別</div> <table class="simple" align="center"> <tr style="background-color:#dddddd;"> <td rowspan="2">	タイプ	<td rowspan="2"> 	スロット回転速度<br> 	[回転数/秒]	<td rowspan="2">	アに対する比率	<td colspan="2">プレイ状況 		 <tr style="background-color:#dddddd;"> 				<td>	メッセージウインドウ	<td>	場所(行動）　確認したもののみ記載	 <tr><td>	ア	<td>	5.995±0.004	<td>	1	<td>	開いている	<td>	カジノ入ってすぐのフロア<br> オラクルベリーの町 屋外<br> フィールド	 <tr><td>	イ	<td>	6.189±0.004	<td>	1.032 	<td>	開いていない	<td>	カジノ入ってすぐのフロア(その場にいる/歩く)	 <tr><td>	ウ	<td>	6.267±0.006	<td>	1.045 	<td>	開いていない	<td>	オラクルベリーの町屋外(その場にいる/歩く)	 <tr><td>	エ※	<td>	5.998±0.008	<td>	1.000 	<td>	開いていない	<td>	フィールド(その場にいる/進めない方向に歩く) </table>							 <p> 補足：<br>			 「メッセージウインドウ」　：　画面下横幅いっぱいに表示されるウインドウ　これが出ていると人の動きが止まる<br>								 	※エについては、アと同様のケースとも考えられます。		<br> <br> <br> </p>  <h3>2.かならず必要な補正</h3> <p> 次の操作をすると、スロット回転の進まない時間が発生します。待ち時間に加算する補正が必要です。	</p> <div class="c">表2：スロット出入りの時間補正</div> <table class="simple" align="center"> <tr style="background-color:#dddddd;"> 	<td>補正時間[秒]<td>	プレイ状況						 	<tr><td>	1.0±0.1	<td>	スロット抜ける操作、スロットに入る操作　（1セット）						 	</table>							 	<p><br> 	<br> 	</p>		  <h3>3.プレイ状況により必要となる補正</h3> <p> 	次の操作をすると、スロット回転の進まない時間が発生します。待ち時間に加算する補正が必要です。									</p> <div class="c">表3：各行動ごとの時間補正</div> <table class="simple" align="center"> <tr style="background-color:#dddddd;">  <td>補正時間[秒]<td>	プレイ状況						 	<tr><td>	2.3±0.1	<td>	カジノ→カジノ地下→カジノ						 	<tr><td>	3.3±0.2	<td>	カジノ→町→カジノ						 	<tr><td>	7.1±0.2	<td>	カジノ→町→フィールド→町→カジノ						 	<tr><td>	3.2±0.2	<td>	カジノ内でキメラのつばさ使用→フィールド→町→カジノ	</table>					 <p> 	略記凡例　：カジノ（カジノ入ってすぐのフロア）　　町（オラクルべリーの町屋外）　　									 </p>  <h2><a name="3" href="#3">補足</a></h2>   <p>										 ■	誤差に関する注意					<br>				 	・調査における計測の誤差、操作に関する誤差、機器の動作に関する誤差等、すべて含めた値です。					<br>				 	・表記はだいたい1σにあたります。約7割のプレイがこの範囲内に収まると思われます。	<br>				 	・実際にプレイすると、各個人の計測時の環境や癖などにより毎回固有のズレが生じることも考えられます。その場合は、2にあたる時間を自分にあわせ調整することをお勧めします。					<br>				 										 </p><p>										 ■	待ち時間の計測始点/計測終点　に関する注意					<br>				 	・上記　2の値については、次のように定義している場合の値を掲載しています。					<br>				 	　【始点】スロット終了の暗転を確定するボタンを押した瞬間					<br>				 	　【終点】スロット開始の暗転を確定する「はい」の決定ボタンを押した瞬間					<br>				 	　計測の始点・終点が異なる場合には違う値を用いる必要があります。					<br>				 	・上記、1、3、については、　計測の始点・終点は影響しません。					<br>				 </p><p>	 									 ■	調査環境					<br>				 	・使用PS2型番　SCPH-90000					<br>				 	・使用ディスク　　アルティメットヒッツ版　(SLPM 表面66480　裏面65555)					<br>				 </p><p>										 ■	参考サイト					<br>				 　○　<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">スロット技についてのmiya氏の原理解説</a>　　　原理を参考にしました。<br> 　○　<a href="http://souko2525.blog39.fc2.com/blog-entry-29.html" target="sub">そうこ氏の乱数データ</a>　　　回転数を測定する出目表の作成のためデータを利用いたしました。<br> </p>	 <p> ■その他<br> ・公開した資料に関して100%の正しさを保証するものではありません。自己責任でご使用ください。<br> ・内容に間違い等発見された場合は、ご連絡いただけると大変助かります。<br> ・このページの内容を用いた解析等を公開される場合は、当ページへリンクして（またはURLを明記して）ください。<br> ・転載等はご遠慮ください。<br> </p>  <hr>  <table width="100%" class="none"> <col><col width="10"><col> <tr><td valign="middle"> 　<a href="../index.html">▲　メインページへ戻る</a><br> 　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br> 　リンクはご自由にどうぞ。 <td> <td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> </div> <!--shinobi1--> <script type="text/javascript" src="http://x8.tudura.com/ufo/09228670v"></script> <noscript><img src="http://x8.tudura.com/bin/ll?09228670v" border="0"></noscript> <!--shinobi2--> </body> </html>  
+<html><meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="keywords" content="ドラゴンクエスト,ドラクエ,スロット,カジノ,出目,DQ,攻略,短時間,RTA,タイムアタック">
+<meta name="author" content="右弐(うに)">
+<meta name="description" content="ドラクエ5のスロット出目表を公開しています">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+	font-size:0.9em;
+	line-height:1.5em;
+ 	padding:10px;
+ 	background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+	background-color:#dddddd;
+	font-size:0.9em;
+	line-height:1.5em;
+/*	text-align:center;*/
+}
+
+
+a{
+	text-decoration:none;
+}
+a:hover{
+	color:#00aa44;
+	text-decoration:underline;
+}
+
+
+p{
+	margin:10px 10px 10px 10px;
+	padding:3px 5px 3px 5px;
+}
+
+ul li{
+	margin:10px 10px 10px 5px;
+	padding:3px 5px 3px 5px;
+}
+
+pre{font-size:100%;
+	padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+	text-align:left; 
+	width:760px;
+	margin: 0px auto 0px auto ;
+	padding: 4px 4px 4px 4px ;
+	background-color:white;
+	border:1px solid #999999;
+}
+
+div.frame2{
+	text-align:left; 
+	background-color:white;
+	border:1px solid #8844ff; 
+	padding:5px 10px 5px 10px;
+	margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+	text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.9em;
+	line-height:1.1em;	
+}
+
+table.timetable td{
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.timetable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.itemtable td{
+	padding:3px 0px 1px 1px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.itemtable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.gold td{
+	padding:3px 2px 1px 2px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+	background-color:#cccccc;
+	color:#333333;
+	border-style:solid;
+	border-color:#333333;
+}
+
+h1{	font-size:1.5em;
+	padding:6px 15px 4px 15px; 
+	margin-top:2px;
+	margin-bottom:0px;
+	border-width:0px 0px 1px 3px;	
+}
+
+div.under{
+	background-color:white;
+	padding:2px 15px 2px 15px;
+	border-width:1px 0px 1px 3px;
+	text-align:right;
+	margin-top:0px;
+	margin-right:0px;
+	margin-bottom:2px;
+	font-size:80%;
+}
+
+h2{	font-size:1.2em;
+	padding:6px 10px 4px 10px; 
+	border-width:0px 0px 1px 3px;
+	margin-top:5px;
+}
+
+h3{	font-size:1.0em;	
+	background-color:white;
+	padding:2px 10px 2px 10px;
+	border-width:0px 0px 1px 3px;
+	width:60%;
+}	
+
+span.r{
+	float:right;
+	text-align:center;
+}
+
+div.under a{
+	text-decoration:none;
+}
+
+
+td.sp{
+	text-align:center;
+	font-size:80%;
+	background-color:#eeeeee;
+	width:468px;
+}
+
+div.update{
+	text-align:right;
+	font-size:90%;
+	line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;font-size:0.9em;}
+.r {text-align:right;}
+
+.add {background-color:#ddddff;}
+.add2 {color:#004400;}
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+
+
+<title>
+スロット回転速度・乱数消費速度　　ドラクエ5　PS2版</title>
+</head>
+<body class="sub">
+<div class="frame1">
+<h1 id="top">
+スロット回転速度・乱数消費速度　　ドラクエ5　PS2版</title>
+<a name="top"></a></h1>
+<div class="under">調査・分析・執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2012.11.05</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+　<a href="./slot_jackpot.html">▲　出目表のページへ戻る</a><br>
+　<a href="./random01.html">▲　乱数制御研究のページへ戻る</a><br>
+<td valign="middle" class="sp">
+スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+<!--ここから本文-->
+
+<h2><a name="1" href="#1">はじめに</a></h2>
+<h3>スロットの待ち時間の重要性</h3>
+<p>
+ドラゴンクエスト5　（プレイステーション2版）では、通称「カジノ技」と呼ばれる乱数制御技が存在します。2004年に<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">miya氏により解明</a>され、RTA（短時間攻略）など、各種の攻略に利用されてきました。</p>
+<p>
+スロットの出目は、スロットをプレイしていない間も進んでいきます。この「待ち時間」の回転速度、乱数消費速度に関して、これまでは、「1秒でスロット約6回転」「1秒で乱数約30個」ということが知られていました。
+しかし実際には、この速度はプレイ状況に依存して変化します。本ページでは、この調査結果を公開しています。</p>
+<h3>このページを読むとどうなるか</h3>
+<p>
+カジノ技を使う際に精度が向上するため「当たり直前」に入れる確率も上がります。また、今まで「ちゃんと時間を計ったのになぜか当たりを通り過ぎていた」という経験のある方は、本ページの内容を踏まえて計算すれば改善されます。<br>
+ただし、調査事項の性質から考えて、使用機器や環境により差異が生じる可能性は十分に予想されます。再現性を保証するものではないことをあらかじめお断りいたします。
+</p>
+<h2><a name="2" href="#2">調査データ</a></h2>
+<h3>1.スロット回転速度　（5倍するとスロット乱数消費速度）</h3>
+<p>
+	待ち時間のプレイ状況によって変化します。以下のタイプが確認されています。								</p>	
+<div class="c">表1：スロット回転速度　待ち時間状況タイプ別</div>
+<table class="simple" align="center">
+<tr style="background-color:#dddddd;">
+<td rowspan="2">	タイプ	<td rowspan="2">
+	スロット回転速度<br>
+	[回転数/秒]	<td rowspan="2">	アに対する比率	<td colspan="2">プレイ状況
+		
+<tr style="background-color:#dddddd;">
+				<td>	メッセージウインドウ	<td>	場所(行動）　確認したもののみ記載	
+<tr><td>	ア	<td>	5.995±0.004	<td>	1	<td>	開いている	<td>	カジノ入ってすぐのフロア<br>
+オラクルベリーの町 屋外<br>
+フィールド	
+<tr><td>	イ	<td>	6.189±0.004	<td>	1.032 	<td>	開いていない	<td>	カジノ入ってすぐのフロア(その場にいる/歩く)	
+<tr><td>	ウ	<td>	6.267±0.006	<td>	1.045 	<td>	開いていない	<td>	オラクルベリーの町屋外(その場にいる/歩く)	
+<tr><td>	エ※	<td>	5.998±0.008	<td>	1.000 	<td>	開いていない	<td>	フィールド(その場にいる/進めない方向に歩く)
+</table>							
+<p>
+補足：<br>			
+「メッセージウインドウ」　：　画面下横幅いっぱいに表示されるウインドウ　これが出ていると人の動きが止まる<br>								
+	※エについては、アと同様のケースとも考えられます。		<br>
+<br>
+<br>
+</p>
+
+<h3>2.かならず必要な補正</h3>
+<p>
+次の操作をすると、スロット回転の進まない時間が発生します。待ち時間に加算する補正が必要です。	</p>
+<div class="c">表2：スロット出入りの時間補正</div>
+<table class="simple" align="center">
+<tr style="background-color:#dddddd;">
+	<td>補正時間[秒]<td>	プレイ状況						
+	<tr><td>	1.0±0.1	<td>	スロット抜ける操作、スロットに入る操作　（1セット）						
+	</table>							
+	<p><br>
+	<br>
+	</p>		
+
+<h3>3.プレイ状況により必要となる補正</h3>
+<p>
+	次の操作をすると、スロット回転の進まない時間が発生します。待ち時間に加算する補正が必要です。									</p>
+<div class="c">表3：各行動ごとの時間補正</div>
+<table class="simple" align="center">
+<tr style="background-color:#dddddd;">
+
+<td>補正時間[秒]<td>	プレイ状況						
+	<tr><td>	2.3±0.1	<td>	カジノ→カジノ地下→カジノ						
+	<tr><td>	3.3±0.2	<td>	カジノ→町→カジノ						
+	<tr><td>	7.1±0.2	<td>	カジノ→町→フィールド→町→カジノ						
+	<tr><td>	3.2±0.2	<td>	カジノ内でキメラのつばさ使用→フィールド→町→カジノ	</table>					
+<p>
+	略記凡例　：カジノ（カジノ入ってすぐのフロア）　　町（オラクルべリーの町屋外）　　									
+</p>
+
+<h2><a name="3" href="#3">補足</a></h2>
+
+
+<p>										
+■	誤差に関する注意					<br>				
+	・調査における計測の誤差、操作に関する誤差、機器の動作に関する誤差等、すべて含めた値です。					<br>				
+	・表記はだいたい1σにあたります。約7割のプレイがこの範囲内に収まると思われます。	<br>				
+	・実際にプレイすると、各個人の計測時の環境や癖などにより毎回固有のズレが生じることも考えられます。その場合は、2にあたる時間を自分にあわせ調整することをお勧めします。					<br>				
+										
+</p><p>										
+■	待ち時間の計測始点/計測終点　に関する注意					<br>				
+	・上記　2の値については、次のように定義している場合の値を掲載しています。					<br>				
+	　【始点】スロット終了の暗転を確定するボタンを押した瞬間					<br>				
+	　【終点】スロット開始の暗転を確定する「はい」の決定ボタンを押した瞬間					<br>				
+	　計測の始点・終点が異なる場合には違う値を用いる必要があります。					<br>				
+	・上記、1、3、については、　計測の始点・終点は影響しません。					<br>				
+</p><p>	 									
+■	調査環境					<br>				
+	・使用PS2型番　SCPH-90000					<br>				
+	・使用ディスク　　アルティメットヒッツ版　(SLPM 表面66480　裏面65555)					<br>				
+</p><p>										
+■	参考サイト					<br>				
+　○　<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">スロット技についてのmiya氏の原理解説</a>　　　原理を参考にしました。<br>
+　○　<a href="http://souko2525.blog39.fc2.com/blog-entry-29.html" target="sub">そうこ氏の乱数データ</a>　　　回転数を測定する出目表の作成のためデータを利用いたしました。<br>
+</p>	
+<p>
+■その他<br>
+・公開した資料に関して100%の正しさを保証するものではありません。自己責任でご使用ください。<br>
+・内容に間違い等発見された場合は、ご連絡いただけると大変助かります。<br>
+・このページの内容を用いた解析等を公開される場合は、当ページへリンクして（またはURLを明記して）ください。<br>
+・転載等はご遠慮ください。<br>
+</p>
+
+<hr>
+
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="../index.html">▲　メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br>
+　リンクはご自由にどうぞ。
+<td>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+</div>
+
+</body>
+</html>
+
+

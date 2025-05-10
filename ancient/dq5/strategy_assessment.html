@@ -1,1 +1,563 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> <html lang="ja"> <meta http-equiv="Content-Script-Type" content="text/javascript"> <meta http-equiv="Content-Style-Type" content="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"> <meta name="keywords" content="ドラクエ,リアルタイムアタック,RTA,戦略,突破率,平均,期待値,標準幅,分散,議論,指標,確率分布,確率,DQ,短時間"> <meta name="author" content="右弐"> <meta name="description" content="タイムアタックの戦略を評価する指標について考察します。平均値、期待値以外に、突破率という概念を推奨。"> <!--これより上は固定--> <!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->  <style type="text/css"> <!-- body.campus{ font-size:0.9em; line-height:1.5em;  padding:10px;  background-color:#ffffff; }  body.sub{ /* padding:10px;*/ background-color:#bbffbb; font-size:0.9em; line-height:1.5em; /*text-align:center;*/ }   a{ text-decoration:none; } a:hover{ color:#00aa44; text-decoration:underline; }   p{ margin:10px 10px 10px 10px; padding:3px 5px 3px 5px; }  li{ margin:0px 10px 0px 0px; padding:3px 5px 3px 5px;  }  pre{font-size:100%; padding:0px 15px 0px 15px; }   div.frame1{ text-align:left;  width:760px; margin: 0px auto 0px auto ; padding: 4px 4px 4px 4px ; background-color:white; border:1px solid #008800; }  div.frame2{ text-align:left;  background-color:white; border:1px solid #8844ff;  padding:5px 10px 5px 10px; margin:5px 10px 5px 10px; }  span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;} div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}  table.none{  border:none; border-collapse:collapse;  }  table.tab{  border:none; border-collapse:collapse;    }  table.simple{  border:1px solid black; border-collapse:collapse;  }  table.simple td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  padding:0px 5px 0px 5px;  }  table.simpleleft{  border:1px solid black; border-collapse:collapse;  }  tr.c td{ text-align:center !important; }  table.simpleleft td,th{  border:1px solid black; border-collapse:collapse;  text-align:left;  padding:0px 5px 0px 5px;  }  table.data{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.data td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.timetable{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.9em; line-height:1.1em; }  table.timetable td{ border:1px solid black; border-collapse:collapse; text-align:center; }  table.timetable th{ border:1px solid black;border-collapse:collapse; }   table.itemtable{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.8em; line-height:1.1em; }  table.itemtable td{ padding:3px 0px 1px 1px; border:1px solid black; border-collapse:collapse; text-align:center; }  table.itemtable th{ border:1px solid black;border-collapse:collapse; }   table.gold{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.8em; line-height:1.1em; }  table.gold td{ padding:3px 2px 1px 2px; border:1px solid black; border-collapse:collapse; text-align:center; }  td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }   tr.left td{  text-align:left; }  tr.simple td{  border:1px solid black; border-collapse:collapse;  }   td.simple{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  h1,h2,h3,h4,div.under{ background-color:#bbffcc; color:#006644 !important; border-style:solid; border-color:#228855; }  h1{font-size:1.5em; padding:6px 15px 4px 15px;  margin-top:2px; margin-bottom:0px; border-width:0px 0px 1px 3px; }  div.under{ background-color:white; padding:2px 15px 2px 15px; border-width:1px 0px 1px 3px; text-align:right; margin-top:0px; margin-right:0px; margin-bottom:2px; font-size:80%; }  h2{font-size:1.2em; padding:6px 10px 4px 10px;  border-width:0px 0px 1px 3px; margin-top:5px; }  h3{font-size:1.0em; background-color:white; padding:2px 10px 2px 10px; border-width:0px 0px 1px 3px; width:60%; }  span.r{ float:right; text-align:center; }  div.under a{ text-decoration:none; }  td.sp{ text-align:center; font-size:80%; background-color:#ffffff; width:468px; }  div.update{ text-align:right; font-size:90%; line-height:1.2em; }  .l {text-align:left;} .c {text-align:center;font-size:0.9em;} .r {text-align:right;}  .add {background-color:#ddddff;} .add2 {color:#004400;} .red {background-color:#ffdddd;} .red2 {background-color:#ffeeee;} .blue {background-color:#ddddff;} .green {background-color:#ddffdd;} .yellow {background-color:#ffffdd;} .white {background-color:#ffffff;} .gray {background-color:#dddddd;} --> </style>   <title> 突破率　推定のすすめ　[タイムアタックの戦略評価] </title> </head> <body class="sub"> <div class="frame1"> <h1 id="top"> 突破率　推定のすすめ　[タイムアタックの戦略評価] </h1> <div class="under">執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2013.09.06</div> <table width="100%" class="none"> <col><col width="20"><col> <tr> <td valign="middle">  　<a href="../index.html">▲　筆者のメインページへ</a><br> 　<a href="../diary/diary.html">▲　筆者の日記へ</a>　/　 　<a href="../diary/diary.html#bottom">自己紹介</a><br>    <td valign="middle" class="sp"> スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> <!--ここから本文-->  <h2 id="00"><a href="#00">はじめに</a></h2> <h3 id="01">現代のRTA戦略と突破率	</h3> <p> 2013年夏現在、ロールプレイングゲームの短時間攻略に挑むプレイヤーは多く、とくにRTA（リアルタイムアタック）は人気があります。日々、新しい戦略が考案されています。 </p>   <p> ある戦略でプレイした場合の、目安となるタイムの表現としてよく使われるのは次のような形でしょう。<br> 　「この戦略は、7時間±15分の範囲に7割のプレイが収まる」<br> 期待されるタイムの分布を「中央値」と「幅」の2つの数値で表しています。しかし、プレイ目的も、それに特化した戦略も多岐にわたる現代においては、この2つだけでは不十分です。 筆者は、この2つに加え「突破率」を用いることで、現代RTA戦略をより明快に議論できると考えています。 </p> <p> 当ページへのリンクはご自由にどうぞ。管理人への連絡も必要ありません。 </p> <h3>前提知識</h3> <ul> <li> 「RTA」というプレイスタイルついては、詳しくはこちらをご覧ください<br> →<a href="http://www.rta.jp/">RTA（リアルタイムアタック）のホームページ（おてう氏）</a><br>  <li> 「確率分布」という言葉がピンとこない場合は、まず<a href="http://www.ne.jp/asahi/new/legend/mansaku/maniac_text/TAtheory/" target="_blank">タイムアタック論（まんさく氏）</a>を読むことをオススメします。本ページは、まんさく氏の論から一歩進んだ内容です。 </ul> <h3>戦略とは</h3> <p> 本ページでは、「あらゆる状況への対処を記述できると仮定し、その記述を戦略と呼ぶ」ことにします。<br> 戦略を参照しながら、神様がミスなく理想的にプレイした場合のタイムを議論していると思ってください。 </p> <p> 実際のプレイには多くの要素が影響し、「戦略」だけでタイムが決まるわけではなく、プレイヤーの性格や相性と切り離した戦略の議論は限界がありますが、ここでは理想化して、切り離せると仮定します。 </p> <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>   <h2 id="2"><a href="#2">確率分布と数値の例</a></h2> <p> さて、例として3つの戦略があるとして、その確率分布グラフを見ていきましょう。<br> 確率分布には、「戦略とタイムの関係」がすべて表現されています。この確率分布を正確に知るのは難しいですが、多くの場合その必要はありません。大切なのは、「どんな形をしていそうか」というイメージです。議論のとき、このイメージが共有できれば、数値だけでも意思疎通は十分に可能です。 </p> <table class="none"> <tr><td> <img src="photosa/fig1.png" width=400 height=300 style="border:1px solid black;"> <td width="20"> <td> 【図1】<br> タイムのばらつきが少ない戦略です。 <br>  数値は次のようにおいてみます<br> <br> ・7時間±15分に、7割のプレイが収まる<br> ・6時間30分を切れる確率は3%<br> <tr><td>   <img src="photosa/fig2.png" width=400 height=300 style="border:1px solid black;"> <td width="20"> <td> 【図2】<br> タイムのばらつきが大きい戦略です。<br> 数値は、図1との関連から次のようになります<br> <br> ・7時間±30分に、7割のプレイが収まる<br> ・6時間30分を切れる確率は15%<br> <tr><td> <img src="photosa/fig3.png" width=400 height=300 style="border:1px solid black;"> <td width="20"> <td> 【図3】<br> タイムが2つの典型的なケースに割れる戦略のようです。「丁半博打」のような要素を取り込んだ戦略と思われます。<br> 数値は次のようになるでしょう。<br> <br> <div class="red">・7時間±50分に、7割のプレイが収まる<br> 　↑この値に意味があるのでしょうか？</div> ・6時間30分を切れる確率は50%<br>  </table> <p> 【図3】のケースでは「突破率」を持ち出すとすっきりします。<br> 赤地のところを、次のように言い換えた方がよいでしょう。<br> </p> <p class="red"> ・狙ったケースに入るのは6割　←これが突破率<br> ・狙ったケースに入った場合には、6時間10分±20分に、7割のプレイが収まる </p> <p> なお、ふつう、このような戦略をとるとき興味があるのは、狙ったケースに「入れた」場合にどうなるのかであり、グラフ右側の山です。「突破率」を明示的に付け加えることで、右の山だけを切り離した議論ができます。<br> もちろん、左の山についても切り離した議論は可能です。複数の山がある場合も同様です。このような場合は突破率という言葉よりも「分岐率」などがしっくりくるかもしれません。言葉は何でも構いません。大切なのは分布をいくつかに分けることです。 </p>  <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>  <h2 id="4"><a href="#4">数値の算出</a></h2> <h3>値は議論に必要</h3> <p> さて問題は、「突破率」「中央値」「幅」といった数値を、どうやって算出するかです。<br> これについて、まずは<strong>主観で値を提示</strong>してよいと筆者は考えます。 戦略を議論するという観点で考えると、いちばん大切なのは、これらの値が存在することです。主観での数値でも、何もないよりは、はるかに議論しやすいです。<br>その次の段階として、値の根拠のグレードアップが来ます。確率計算、シミュレーション、複数回プレイして統計を取る、など、グレードアップの方法はいくつかあります。 この過程で、当初の値が修正されたり、議論の結論が覆ることがあると思いますが、それが健全な議論だと思います。<br> </p> <h3>主観の効用</h3> <p> このように書くと、主観は、精度が悪く信用のおけない根拠に感じるかもしれませんが、あながちそうともいえません。<br> 計算やシミュレーションでは、ある要因を見逃したために大きく間違った値が提示されることもありえます。<br> また、長時間におよぶプレイ全体のタイムの「中央値」「幅」などは、プレイ展開を分析し、ある程度は計算できるにしても、主観を排除することは困難です。<br> さらに、すこし見方の角度は違いますが、主観で出された値には、戦略家の経験と思想が表れているともいえ、戦略そのものの議論とは別の興味の対象ともなります。 </p>  <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>  <h2 id="4"><a href="#4">数値の算出手法　4つ</a></h2> <p> 大きく4つの手法を紹介します。<br> とくに「突破率」に関しては、多くの算出の実例があるので、リンクにて紹介します。 おもにドラクエ5[PS2版]での実例です。<strong>リンク先は、ボス名などネタバレが含まれることがあります。</strong> </p> <h3>１．主観</h3> <p> 前項で説明した通りです。最も手間がかかりません。<br> </p>  <h3>２．確率計算</h3> <p> 判断に必要となる精度の範囲で計算を行えば、手間はあまりかかりません。客観性もあります。計算方法と、使う基礎パラメータの信憑性に、注意する必要があります。確率計算の知識と技術も必要です。<br> </p>  <p> 「主観」と「確率計算」を組みあわせて確率を推定する例がよく見られます。<br> 部分の突破率は主観で出し、その値をもとに、全体の突破率を概算した例もあります。<br> ○<a href="http://etoile0221.blog70.fc2.com/blog-entry-434.html" target="_blank"> 各所の突破率　(5:52プレイ時の戦略) </a>　エトワールさん<br> ◇<a href="http://uniright2.fc2web.com/dq5/uni/rta62259/time_strategy.html#1" target="_blank"> 各所の突破率、目標タイム達成率、プレイ時間推定(6:22プレイ時の戦略) </a>　右弐<br> ○<a href="http://book.geocities.jp/tarahiro64/ps2dq5rta62221wp.html" target="_blank"> 各関門の突破率と貴重品消費の見積もり　(6:22プレイ時の戦略)</a>　たらひろさん<br> 　→　データ計算　→　◇ <a href="http://uniright2.fc2web.com/diary/dq5diary16.html#20120117" target="_blank"> 上記データをもとにした全体の突破率計算 </a>　右弐 </p>  <p> 部分の突破率に絞った計算例もあります。<br> ◇<a href="http://uniright2.fc2web.com/dq5/sugoroku01.html" target="_blank"> すごろく場　よろずや到達率 </a>　右弐<br> ○<a href="http://harapan.exblog.jp/16719448/" target="_blank"> カジノの確率　(連射パッドの周期利用) </a>　腹黒パンダさん<br>   </p>  <h3>３．シミュレーション</h3> <p> ゲーム内の特定の状況と対応戦略をプログラムにして、10万回などといった多数の擬似プレイを行うものです。分岐や繰り返しの多い複雑な処理も扱うことが可能です。プログラミングの知識と技術が要求されます。<br> ○ <a href="http://www.geocities.jp/agnesboulangerchan/ps2dq5/rta-casino-20130626-05h46m41s/ps2dq5rta-casino-20130626-05h46m41s-strategy.txt" target="_blank"> カジノ突破率(5:46プレイ時の戦略)　ページ中段 </a>　シミュレータを1000万回実行　　ping値さん<br>  ○ <a href="http://www.k-games.net/dq3recovery/06.html" target="_blank"> すごろくクリア確率　（第5問：来場者pdf　3ページ末尾） </a><br> 　2013夏 SFC版ドラゴンクエスト３ リカバリーTA大会　（代表くねおさん）<br> </p>  <h3>４．実際に複数回プレイ</h3> <p> プレイヤーの影響を受けることを除けば、ある意味、最上のシミュレーションなのですが、いかんせん時間も手間がかかります。また、テストしたい戦略/戦術を固定してプレイすることも必要で、比較的この点に注意された上でのプレイの実例を挙げます。<br> ○ <a href="http://iliad430.blog100.fc2.com/blog-entry-87.html" target="_blank"> ボス戦の勝率と消耗品 </a>　同じボスを50戦したデータ　　イリアスさん<br> ○ <a href="http://book.geocities.jp/tarahiro64/ps2dq5rta_average.html" target="_blank"> PS2DQ5RTA カジノ未使用　アベレージ重視走 </a>　同じ戦略で10回プレイしたデータ　　たらひろさん<br> </p>  <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>     <h2 id="6"><a href="#6">おわりに</a></h2>  <h3>これは運ゲー戦略？</h3> <table class="none"> <tr><td> <img src="photosa/fig4.png" width=400 height=300 style="border:1px solid black;"> <td width="20"> <td> <p> 左は、どんな戦略のグラフでしょうか？ <br><br>  単独で2%にあたるほどの幸運は、たとえば、<br> ・ドラクエ5[PS2版]であれば、<br> 　「メタルスライムを捕獲」<br> 　「まじんのかなづちをドロップ」<br> ・ドラクエ3[SFC]であれば、<br> 　「表世界フィールドで、はぐれメタルを撃破」<br> 　「らいじんのけんをドロップ」<br> などでしょうか。<br> <br> このような形の確率分布の2%部分を引き当てることを<strong>前提とした</strong>戦略に対して、多くの人が違和感を覚えるのではないでしょうか。<br> </p> </table> <p> そのような方は、本ページの「突破率」にあたる概念は、すでに頭の中に存在していたと思われます。そして「確率分布」の形や「突破率」に対して、自分の許容範囲を設定している、と解釈できます。<br> このように考えると、いわゆる「運ゲー」というのも、許容範囲の程度問題です。 程度問題ならば、グラフ化や数値化した上で、戦略の評価なり、個々人の嗜好なりを扱った方が混乱は防げます。 </p>  <h3>むすび</h3>  <p> RTAプレイヤーが増え、プレイ目的が多様化する中にあって、「戦略」の評価に関する議論がうまくかみ合わないケースも増えてきたように思います。 これは、多様化が悪いわけではなく、その多様化を語る上での「用語の整備」が立ち遅れているためと解釈しており、一石を投じる意図で「突破率」を明示してみました。<br> 「博打/安定」「最速タイム向き/平均向き」などの用語は、対比して語られることが多いですが、背後の確率分布のイメージが共有されているとは言いがたい状況だと思います。【図2】と【図3】のどちらもが、同じ「博打」という言葉で語られてしまえば、議論がかみ合わないのは当然です。本ページが、議論の円滑化と効率化に役立てば、望外の喜びです。<br> <br> </p> <h3>おまけ　：　プレイヤーの評価</h3> <p> 余談ですが、「戦略」ではなく「プレイヤー」を同様に評価できないか、考えてみました。<br> たとえば対戦RTAでは、プレイヤーの選べる「戦略」は、トランプゲームでいうところの手持ちの「カード」に相当します。この「カード」には、1枚1枚、異なる確率分布グラフが描かれています。相手の出すカードも予想し、自分の勝つ領域が最大となるカード選択を行っていくのが、真に対戦の勝利を目指した「広義の戦略」です。したがって、対戦に向いた単独の「戦略」というのは存在しないといえるでしょう。また、扱えるカードの多いプレイヤーは、それだけ有利になるのは当然です。 このように考えていくと、「プレイヤー」という複雑な対象を、タイムの確率分布で表現することは原理的に不可能と思われます。<br> そして、それで良いと思います。「戦略」は装備品であり、それを装備して対戦するキャラクターが「プレイヤー」ですから。戦略とプレイヤーを切り離す認識の分化は、今後のRTA界ではさらに進むものと思われ、それは健全な方向であると筆者は考えています。 </p>  <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>   <h2 id="8"><a href="#8">関連文献</a></h2> <p> 本文内にリンクを張らせていただきました。有効な研究の数々に、この場を借りて、御礼申し上げます。  </p>    <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>  <hr>  <table width="100%" class="none"> <col><col width="10"><col> <tr><td valign="middle"> 　<a href="../index.html">▲　メインページへ戻る</a><br> 　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br> 　リンクはご自由にどうぞ <td> <td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> </div> <!--shinobi1--> <script type="text/javascript" src="http://x8.tudura.com/ufo/09228670v"></script> <noscript><img src="http://x8.tudura.com/bin/ll?09228670v" border="0"></noscript> <!--shinobi2--> </body> </html>  
+<html><meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="keywords" content="ドラクエ,リアルタイムアタック,RTA,戦略,突破率,平均,期待値,標準幅,分散,議論,指標,確率分布,確率,DQ,短時間">
+<meta name="author" content="右弐">
+<meta name="description" content="タイムアタックの戦略を評価する指標について考察します。平均値、期待値以外に、突破率という概念を推奨。">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+font-size:0.9em;
+line-height:1.5em;
+ padding:10px;
+ background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+background-color:#bbffbb;
+font-size:0.9em;
+line-height:1.5em;
+/*text-align:center;*/
+}
+
+
+a{
+text-decoration:none;
+}
+a:hover{
+color:#00aa44;
+text-decoration:underline;
+}
+
+
+p{
+margin:10px 10px 10px 10px;
+padding:3px 5px 3px 5px;
+}
+
+li{
+margin:0px 10px 0px 0px;
+padding:3px 5px 3px 5px;
+
+}
+
+pre{font-size:100%;
+padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+text-align:left; 
+width:760px;
+margin: 0px auto 0px auto ;
+padding: 4px 4px 4px 4px ;
+background-color:white;
+border:1px solid #008800;
+}
+
+div.frame2{
+text-align:left; 
+background-color:white;
+border:1px solid #8844ff; 
+padding:5px 10px 5px 10px;
+margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.9em;
+line-height:1.1em;
+}
+
+table.timetable td{
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+table.timetable th{
+border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.8em;
+line-height:1.1em;
+}
+
+table.itemtable td{
+padding:3px 0px 1px 1px;
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+table.itemtable th{
+border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.8em;
+line-height:1.1em;
+}
+
+table.gold td{
+padding:3px 2px 1px 2px;
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+background-color:#bbffcc;
+color:#006644 !important;
+border-style:solid;
+border-color:#228855;
+}
+
+h1{font-size:1.5em;
+padding:6px 15px 4px 15px; 
+margin-top:2px;
+margin-bottom:0px;
+border-width:0px 0px 1px 3px;
+}
+
+div.under{
+background-color:white;
+padding:2px 15px 2px 15px;
+border-width:1px 0px 1px 3px;
+text-align:right;
+margin-top:0px;
+margin-right:0px;
+margin-bottom:2px;
+font-size:80%;
+}
+
+h2{font-size:1.2em;
+padding:6px 10px 4px 10px; 
+border-width:0px 0px 1px 3px;
+margin-top:5px;
+}
+
+h3{font-size:1.0em;
+background-color:white;
+padding:2px 10px 2px 10px;
+border-width:0px 0px 1px 3px;
+width:60%;
+}
+
+span.r{
+float:right;
+text-align:center;
+}
+
+div.under a{
+text-decoration:none;
+}
+
+td.sp{
+text-align:center;
+font-size:80%;
+background-color:#ffffff;
+width:468px;
+}
+
+div.update{
+text-align:right;
+font-size:90%;
+line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;font-size:0.9em;}
+.r {text-align:right;}
+
+.add {background-color:#ddddff;}
+.add2 {color:#004400;}
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+
+
+<title>
+突破率　推定のすすめ　[タイムアタックの戦略評価]
+</title>
+</head>
+<body class="sub">
+<div class="frame1">
+<h1 id="top">
+突破率　推定のすすめ　[タイムアタックの戦略評価]
+</h1>
+<div class="under">執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2013.09.06</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+
+　<a href="../index.html">▲　筆者のメインページへ</a><br>
+　<a href="../diary/diary.html">▲　筆者の日記へ</a>　/　
+　<a href="../diary/diary.html#bottom">自己紹介</a><br>
+
+
+
+<td valign="middle" class="sp">
+スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+<!--ここから本文-->
+
+<h2 id="00"><a href="#00">はじめに</a></h2>
+<h3 id="01">現代のRTA戦略と突破率	</h3>
+<p>
+2013年夏現在、ロールプレイングゲームの短時間攻略に挑むプレイヤーは多く、とくにRTA（リアルタイムアタック）は人気があります。日々、新しい戦略が考案されています。
+</p>
+
+
+<p>
+ある戦略でプレイした場合の、目安となるタイムの表現としてよく使われるのは次のような形でしょう。<br>
+　「この戦略は、7時間±15分の範囲に7割のプレイが収まる」<br>
+期待されるタイムの分布を「中央値」と「幅」の2つの数値で表しています。しかし、プレイ目的も、それに特化した戦略も多岐にわたる現代においては、この2つだけでは不十分です。
+筆者は、この2つに加え「突破率」を用いることで、現代RTA戦略をより明快に議論できると考えています。
+</p>
+<p>
+当ページへのリンクはご自由にどうぞ。管理人への連絡も必要ありません。
+</p>
+<h3>前提知識</h3>
+<ul>
+<li>
+「RTA」というプレイスタイルついては、詳しくはこちらをご覧ください<br>
+→<a href="http://www.rta.jp/">RTA（リアルタイムアタック）のホームページ（おてう氏）</a><br>
+
+<li>
+「確率分布」という言葉がピンとこない場合は、まず<a href="http://www.ne.jp/asahi/new/legend/mansaku/maniac_text/TAtheory/" target="_blank">タイムアタック論（まんさく氏）</a>を読むことをオススメします。本ページは、まんさく氏の論から一歩進んだ内容です。
+</ul>
+<h3>戦略とは</h3>
+<p>
+本ページでは、「あらゆる状況への対処を記述できると仮定し、その記述を戦略と呼ぶ」ことにします。<br>
+戦略を参照しながら、神様がミスなく理想的にプレイした場合のタイムを議論していると思ってください。
+</p>
+<p>
+実際のプレイには多くの要素が影響し、「戦略」だけでタイムが決まるわけではなく、プレイヤーの性格や相性と切り離した戦略の議論は限界がありますが、ここでは理想化して、切り離せると仮定します。
+</p>
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+
+<h2 id="2"><a href="#2">確率分布と数値の例</a></h2>
+<p>
+さて、例として3つの戦略があるとして、その確率分布グラフを見ていきましょう。<br>
+確率分布には、「戦略とタイムの関係」がすべて表現されています。この確率分布を正確に知るのは難しいですが、多くの場合その必要はありません。大切なのは、「どんな形をしていそうか」というイメージです。議論のとき、このイメージが共有できれば、数値だけでも意思疎通は十分に可能です。
+</p>
+<table class="none">
+<tr><td>
+<img src="photosa/fig1.png" width=400 height=300 style="border:1px solid black;">
+<td width="20">
+<td>
+【図1】<br>
+タイムのばらつきが少ない戦略です。
+<br>
+
+数値は次のようにおいてみます<br>
+<br>
+・7時間±15分に、7割のプレイが収まる<br>
+・6時間30分を切れる確率は3%<br>
+<tr><td>
+
+
+<img src="photosa/fig2.png" width=400 height=300 style="border:1px solid black;">
+<td width="20">
+<td>
+【図2】<br>
+タイムのばらつきが大きい戦略です。<br>
+数値は、図1との関連から次のようになります<br>
+<br>
+・7時間±30分に、7割のプレイが収まる<br>
+・6時間30分を切れる確率は15%<br>
+<tr><td>
+<img src="photosa/fig3.png" width=400 height=300 style="border:1px solid black;">
+<td width="20">
+<td>
+【図3】<br>
+タイムが2つの典型的なケースに割れる戦略のようです。「丁半博打」のような要素を取り込んだ戦略と思われます。<br>
+数値は次のようになるでしょう。<br>
+<br>
+<div class="red">・7時間±50分に、7割のプレイが収まる<br>
+　↑この値に意味があるのでしょうか？</div>
+・6時間30分を切れる確率は50%<br>
+
+</table>
+<p>
+【図3】のケースでは「突破率」を持ち出すとすっきりします。<br>
+赤地のところを、次のように言い換えた方がよいでしょう。<br>
+</p>
+<p class="red">
+・狙ったケースに入るのは6割　←これが突破率<br>
+・狙ったケースに入った場合には、6時間10分±20分に、7割のプレイが収まる
+</p>
+<p>
+なお、ふつう、このような戦略をとるとき興味があるのは、狙ったケースに「入れた」場合にどうなるのかであり、グラフ右側の山です。「突破率」を明示的に付け加えることで、右の山だけを切り離した議論ができます。<br>
+もちろん、左の山についても切り離した議論は可能です。複数の山がある場合も同様です。このような場合は突破率という言葉よりも「分岐率」などがしっくりくるかもしれません。言葉は何でも構いません。大切なのは分布をいくつかに分けることです。
+</p>
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2 id="4"><a href="#4">数値の算出</a></h2>
+<h3>値は議論に必要</h3>
+<p>
+さて問題は、「突破率」「中央値」「幅」といった数値を、どうやって算出するかです。<br>
+これについて、まずは<strong>主観で値を提示</strong>してよいと筆者は考えます。
+戦略を議論するという観点で考えると、いちばん大切なのは、これらの値が存在することです。主観での数値でも、何もないよりは、はるかに議論しやすいです。<br>その次の段階として、値の根拠のグレードアップが来ます。確率計算、シミュレーション、複数回プレイして統計を取る、など、グレードアップの方法はいくつかあります。
+この過程で、当初の値が修正されたり、議論の結論が覆ることがあると思いますが、それが健全な議論だと思います。<br>
+</p>
+<h3>主観の効用</h3>
+<p>
+このように書くと、主観は、精度が悪く信用のおけない根拠に感じるかもしれませんが、あながちそうともいえません。<br>
+計算やシミュレーションでは、ある要因を見逃したために大きく間違った値が提示されることもありえます。<br>
+また、長時間におよぶプレイ全体のタイムの「中央値」「幅」などは、プレイ展開を分析し、ある程度は計算できるにしても、主観を排除することは困難です。<br>
+さらに、すこし見方の角度は違いますが、主観で出された値には、戦略家の経験と思想が表れているともいえ、戦略そのものの議論とは別の興味の対象ともなります。
+</p>
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2 id="4"><a href="#4">数値の算出手法　4つ</a></h2>
+<p>
+大きく4つの手法を紹介します。<br>
+とくに「突破率」に関しては、多くの算出の実例があるので、リンクにて紹介します。
+おもにドラクエ5[PS2版]での実例です。<strong>リンク先は、ボス名などネタバレが含まれることがあります。</strong>
+</p>
+<h3>１．主観</h3>
+<p>
+前項で説明した通りです。最も手間がかかりません。<br>
+</p>
+
+<h3>２．確率計算</h3>
+<p>
+判断に必要となる精度の範囲で計算を行えば、手間はあまりかかりません。客観性もあります。計算方法と、使う基礎パラメータの信憑性に、注意する必要があります。確率計算の知識と技術も必要です。<br>
+</p>
+
+<p>
+「主観」と「確率計算」を組みあわせて確率を推定する例がよく見られます。<br>
+部分の突破率は主観で出し、その値をもとに、全体の突破率を概算した例もあります。<br>
+○<a href="http://etoile0221.blog70.fc2.com/blog-entry-434.html" target="_blank">
+各所の突破率　(5:52プレイ時の戦略)
+</a>　エトワールさん<br>
+◇<a href="http://uniright2.fc2web.com/dq5/uni/rta62259/time_strategy.html#1" target="_blank">
+各所の突破率、目標タイム達成率、プレイ時間推定(6:22プレイ時の戦略)
+</a>　右弐<br>
+○<a href="http://book.geocities.jp/tarahiro64/ps2dq5rta62221wp.html" target="_blank">
+各関門の突破率と貴重品消費の見積もり　(6:22プレイ時の戦略)</a>　たらひろさん<br>
+　→　データ計算　→　◇
+<a href="http://uniright2.fc2web.com/diary/dq5diary16.html#20120117" target="_blank">
+上記データをもとにした全体の突破率計算
+</a>　右弐
+</p>
+
+<p>
+部分の突破率に絞った計算例もあります。<br>
+◇<a href="http://uniright2.fc2web.com/dq5/sugoroku01.html" target="_blank">
+すごろく場　よろずや到達率
+</a>　右弐<br>
+○<a href="http://harapan.exblog.jp/16719448/" target="_blank">
+カジノの確率　(連射パッドの周期利用)
+</a>　腹黒パンダさん<br>
+
+
+</p>
+
+<h3>３．シミュレーション</h3>
+<p>
+ゲーム内の特定の状況と対応戦略をプログラムにして、10万回などといった多数の擬似プレイを行うものです。分岐や繰り返しの多い複雑な処理も扱うことが可能です。プログラミングの知識と技術が要求されます。<br>
+○
+<a href="http://www.geocities.jp/agnesboulangerchan/ps2dq5/rta-casino-20130626-05h46m41s/ps2dq5rta-casino-20130626-05h46m41s-strategy.txt" target="_blank">
+カジノ突破率(5:46プレイ時の戦略)　ページ中段
+</a>　シミュレータを1000万回実行　　ping値さん<br>
+
+○
+<a href="http://www.k-games.net/dq3recovery/06.html" target="_blank">
+すごろくクリア確率　（第5問：来場者pdf　3ページ末尾）
+</a><br>
+　2013夏 SFC版ドラゴンクエスト３ リカバリーTA大会　（代表くねおさん）<br>
+</p>
+
+<h3>４．実際に複数回プレイ</h3>
+<p>
+プレイヤーの影響を受けることを除けば、ある意味、最上のシミュレーションなのですが、いかんせん時間も手間がかかります。また、テストしたい戦略/戦術を固定してプレイすることも必要で、比較的この点に注意された上でのプレイの実例を挙げます。<br>
+○
+<a href="http://iliad430.blog100.fc2.com/blog-entry-87.html" target="_blank">
+ボス戦の勝率と消耗品
+</a>　同じボスを50戦したデータ　　イリアスさん<br>
+○
+<a href="http://book.geocities.jp/tarahiro64/ps2dq5rta_average.html" target="_blank">
+PS2DQ5RTA カジノ未使用　アベレージ重視走
+</a>　同じ戦略で10回プレイしたデータ　　たらひろさん<br>
+</p>
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+
+
+
+<h2 id="6"><a href="#6">おわりに</a></h2>
+
+<h3>これは運ゲー戦略？</h3>
+<table class="none">
+<tr><td>
+<img src="photosa/fig4.png" width=400 height=300 style="border:1px solid black;">
+<td width="20">
+<td>
+<p>
+左は、どんな戦略のグラフでしょうか？
+<br><br>
+
+単独で2%にあたるほどの幸運は、たとえば、<br>
+・ドラクエ5[PS2版]であれば、<br>
+　「メタルスライムを捕獲」<br>
+　「まじんのかなづちをドロップ」<br>
+・ドラクエ3[SFC]であれば、<br>
+　「表世界フィールドで、はぐれメタルを撃破」<br>
+　「らいじんのけんをドロップ」<br>
+などでしょうか。<br>
+<br>
+このような形の確率分布の2%部分を引き当てることを<strong>前提とした</strong>戦略に対して、多くの人が違和感を覚えるのではないでしょうか。<br>
+</p>
+</table>
+<p>
+そのような方は、本ページの「突破率」にあたる概念は、すでに頭の中に存在していたと思われます。そして「確率分布」の形や「突破率」に対して、自分の許容範囲を設定している、と解釈できます。<br>
+このように考えると、いわゆる「運ゲー」というのも、許容範囲の程度問題です。
+程度問題ならば、グラフ化や数値化した上で、戦略の評価なり、個々人の嗜好なりを扱った方が混乱は防げます。
+</p>
+
+<h3>むすび</h3>
+
+<p>
+RTAプレイヤーが増え、プレイ目的が多様化する中にあって、「戦略」の評価に関する議論がうまくかみ合わないケースも増えてきたように思います。
+これは、多様化が悪いわけではなく、その多様化を語る上での「用語の整備」が立ち遅れているためと解釈しており、一石を投じる意図で「突破率」を明示してみました。<br>
+「博打/安定」「最速タイム向き/平均向き」などの用語は、対比して語られることが多いですが、背後の確率分布のイメージが共有されているとは言いがたい状況だと思います。【図2】と【図3】のどちらもが、同じ「博打」という言葉で語られてしまえば、議論がかみ合わないのは当然です。本ページが、議論の円滑化と効率化に役立てば、望外の喜びです。<br>
+<br>
+</p>
+<h3>おまけ　：　プレイヤーの評価</h3>
+<p>
+余談ですが、「戦略」ではなく「プレイヤー」を同様に評価できないか、考えてみました。<br>
+たとえば対戦RTAでは、プレイヤーの選べる「戦略」は、トランプゲームでいうところの手持ちの「カード」に相当します。この「カード」には、1枚1枚、異なる確率分布グラフが描かれています。相手の出すカードも予想し、自分の勝つ領域が最大となるカード選択を行っていくのが、真に対戦の勝利を目指した「広義の戦略」です。したがって、対戦に向いた単独の「戦略」というのは存在しないといえるでしょう。また、扱えるカードの多いプレイヤーは、それだけ有利になるのは当然です。
+このように考えていくと、「プレイヤー」という複雑な対象を、タイムの確率分布で表現することは原理的に不可能と思われます。<br>
+そして、それで良いと思います。「戦略」は装備品であり、それを装備して対戦するキャラクターが「プレイヤー」ですから。戦略とプレイヤーを切り離す認識の分化は、今後のRTA界ではさらに進むものと思われ、それは健全な方向であると筆者は考えています。
+</p>
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+
+<h2 id="8"><a href="#8">関連文献</a></h2>
+<p>
+本文内にリンクを張らせていただきました。有効な研究の数々に、この場を借りて、御礼申し上げます。
+
+</p>
+
+
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+<hr>
+
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="../index.html">▲　メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br>
+　リンクはご自由にどうぞ
+<td>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+</div>
+
+</body>
+</html>
+
+

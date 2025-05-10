@@ -1,1 +1,594 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> <html lang="ja"> <meta http-equiv="Content-Script-Type" content="text/javascript"> <meta http-equiv="Content-Style-Type" content="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"> <meta name="keywords" content="ドラゴンクエスト,ドラクエ,スロット,カジノ,出目,DQ,攻略,短時間,RTA,タイムアタック"> <meta name="author" content="右弐(うに)"> <meta name="description" content="ドラクエ5のスロット出目表を公開しています"> <!--これより上は固定--> <!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->  <style type="text/css"> <!-- body.campus{ font-size:0.9em; line-height:1.5em;  padding:10px;  background-color:#ffffff; }  body.sub{ /* padding:10px;*/ background-color:#bbf0bb; font-size:0.9em; line-height:1.5em; /*text-align:center;*/ }   a{ text-decoration:none; } a:hover{ color:#00aa44; text-decoration:underline; }   p{ margin:10px 10px 10px 10px; padding:3px 5px 3px 5px; }  li{ margin:0px 10px 0px 0px; padding:3px 5px 3px 5px;  }  pre{font-size:100%; padding:0px 15px 0px 15px; }   div.frame1{ text-align:left;  width:760px; margin: 0px auto 0px auto ; padding: 4px 4px 4px 4px ; background-color:white; border:1px solid #008800; }  div.frame2{ text-align:left;  background-color:white; border:1px solid #8844ff;  padding:5px 10px 5px 10px; margin:5px 10px 5px 10px; }  span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;} div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}  table.none{  border:none; border-collapse:collapse;  }  table.tab{  border:none; border-collapse:collapse;    }  table.simple{  border:1px solid black; border-collapse:collapse;  }  table.simple td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  padding:0px 5px 0px 5px;  }  table.simpleleft{  border:1px solid black; border-collapse:collapse;  }  tr.c td{ text-align:center !important; }  table.simpleleft td,th{  border:1px solid black; border-collapse:collapse;  text-align:left;  padding:0px 5px 0px 5px;  }  table.data{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.data td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.timetable{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.9em; line-height:1.1em; }  table.timetable td{ border:1px solid black; border-collapse:collapse; text-align:center; }  table.timetable th{ border:1px solid black;border-collapse:collapse; }   table.itemtable{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.8em; line-height:1.1em; }  table.itemtable td{ padding:3px 0px 1px 1px; border:1px solid black; border-collapse:collapse; text-align:center; }  table.itemtable th{ border:1px solid black;border-collapse:collapse; }   table.gold{ background-color:white; border-collapse:collapse; border:2px solid black; font-size:0.8em; line-height:1.1em; }  table.gold td{ padding:3px 2px 1px 2px; border:1px solid black; border-collapse:collapse; text-align:center; }  td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }   tr.left td{  text-align:left; }  tr.simple td{  border:1px solid black; border-collapse:collapse;  }   td.simple{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  h1,h2,h3,h4,div.under{ background-color:#ddccff; color:#440066 !important; border-style:solid; border-color:#662288; }  h1{font-size:1.5em; padding:6px 15px 4px 15px;  margin-top:2px; margin-bottom:0px; border-width:0px 0px 1px 3px; }  div.under{ background-color:white; padding:2px 15px 2px 15px; border-width:1px 0px 1px 3px; text-align:right; margin-top:0px; margin-right:0px; margin-bottom:2px; font-size:80%; }  h2{font-size:1.2em; padding:6px 10px 4px 10px;  border-width:0px 0px 1px 3px; margin-top:5px; }  h3{font-size:1.0em; background-color:white; padding:2px 10px 2px 10px; border-width:0px 0px 1px 3px; width:60%; }  span.r{ float:right; text-align:center; }  div.under a{ text-decoration:none; }  td.sp{ text-align:center; font-size:80%; background-color:#ffffff; width:468px; }  div.update{ text-align:right; font-size:90%; line-height:1.2em; }  .l {text-align:left;} .c {text-align:center;font-size:0.9em;} .r {text-align:right;}  .add {background-color:#ddddff;} .add2 {color:#004400;} .red {background-color:#ffdddd;} .red2 {background-color:#ffeeee;} .blue {background-color:#ddddff;} .green {background-color:#ddffdd;} .yellow {background-color:#ffffdd;} .white {background-color:#ffffff;} .gray {background-color:#dddddd;} --> </style>   <title> カジノ技　スロット出目表　[5000回転まで対応]　ドラクエ5　PS2版 </title> </head> <body class="sub"> <div class="frame1"> <h1 id="top"> カジノ技　スロット出目表　[5000回転まで対応]　ドラクエ5　PS2版 </h1> <div class="under">資料作成・調査・執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2013.07.13</div> <table width="100%" class="none"> <col><col width="20"><col> <tr> <td valign="middle">  　<a href="./random01.html">▲　乱数研究のページへ</a><br> 　<a href="../index.html">▲　メインページへ</a><br> 　<a href="../dq5_rta_records.html">▲　DQ5RTA記録集</a><br>  </tr> </table> <!--ここから本文-->  <h2 id="00"><a href="#00">はじめに</a></h2> <p> ここは、ドラクエ5[PS2版]では有名な技、通称「カジノ技」のサポートページです。<br> 技を使うには「出目表」という資料が必要です。ここでは、筆者が作成した資料を公開しています。<br> なお、「カジノ技」についてよくわからない場合は、まず<a href="#2">カジノ技のやりかた</a>からお読みください。<br>  <br>  当ページへのリンクはご自由にどうぞ。管理人への連絡も必要ありません。 </p>  <h2 id="1"><a href="#1">公開資料</a></h2> <h3>ダウンロード</h3> <p> <a href="../archives.html" style="font-weight:bold;">資料館からダウンロードできます</a> 。PDF形式です。攻略に自由にお使いください。 </p> <h3>説明</h3> <p> 3つでワンセットです。まずはダウンロードし、実物を見ながら説明を読んでみてください。<br> <br> ■スロット出目表【当たり付近】<br> 　ひとつの当たりに1ページをあてています。当たり前後の合計16回転分の出目が載っています。<br> 　スロットを回すと、出目は表の中を「下へ」進んでいきます。このまま回すと当たるのかわかります。<br> 　載っている当たりは合計45個です。<br> 　・5000回転までに存在する、30万枚以上を狙える大当たり(31個)<br> 　・1100回転までに存在する、100倍以上が確率3/5以上で出る当たり(14個)　元出稼ぎに使う<br> <br> ■スロット待ち時間表<br> 　ふたつの当たりの間の待ち時間を一覧にしています。順番に前から当てる必要がなくなります。<br> <br> ■スロット出目表【検索用】<br> 　PC上で文字列検索するための表です。<strong>目で出目を見ることを想定していません</strong>。<br> 　出目15個が、15個の文字列で表現されています。すべて半角文字です。<br> 　スロットの画面を、横書きだと思って「上段→中段→下段」の順で読んだ15個の文字列で検索してください。<br> 　15文字すべて入力せず、一部分だけでもヒットしますが、似た出目がヒットしやすくなるので注意ください。<br> 　表の左右には、直近の当たりまでの回転数と待ち時間が書いてあります。次の当たりが把握できます。<br> 　筆者は「Adobe Reader」を使っています。検索のたびに「Ctrl + F」を押すと検索文字列が上書できて便利です。<br> 　説明動画もあります　→　<a href="http://youtu.be/gdoM06Hx96I" target="_blank">スロット出目表【検索用】の使い方（youtube）</a><br> </p>   <h3>補足</h3> <ul> <li>出目表の１・10コインスロットってどれ？<br> オラクルベリーのカジノで、下図■の位置です。2つはまったく同じ絵柄が出ます。<br> <pre> 　 □ 　　　 ■□□□　　 □■□□　　 </pre> 他のスロットの出目表も作ることは可能です。実際に公開されています→<a href="http://souko2525.blog39.fc2.com/blog-entry-29.html">そうこ氏のまとめと出目表</a><br> しかし上の2つ以外は当たりが出にくいため、プレイでの実用は見かけません（2013年6月現在)<br>　  <li>回転数<br> すべて「100コインスロット」に換算した回転数で表記しています。<br> 旧来の「1コイン・10コインスロット」特有の回転数は、（）カッコつきで付記しています。<br> 何を言っているのかよくわからない場合は、とりあえずスルーして問題ありません。このページの資料は整合性がとれています。歴史的経緯は<a href="./random01.html#20121024">乱数研究のページの該当部分</a>をお読みください。<br>　  <li>パターン<br> 出目表は5列あります。この列はパターンと呼ばれています。（導入は赤ちゅん氏）<br> 左からパターン1、パターン2、・・・、パターン5、です。<br> スロットを回すと、出目は表の中を「下へ」進んでいき、横には移動しません。<br> このため、当たりと異なるパターンに入ると「外れ」ということになります。<br>　    <li>Jackpot　No.<br> <strong>当たりのチャンス</strong>に、順番に番号を振りました。<br> <ul> <li>数千枚のチャンス　　ローマ数字　　例　：　　　iii　　　ix <li>30万枚以上のチャンス　算用数字　　　　例　：　　　5　　　17α  <br> 　α、β　は、当たり目が時間的に接近しているため、両方ともに当てることはできません。<br> </ul> ページ末尾に、<a href="#jj">回転数と「Jackpod No.」の対応表</a>を載せておきます。 </ul>  <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>  <h2 id="2"><a href="#2">カジノ技のやりかた　資料の使い方</a></h2> <h3>カジノ技の仕組み</h3> <p> 大当たりの直前からスロットを開始できれば効率的です。PS2版ドラクエ5では、そんなうまい話が実現できてしまいます。スロットの出目はプレイ開始からの時間によって決まり※、 したがって、出目を完全に予測できるからです。<br> 基本原理は以上のように単純です。厳密ではありませんが、カジノ技をとりあえず使う目的なら、原理に対してはこの程度の認識で十分です。なお、細かい仕様に興味のある方は、 <a href="./random01.html">乱数研究のページ</a>をお読みください。<br>  ※　miya氏が発見　2004年 </p> <h3>基本編　このページの資料を使ったカジノ技の流れ</h3> <p> 当たりは膨大な出目の中に点在します。当たり付近の出目は「出目表当たり付近」に載っています。ゲーム画面と出目表を見比べれば、そのまま回すと当たるのか、外れるのかを知ることができます。<br> また、当たり付近に入るための待ち時間は、「待ち時間表」に載っています。<br> これらを踏まえて、次のように行動します。<br> </p> <p class="red"> オラクルベリーのカジノに行き、コインを購入します（数枚～数十枚）<br> オラクルベリーの教会でセーブ　→　リセット　→　ロード　とし、カジノのスロットに向かいます。<br> 次の1～4を繰り返しつつ、1・10コインスロットで数千枚を当てた後、100・10コインスロットで30万枚を当てます。<br> 　１．当たり付近まで待って、スロットを開始する<br> 　２．スロットの現在の絵柄を「出目表当たり付近」で探す<br> 　３．当たりなら回して当て、外れならスロットを回さない<br> 　４．次の当たり付近までの待ち時間を「待ち時間表」で把握してから、スロットをやめる   </p>  <h3>応用編　待ち時間の補正　/　出目表【検索用】を使う</h3> <p> 実際には、待ち時間に出目が進む速度は、待ち時間の過ごし方によって変化します※1。そのため、「待ち時間表」に記載の数値に若干の補正を加えて待つ方が精度は上がります。</p> <p>しかしそれでも、いろいろな行動をしながら数分もの長時間を待ってスロットに入る場合、当たりの直前に入るのはかなり難しくなります。そこで、一度わざと早め※2に入り、出目を確認して当たりまでの時間を把握し、当たり直前を狙い再度スロットに入る方法が有効になります。この際、比較的広い範囲から出目を探すことになるので、PC上でのファイル検索が有効です。この用途には「出目表検索用」を公開しています。<br>  </p> <p> 「スロットに入る→検索する→出目確認する→待ち時間把握」の一連の作業に仮に20秒かかるとします。この20秒はロスですが、待ち時間が長く買い物など複雑な行動をとるのであれば、結果的に取り戻せると考えられます。当たり直前に入ることが可能となるからです。<br> スロットを回すと1回転には約10秒かかります。直接当たりを狙って6回転前に入ってしまうよりも、20秒を捨てて2回転前に入れるなら結果として速いです。つまり、一発で当たり直前に入れる自信がないならば、検索をはさむ方が無難です。実際にプレイで試してうまく直前に入れない区間に対しては、検索すると良いでしょう。 </p> <p>  ※1　　詳しくは<a href="./slot_speed.html">待ち時間のスロット回転速度・乱数消費速度</a> を参照ください。<br> ※2　　3.5秒以上ないと、再度入りなおして当たりに間に合わなくなる可能性が出てきます。<br>  </p> <h3>資料それぞれの役割イメージ</h3> <p> ・スロットの出目：海<br> ・当たり　：　宝の島　海に点在する<br> ・出目表当たり付近　　　：　宝の島それぞれの地図<br> ・待ち時間表　：　近くの島々までの方角と距離が書いてある表<br> ・出目表検索用：　海図とGPS<br> 次の島が近くなら海図とGPSは使わなくても島にたどりつけます。そして、そのほうが速いです。 </p>  <p> 　<a href="#top">▲　このページのトップへ戻る</a><br> </p> <h2 id="jj"><a href="#jj">当たり一覧</a></h2> <h3>回転数とJackpot No.　対応表</h3> <center> <table class="none"> <tr><td valign="top"> 元手稼ぎ（千枚以上） <table class="timetable"> <col span="4"> <col span="1" style="background-color:#e8f0ff;"> <col span="1" style="background-color:#e8f0ff; text-align:right;"> <tr><td>スロット<br>種別<td>回転数<br>100コイン<br>換算<td>回転数<br>1・10コイン<br>特有<td>パ<br>タ<br>|<br>ン<td>Jackpot No.  <tr>	<td>	1・10	<td>	-2 	<td>	10 	<td>	2 	<td>	i <tr>	<td>	1・10	<td>	33 	<td>	45 	<td>	3 	<td>	ii <tr>	<td>	1・10	<td>	83 	<td>	95 	<td>	3 	<td>	iii <tr>	<td>	1・10	<td>	274 	<td>	286 	<td>	2 	<td>	iv <tr>	<td>	1・10	<td>	365 	<td>	377 	<td>	4 	<td>	v <tr>	<td>	1・10	<td>	492 	<td>	504 	<td>	3 	<td>	vi <tr>	<td>	1・10	<td>	657 	<td>	669 	<td>	1 	<td>	vii <tr>	<td>	1・10	<td>	689 	<td>	701 	<td>	4 	<td>	viiiα <tr>	<td>	1・10	<td>	698 	<td>	710 	<td>	3 	<td>	viiiβ <tr>	<td>	1・10	<td>	714 	<td>	726 	<td>	4 	<td>	ix <tr>	<td>	1・10	<td>	845 	<td>	857 	<td>	4 	<td>	x <tr>	<td>	1・10	<td>	918 	<td>	930 	<td>	1 	<td>	xi <tr>	<td>	1・10	<td>	959 	<td>	971 	<td>	5 	<td>	xii <tr>	<td>	1・10	<td>	1062 	<td>	1074 	<td>	1 	<td>	xiii </table> <p> 注意：「元出稼ぎ」の表について<br> 　表記した「回転数」「パターン」は、<br> 　「先頭の当たり」の位置です。<br> </p> <td width="20"> <td> 大当たり（30万枚以上） <table class="timetable"> <col span="4"> <col span="1" style="background-color:#e8f0ff;"> <col span="1" style="background-color:#e8f0ff; text-align:right;"> <tr><td>スロット<br>種別<td>回転数<br>100コイン<br>換算<td>回転数<br>1・10コイン<br>特有<td>パ<br>タ<br>|<br>ン<td>Jackpot No. <tr>	<td>	100	<td>	19 	<td>		<td>	1 	<td>	1 <tr>	<td>	100	<td>	58 	<td>		<td>	1 	<td>	2 <tr>	<td>	100	<td>	123 	<td>		<td>	1 	<td>	3 <tr>	<td>	100	<td>	363 	<td>		<td>	2 	<td>	4 <tr>	<td>	100	<td>	495 	<td>		<td>	3 	<td>	5 <tr>	<td>	100	<td>	644 	<td>		<td>	5 	<td>	6 <tr>	<td>	100	<td>	698 	<td>		<td>	3 	<td>	7 <tr>	<td>	100	<td>	1023 	<td>		<td>	2 	<td>	8 <tr>	<td>	1・10	<td>	1062 	<td>	1074 	<td>	3 	<td>	9 <tr>	<td>	100	<td>	1150 	<td>		<td>	2 	<td>	10 <tr>	<td>	100	<td>	1208 	<td>		<td>	2 	<td>	11 <tr>	<td>	100	<td>	1265 	<td>		<td>	2 	<td>	12 <tr>	<td>	100	<td>	1297 	<td>		<td>	4 	<td>	13 <tr>	<td>	100	<td>	1541 	<td>		<td>	2 	<td>	14 <tr>	<td>	100	<td>	1982 	<td>		<td>	5 	<td>	15 <tr>	<td>	1・10	<td>	2831 	<td>	2843 	<td>	2 	<td>	16 <tr>	<td>	100	<td>	3000 	<td>		<td>	4 5	<td>	17α <tr>	<td>	100	<td>	3003 	<td>		<td>	2 	<td>	17β <tr>	<td>	100	<td>	3071 	<td>		<td>	4 	<td>	18 <tr>	<td>	100	<td>	3156 	<td>		<td>	5 	<td>	19 <tr>	<td>	100	<td>	3230 	<td>		<td>	3 	<td>	20 <tr>	<td>	100	<td>	3262 	<td>		<td>	4 	<td>	21 <tr>	<td>	100	<td>	3652 	<td>		<td>	4 	<td>	22 <tr>	<td>	100	<td>	3698 	<td>		<td>	2 	<td>	23α <tr>	<td>	100	<td>	3710 	<td>		<td>	3 	<td>	23β <tr>	<td>	100	<td>	3918 	<td>		<td>	3 4	<td>	24 <tr>	<td>	100	<td>	4308 	<td>		<td>	3 	<td>	25 <tr>	<td>	1・10	<td>	4527 	<td>	4539 	<td>	2 	<td>	26 <tr>	<td>	100	<td>	4570 	<td>		<td>	2 	<td>	27 <tr>	<td>	1・10	<td>	4749 	<td>	4761 	<td>	2 	<td>	28 <tr>	<td>	100	<td>	4977 	<td>		<td>	5 	<td>	29 </table> </table> </center>  <h3>特筆すべきチャンス</h3> <p> ふつうの大当たりのチャンスは、5つのパターンのうち1つだけで1000倍が当ります。パターンの制御は1/30秒精度の操作が必要であり困難です。したがって、当たる確率は1/5というように捉えられています。<br> しかし、いくつかのチャンスは例外です。ここでは3つ取り上げます。<br> </p> <p> ◆　17α,17β (回転数 3000, 3003) 　<br> 実質、3/5の確率で、1000倍が当たります。100倍以上が当たる確率は5/5です。<br> 付近の出目が次のようになっているためです。回転数3000直前を狙えばOKです。<br> </p> <pre> 3000 □□○■■　　　■：1000倍 3001 ○□□□□　　　○：100倍 3002 □□□□□ 3003 □■□□□ </pre>   <p> ◆　23α,23β (回転数 3698, 3710) 　<br> 回転数が12の差しかなく、パターンがずれているため、両方を「当てる」ことはできません。<br> （スロットを一度出て、再度入りなおすと最短でも15回転以上が経過するためです）<br> 普通に23αのみを狙えば、1/5＝20%の当たり確率です。しかし工夫すれば両方を「狙う」ことはできます。<br> 23αの5回転手前の回転数3693を狙ってスロットに入り、<br> 　→　パターン2　そのまま5回転回して23αを当てる<br> 　→　パターン3　そのまま17回転回して23βを当てる　※<br> 　→　それ以外　スロットを一度出て再度入りなおすと、23β直前　1/5の確率で当たる<br> この方法ならば、計算上は52%の確率で当たります。<br> また、※の場合には16回転のタイムロスを嫌って、スロットを一度出る方法をとるなら、36%になります。  </p>   <p> ◆　24 (回転数 3918) 　<br> 2/5の確率で、1000倍が当たります。  </p>     <p> 　<a href="#top">▲　このページのトップへ戻る</a><br> </p> <h2 id="3"><a href="#3">おわりに</a></h2>  <h3> 参考文献・サイト </h3> <p> 作成に当たり参照したサイトです。この場を借りてお礼申し上げます。<br><br>  ■使用した乱数データ<br> ・最初～124回転　<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">miya氏の乱数データ</a><br> ・125回転～5001回転　<a href="http://souko2525.blog39.fc2.com/blog-entry-27.html" target="sub">そうこ氏・御茶麒麟氏の乱数データ</a> <br> <br> ■出目表の体裁に関して<br> ・<a href="http://meguriai.kumogakure.com/" target="sub">赤ちゅん氏の出目表</a>を参考にしています。 </p> <p> <h3>注意事項</h3> <p> ・公開した資料に関して100%の正しさを保証するものではありません。自己責任でご使用ください。<br> ・内容に間違い等発見された場合は、ご連絡いただけると助かります。<br> ・紹介の際には、このページにリンクをお願いします。公開した資料の転載等はご遠慮ください。<br> </p> <p> 　<a href="#top" id>▲　このページのトップへ戻る</a><br> </p>  <hr>  <table width="100%" class="none"> <col><col width="10"><col> <tr><td valign="middle"> 　<a href="../index.html">▲　メインページへ戻る</a><br> 　リンクはご自由にどうぞ <td> <td valign="middle" class="sp">   </tr> </table> </div> </body> </html>  
+<html><meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="keywords" content="ドラゴンクエスト,ドラクエ,スロット,カジノ,出目,DQ,攻略,短時間,RTA,タイムアタック">
+<meta name="author" content="右弐(うに)">
+<meta name="description" content="ドラクエ5のスロット出目表を公開しています">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+font-size:0.9em;
+line-height:1.5em;
+ padding:10px;
+ background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+background-color:#bbf0bb;
+font-size:0.9em;
+line-height:1.5em;
+/*text-align:center;*/
+}
+
+
+a{
+text-decoration:none;
+}
+a:hover{
+color:#00aa44;
+text-decoration:underline;
+}
+
+
+p{
+margin:10px 10px 10px 10px;
+padding:3px 5px 3px 5px;
+}
+
+li{
+margin:0px 10px 0px 0px;
+padding:3px 5px 3px 5px;
+
+}
+
+pre{font-size:100%;
+padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+text-align:left; 
+width:760px;
+margin: 0px auto 0px auto ;
+padding: 4px 4px 4px 4px ;
+background-color:white;
+border:1px solid #008800;
+}
+
+div.frame2{
+text-align:left; 
+background-color:white;
+border:1px solid #8844ff; 
+padding:5px 10px 5px 10px;
+margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.9em;
+line-height:1.1em;
+}
+
+table.timetable td{
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+table.timetable th{
+border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.8em;
+line-height:1.1em;
+}
+
+table.itemtable td{
+padding:3px 0px 1px 1px;
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+table.itemtable th{
+border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+background-color:white; border-collapse:collapse;
+border:2px solid black;
+font-size:0.8em;
+line-height:1.1em;
+}
+
+table.gold td{
+padding:3px 2px 1px 2px;
+border:1px solid black; border-collapse:collapse;
+text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+background-color:#ddccff;
+color:#440066 !important;
+border-style:solid;
+border-color:#662288;
+}
+
+h1{font-size:1.5em;
+padding:6px 15px 4px 15px; 
+margin-top:2px;
+margin-bottom:0px;
+border-width:0px 0px 1px 3px;
+}
+
+div.under{
+background-color:white;
+padding:2px 15px 2px 15px;
+border-width:1px 0px 1px 3px;
+text-align:right;
+margin-top:0px;
+margin-right:0px;
+margin-bottom:2px;
+font-size:80%;
+}
+
+h2{font-size:1.2em;
+padding:6px 10px 4px 10px; 
+border-width:0px 0px 1px 3px;
+margin-top:5px;
+}
+
+h3{font-size:1.0em;
+background-color:white;
+padding:2px 10px 2px 10px;
+border-width:0px 0px 1px 3px;
+width:60%;
+}
+
+span.r{
+float:right;
+text-align:center;
+}
+
+div.under a{
+text-decoration:none;
+}
+
+td.sp{
+text-align:center;
+font-size:80%;
+background-color:#ffffff;
+width:468px;
+}
+
+div.update{
+text-align:right;
+font-size:90%;
+line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;font-size:0.9em;}
+.r {text-align:right;}
+
+.add {background-color:#ddddff;}
+.add2 {color:#004400;}
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+
+
+<title>
+カジノ技　スロット出目表　[5000回転まで対応]　ドラクエ5　PS2版
+</title>
+</head>
+<body class="sub">
+<div class="frame1">
+<h1 id="top">
+カジノ技　スロット出目表　[5000回転まで対応]　ドラクエ5　PS2版
+</h1>
+<div class="under">資料作成・調査・執筆 ： <a href="../index.html">右弐</a>　　/　　最終更新 ： 2013.07.13</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+
+　<a href="./random01.html">▲　乱数研究のページへ</a><br>
+　<a href="../index.html">▲　メインページへ</a><br>
+　<a href="../dq5_rta_records.html">▲　DQ5RTA記録集</a><br>
+
+<td valign="middle" class="sp">
+（画像提供：Amazon）<br>
+<a href="http://www.amazon.co.jp/gp/product/B0017M9Q96/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B0017M9Q96&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="bell.jpg" width="70" height="63"></a>
+<a href="http://www.amazon.co.jp/gp/product/B0017M9Q96/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B0017M9Q96&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="bell.jpg" width="70" height="63"></a>
+<a href="http://www.amazon.co.jp/gp/product/B0017M9Q96/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B0017M9Q96&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="bell.jpg" width="70" height="63"></a>
+<a href="http://www.amazon.co.jp/gp/product/B0017M9Q96/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B0017M9Q96&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="bell.jpg" width="70" height="63"></a>
+<a href="http://www.amazon.co.jp/gp/product/B0017M9Q96/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B0017M9Q96&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="bell.jpg" width="70" height="63"></a>
+</tr>
+</table>
+<!--ここから本文-->
+
+<h2 id="00"><a href="#00">はじめに</a></h2>
+<p>
+ここは、ドラクエ5[PS2版]では有名な技、通称「カジノ技」のサポートページです。<br>
+技を使うには「出目表」という資料が必要です。ここでは、筆者が作成した資料を公開しています。<br>
+なお、「カジノ技」についてよくわからない場合は、まず<a href="#2">カジノ技のやりかた</a>からお読みください。<br>
+
+<br>
+
+当ページへのリンクはご自由にどうぞ。管理人への連絡も必要ありません。
+</p>
+
+<h2 id="1"><a href="#1">公開資料</a></h2>
+<h3>ダウンロード</h3>
+<p>
+<a href="http://www.geocities.jp/uniright2/archives.html" style="font-weight:bold;">資料館からダウンロードできます</a> 。PDF形式です。攻略に自由にお使いください。
+</p>
+<h3>説明</h3>
+<p>
+3つでワンセットです。まずはダウンロードし、実物を見ながら説明を読んでみてください。<br>
+<br>
+■スロット出目表【当たり付近】<br>
+　ひとつの当たりに1ページをあてています。当たり前後の合計16回転分の出目が載っています。<br>
+　スロットを回すと、出目は表の中を「下へ」進んでいきます。このまま回すと当たるのかわかります。<br>
+　載っている当たりは合計45個です。<br>
+　・5000回転までに存在する、30万枚以上を狙える大当たり(31個)<br>
+　・1100回転までに存在する、100倍以上が確率3/5以上で出る当たり(14個)　元出稼ぎに使う<br>
+<br>
+■スロット待ち時間表<br>
+　ふたつの当たりの間の待ち時間を一覧にしています。順番に前から当てる必要がなくなります。<br>
+<br>
+■スロット出目表【検索用】<br>
+　PC上で文字列検索するための表です。<strong>目で出目を見ることを想定していません</strong>。<br>
+　出目15個が、15個の文字列で表現されています。すべて半角文字です。<br>
+　スロットの画面を、横書きだと思って「上段→中段→下段」の順で読んだ15個の文字列で検索してください。<br>
+　15文字すべて入力せず、一部分だけでもヒットしますが、似た出目がヒットしやすくなるので注意ください。<br>
+　表の左右には、直近の当たりまでの回転数と待ち時間が書いてあります。次の当たりが把握できます。<br>
+　筆者は「Adobe Reader」を使っています。検索のたびに「Ctrl + F」を押すと検索文字列が上書できて便利です。<br>
+　説明動画もあります　→　<a href="http://youtu.be/gdoM06Hx96I" target="_blank">スロット出目表【検索用】の使い方（youtube）</a><br>
+</p>
+
+
+<h3>補足</h3>
+<ul>
+<li>出目表の１・10コインスロットってどれ？<br>
+オラクルベリーのカジノで、下図■の位置です。2つはまったく同じ絵柄が出ます。<br>
+<pre>
+　 □ 　　　
+■□□□　　
+□■□□　　
+</pre>
+他のスロットの出目表も作ることは可能です。実際に公開されています→<a href="http://souko2525.blog39.fc2.com/blog-entry-29.html">そうこ氏のまとめと出目表</a><br>
+しかし上の2つ以外は当たりが出にくいため、プレイでの実用は見かけません（2013年6月現在)<br>　
+
+<li>回転数<br>
+すべて「100コインスロット」に換算した回転数で表記しています。<br>
+旧来の「1コイン・10コインスロット」特有の回転数は、（）カッコつきで付記しています。<br>
+何を言っているのかよくわからない場合は、とりあえずスルーして問題ありません。このページの資料は整合性がとれています。歴史的経緯は<a href="./random01.html#20121024">乱数研究のページの該当部分</a>をお読みください。<br>　
+
+<li>パターン<br>
+出目表は5列あります。この列はパターンと呼ばれています。（導入は赤ちゅん氏）<br>
+左からパターン1、パターン2、・・・、パターン5、です。<br>
+スロットを回すと、出目は表の中を「下へ」進んでいき、横には移動しません。<br>
+このため、当たりと異なるパターンに入ると「外れ」ということになります。<br>　
+
+
+
+<li>Jackpot　No.<br>
+<strong>当たりのチャンス</strong>に、順番に番号を振りました。<br>
+<ul>
+<li>数千枚のチャンス　　ローマ数字　　例　：　　　iii　　　ix
+<li>30万枚以上のチャンス　算用数字　　　　例　：　　　5　　　17α  <br>
+　α、β　は、当たり目が時間的に接近しているため、両方ともに当てることはできません。<br>
+</ul>
+ページ末尾に、<a href="#jj">回転数と「Jackpod No.」の対応表</a>を載せておきます。
+</ul>
+
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+<h2 id="2"><a href="#2">カジノ技のやりかた　資料の使い方</a></h2>
+<h3>カジノ技の仕組み</h3>
+<p>
+大当たりの直前からスロットを開始できれば効率的です。PS2版ドラクエ5では、そんなうまい話が実現できてしまいます。スロットの出目はプレイ開始からの時間によって決まり※、
+したがって、出目を完全に予測できるからです。<br>
+基本原理は以上のように単純です。厳密ではありませんが、カジノ技をとりあえず使う目的なら、原理に対してはこの程度の認識で十分です。なお、細かい仕様に興味のある方は、
+<a href="./random01.html">乱数研究のページ</a>をお読みください。<br>
+
+※　miya氏が発見　2004年
+</p>
+<h3>基本編　このページの資料を使ったカジノ技の流れ</h3>
+<p>
+当たりは膨大な出目の中に点在します。当たり付近の出目は「出目表当たり付近」に載っています。ゲーム画面と出目表を見比べれば、そのまま回すと当たるのか、外れるのかを知ることができます。<br>
+また、当たり付近に入るための待ち時間は、「待ち時間表」に載っています。<br>
+これらを踏まえて、次のように行動します。<br>
+</p>
+<p class="red">
+オラクルベリーのカジノに行き、コインを購入します（数枚～数十枚）<br>
+オラクルベリーの教会でセーブ　→　リセット　→　ロード　とし、カジノのスロットに向かいます。<br>
+次の1～4を繰り返しつつ、1・10コインスロットで数千枚を当てた後、100・10コインスロットで30万枚を当てます。<br>
+　１．当たり付近まで待って、スロットを開始する<br>
+　２．スロットの現在の絵柄を「出目表当たり付近」で探す<br>
+　３．当たりなら回して当て、外れならスロットを回さない<br>
+　４．次の当たり付近までの待ち時間を「待ち時間表」で把握してから、スロットをやめる
+
+
+</p>
+
+<h3>応用編　待ち時間の補正　/　出目表【検索用】を使う</h3>
+<p>
+実際には、待ち時間に出目が進む速度は、待ち時間の過ごし方によって変化します※1。そのため、「待ち時間表」に記載の数値に若干の補正を加えて待つ方が精度は上がります。</p>
+<p>しかしそれでも、いろいろな行動をしながら数分もの長時間を待ってスロットに入る場合、当たりの直前に入るのはかなり難しくなります。そこで、一度わざと早め※2に入り、出目を確認して当たりまでの時間を把握し、当たり直前を狙い再度スロットに入る方法が有効になります。この際、比較的広い範囲から出目を探すことになるので、PC上でのファイル検索が有効です。この用途には「出目表検索用」を公開しています。<br>
+
+</p>
+<p>
+「スロットに入る→検索する→出目確認する→待ち時間把握」の一連の作業に仮に20秒かかるとします。この20秒はロスですが、待ち時間が長く買い物など複雑な行動をとるのであれば、結果的に取り戻せると考えられます。当たり直前に入ることが可能となるからです。<br>
+スロットを回すと1回転には約10秒かかります。直接当たりを狙って6回転前に入ってしまうよりも、20秒を捨てて2回転前に入れるなら結果として速いです。つまり、一発で当たり直前に入れる自信がないならば、検索をはさむ方が無難です。実際にプレイで試してうまく直前に入れない区間に対しては、検索すると良いでしょう。
+</p>
+<p>
+
+※1　　詳しくは<a href="./slot_speed.html">待ち時間のスロット回転速度・乱数消費速度</a> を参照ください。<br>
+※2　　3.5秒以上ないと、再度入りなおして当たりに間に合わなくなる可能性が出てきます。<br>
+
+</p>
+<h3>資料それぞれの役割イメージ</h3>
+<p>
+・スロットの出目：海<br>
+・当たり　：　宝の島　海に点在する<br>
+・出目表当たり付近　　　：　宝の島それぞれの地図<br>
+・待ち時間表　：　近くの島々までの方角と距離が書いてある表<br>
+・出目表検索用：　海図とGPS<br>
+次の島が近くなら海図とGPSは使わなくても島にたどりつけます。そして、そのほうが速いです。
+</p>
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+<h2 id="jj"><a href="#jj">当たり一覧</a></h2>
+<h3>回転数とJackpot No.　対応表</h3>
+<center>
+<table class="none">
+<tr><td valign="top">
+元手稼ぎ（千枚以上）
+<table class="timetable">
+<col span="4">
+<col span="1" style="background-color:#e8f0ff;">
+<col span="1" style="background-color:#e8f0ff; text-align:right;">
+<tr><td>スロット<br>種別<td>回転数<br>100コイン<br>換算<td>回転数<br>1・10コイン<br>特有<td>パ<br>タ<br>|<br>ン<td>Jackpot No.
+
+<tr>	<td>	1・10	<td>	-2 	<td>	10 	<td>	2 	<td>	i
+<tr>	<td>	1・10	<td>	33 	<td>	45 	<td>	3 	<td>	ii
+<tr>	<td>	1・10	<td>	83 	<td>	95 	<td>	3 	<td>	iii
+<tr>	<td>	1・10	<td>	274 	<td>	286 	<td>	2 	<td>	iv
+<tr>	<td>	1・10	<td>	365 	<td>	377 	<td>	4 	<td>	v
+<tr>	<td>	1・10	<td>	492 	<td>	504 	<td>	3 	<td>	vi
+<tr>	<td>	1・10	<td>	657 	<td>	669 	<td>	1 	<td>	vii
+<tr>	<td>	1・10	<td>	689 	<td>	701 	<td>	4 	<td>	viiiα
+<tr>	<td>	1・10	<td>	698 	<td>	710 	<td>	3 	<td>	viiiβ
+<tr>	<td>	1・10	<td>	714 	<td>	726 	<td>	4 	<td>	ix
+<tr>	<td>	1・10	<td>	845 	<td>	857 	<td>	4 	<td>	x
+<tr>	<td>	1・10	<td>	918 	<td>	930 	<td>	1 	<td>	xi
+<tr>	<td>	1・10	<td>	959 	<td>	971 	<td>	5 	<td>	xii
+<tr>	<td>	1・10	<td>	1062 	<td>	1074 	<td>	1 	<td>	xiii
+</table>
+<p>
+注意：「元出稼ぎ」の表について<br>
+　表記した「回転数」「パターン」は、<br>
+　「先頭の当たり」の位置です。<br>
+</p>
+<td width="20">
+<td>
+大当たり（30万枚以上）
+<table class="timetable">
+<col span="4">
+<col span="1" style="background-color:#e8f0ff;">
+<col span="1" style="background-color:#e8f0ff; text-align:right;">
+<tr><td>スロット<br>種別<td>回転数<br>100コイン<br>換算<td>回転数<br>1・10コイン<br>特有<td>パ<br>タ<br>|<br>ン<td>Jackpot No.
+<tr>	<td>	100	<td>	19 	<td>		<td>	1 	<td>	1
+<tr>	<td>	100	<td>	58 	<td>		<td>	1 	<td>	2
+<tr>	<td>	100	<td>	123 	<td>		<td>	1 	<td>	3
+<tr>	<td>	100	<td>	363 	<td>		<td>	2 	<td>	4
+<tr>	<td>	100	<td>	495 	<td>		<td>	3 	<td>	5
+<tr>	<td>	100	<td>	644 	<td>		<td>	5 	<td>	6
+<tr>	<td>	100	<td>	698 	<td>		<td>	3 	<td>	7
+<tr>	<td>	100	<td>	1023 	<td>		<td>	2 	<td>	8
+<tr>	<td>	1・10	<td>	1062 	<td>	1074 	<td>	3 	<td>	9
+<tr>	<td>	100	<td>	1150 	<td>		<td>	2 	<td>	10
+<tr>	<td>	100	<td>	1208 	<td>		<td>	2 	<td>	11
+<tr>	<td>	100	<td>	1265 	<td>		<td>	2 	<td>	12
+<tr>	<td>	100	<td>	1297 	<td>		<td>	4 	<td>	13
+<tr>	<td>	100	<td>	1541 	<td>		<td>	2 	<td>	14
+<tr>	<td>	100	<td>	1982 	<td>		<td>	5 	<td>	15
+<tr>	<td>	1・10	<td>	2831 	<td>	2843 	<td>	2 	<td>	16
+<tr>	<td>	100	<td>	3000 	<td>		<td>	4 5	<td>	17α
+<tr>	<td>	100	<td>	3003 	<td>		<td>	2 	<td>	17β
+<tr>	<td>	100	<td>	3071 	<td>		<td>	4 	<td>	18
+<tr>	<td>	100	<td>	3156 	<td>		<td>	5 	<td>	19
+<tr>	<td>	100	<td>	3230 	<td>		<td>	3 	<td>	20
+<tr>	<td>	100	<td>	3262 	<td>		<td>	4 	<td>	21
+<tr>	<td>	100	<td>	3652 	<td>		<td>	4 	<td>	22
+<tr>	<td>	100	<td>	3698 	<td>		<td>	2 	<td>	23α
+<tr>	<td>	100	<td>	3710 	<td>		<td>	3 	<td>	23β
+<tr>	<td>	100	<td>	3918 	<td>		<td>	3 4	<td>	24
+<tr>	<td>	100	<td>	4308 	<td>		<td>	3 	<td>	25
+<tr>	<td>	1・10	<td>	4527 	<td>	4539 	<td>	2 	<td>	26
+<tr>	<td>	100	<td>	4570 	<td>		<td>	2 	<td>	27
+<tr>	<td>	1・10	<td>	4749 	<td>	4761 	<td>	2 	<td>	28
+<tr>	<td>	100	<td>	4977 	<td>		<td>	5 	<td>	29
+</table>
+</table>
+</center>
+
+<h3>特筆すべきチャンス</h3>
+<p>
+ふつうの大当たりのチャンスは、5つのパターンのうち1つだけで1000倍が当ります。パターンの制御は1/30秒精度の操作が必要であり困難です。したがって、当たる確率は1/5というように捉えられています。<br>
+しかし、いくつかのチャンスは例外です。ここでは3つ取り上げます。<br>
+</p>
+<p>
+◆　17α,17β (回転数 3000, 3003) 　<br>
+実質、3/5の確率で、1000倍が当たります。100倍以上が当たる確率は5/5です。<br>
+付近の出目が次のようになっているためです。回転数3000直前を狙えばOKです。<br>
+</p>
+<pre>
+3000 □□○■■　　　■：1000倍
+3001 ○□□□□　　　○：100倍
+3002 □□□□□
+3003 □■□□□
+</pre>
+
+
+<p>
+◆　23α,23β (回転数 3698, 3710) 　<br>
+回転数が12の差しかなく、パターンがずれているため、両方を「当てる」ことはできません。<br>
+（スロットを一度出て、再度入りなおすと最短でも15回転以上が経過するためです）<br>
+普通に23αのみを狙えば、1/5＝20%の当たり確率です。しかし工夫すれば両方を「狙う」ことはできます。<br>
+23αの5回転手前の回転数3693を狙ってスロットに入り、<br>
+　→　パターン2　そのまま5回転回して23αを当てる<br>
+　→　パターン3　そのまま17回転回して23βを当てる　※<br>
+　→　それ以外　スロットを一度出て再度入りなおすと、23β直前　1/5の確率で当たる<br>
+この方法ならば、計算上は52%の確率で当たります。<br>
+また、※の場合には16回転のタイムロスを嫌って、スロットを一度出る方法をとるなら、36%になります。
+
+</p>
+
+
+<p>
+◆　24 (回転数 3918) 　<br>
+2/5の確率で、1000倍が当たります。
+
+</p>
+
+
+
+
+<p>
+　<a href="#top">▲　このページのトップへ戻る</a><br>
+</p>
+<h2 id="3"><a href="#3">おわりに</a></h2>
+
+<h3>
+参考文献・サイト
+</h3>
+<p>
+作成に当たり参照したサイトです。この場を借りてお礼申し上げます。<br><br>
+
+■使用した乱数データ<br>
+・最初～124回転　<a href="http://miya.s16.xrea.com/dq/5/study.html" target="sub">miya氏の乱数データ</a><br>
+・125回転～5001回転　<a href="http://souko2525.blog39.fc2.com/blog-entry-27.html" target="sub">そうこ氏・御茶麒麟氏の乱数データ</a>
+<br>
+<br>
+■出目表の体裁に関して<br>
+・<a href="http://meguriai.kumogakure.com/" target="sub">赤ちゅん氏の出目表</a>を参考にしています。
+</p>
+<p>
+<h3>注意事項</h3>
+<p>
+・公開した資料に関して100%の正しさを保証するものではありません。自己責任でご使用ください。<br>
+・内容に間違い等発見された場合は、ご連絡いただけると助かります。<br>
+・紹介の際には、このページにリンクをお願いします。公開した資料の転載等はご遠慮ください。<br>
+</p>
+<p>
+　<a href="#top" id>▲　このページのトップへ戻る</a><br>
+</p>
+
+<hr>
+
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="../index.html">▲　メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a><br>
+　リンクはご自由にどうぞ
+<td>
+<td valign="middle" class="sp">
+
+
+<a href="http://www.amazon.co.jp/gp/product/B007R3NXJI/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B007R3NXJI&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="suika2.jpg" width="88" height="48"></a>
+<a href="http://www.amazon.co.jp/gp/product/B007R3NXJI/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B007R3NXJI&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="suika2.jpg" width="88" height="48"></a>
+<a href="http://www.amazon.co.jp/gp/product/B007R3NXJI/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B007R3NXJI&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="suika2.jpg" width="88" height="48"></a>
+<a href="http://www.amazon.co.jp/gp/product/B007R3NXJI/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B007R3NXJI&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="suika2.jpg" width="88" height="48"></a>
+<a href="http://www.amazon.co.jp/gp/product/B007R3NXJI/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=B007R3NXJI&linkCode=as2&tag=uniright2-22" target="sub"><img border="0" src="suika2.jpg" width="88" height="48"></a>
+</tr>
+</table>
+</div>
+
+</body>
+</html>
+
+

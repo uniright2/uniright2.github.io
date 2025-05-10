@@ -1,1 +1,862 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> <html lang="ja"> <meta http-equiv="Content-Script-Type" content="text/javascript"> <meta http-equiv="Content-Style-Type" content="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"> <meta name="keywords" content="ドラゴンクエスト,ドラクエ,DQ,攻略,短時間,快適,RTA,タイムアタック"> <meta name="author" content="右弐(うに)"> <meta name="description" content="ドラクエ5のすごろく場の研究です。オラクルベリーで「よろず屋」のマスに止まれる確率を計算しています。"> <!--これより上は固定--> <!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->  <style type="text/css"> <!-- body.campus{ 	font-size:0.9em; 	line-height:1.5em;  	padding:10px;  	background-color:#ffffff; }  body.sub{ /* padding:10px;*/ 	background-color:#ffddff; 	font-size:0.9em; 	line-height:1.5em; /*	text-align:center;*/ }   a{ 	text-decoration:none; } a:hover{ 	color:#00aa44; 	text-decoration:underline; }   p{ 	margin:10px 10px 10px 10px; 	padding:3px 5px 3px 5px; }  ul li{ 	margin:10px 10px 10px 5px; 	padding:3px 5px 3px 5px; }  pre{font-size:100%; 	padding:0px 15px 0px 15px; }   div.frame1{ 	text-align:left;  	width:760px; 	margin: 0px auto 0px auto ; 	padding: 4px 4px 4px 4px ; 	background-color:white; 	border:1px solid #ff66ff; }  div.frame2{ 	text-align:left;  	background-color:white; 	border:1px solid #8844ff;  	padding:5px 10px 5px 10px; 	margin:5px 10px 5px 10px; }  span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;} div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}  table.none{  border:none; border-collapse:collapse;  }  table.tab{  border:none; border-collapse:collapse;    }  table.simple{  border:1px solid black; border-collapse:collapse;  }  table.simple td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  padding:0px 5px 0px 5px;  }  table.simpleleft{  border:1px solid black; border-collapse:collapse;  }  tr.c td{ 	text-align:center !important; }  table.simpleleft td,th{  border:1px solid black; border-collapse:collapse;  text-align:left;  padding:0px 5px 0px 5px;  }  table.data{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.data td,th{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  table.timetable{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.9em; 	line-height:1.1em;	 }  table.timetable td{ 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  table.timetable th{ 	border:1px solid black;border-collapse:collapse; }   table.itemtable{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.8em; 	line-height:1.1em;	 }  table.itemtable td{ 	padding:3px 0px 1px 1px; 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  table.itemtable th{ 	border:1px solid black;border-collapse:collapse; }   table.gold{ 	background-color:white; border-collapse:collapse; 	border:2px solid black; 	font-size:0.8em; 	line-height:1.1em;	 }  table.gold td{ 	padding:3px 2px 1px 2px; 	border:1px solid black; border-collapse:collapse; 	text-align:center; }  td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }   tr.left td{  text-align:left; }  tr.simple td{  border:1px solid black; border-collapse:collapse;  }   td.simple{  border:1px solid black; border-collapse:collapse;  text-align:center;  }  h1,h2,h3,h4,div.under{ 	background-color:#ffccee; 	color:#882266 !important; 	border-style:solid; 	border-color:#662266; }  h1{	font-size:1.5em; 	padding:6px 15px 4px 15px;  	margin-top:2px; 	margin-bottom:0px; 	border-width:0px 0px 1px 3px;	 }  div.under{ 	background-color:white; 	padding:2px 15px 2px 15px; 	border-width:1px 0px 1px 3px; 	text-align:right; 	margin-top:0px; 	margin-right:0px; 	margin-bottom:2px; 	font-size:80%; }  h2{	font-size:1.2em; 	padding:6px 10px 4px 10px;  	border-width:0px 0px 1px 3px; 	margin-top:5px; }  h3{	font-size:1.0em;	 	background-color:white; 	padding:2px 10px 2px 10px; 	border-width:0px 0px 1px 3px; 	width:60%; }	  span.r{ 	float:right; 	text-align:center; }  div.under a{ 	text-decoration:none; }  td.sp{ 	text-align:center; 	font-size:80%; 	background-color:#ffeeee; 	width:468px; }  div.update{ 	text-align:right; 	font-size:90%; 	line-height:1.2em; }  .l {text-align:left;} .c {text-align:center;font-size:0.9em;} .r {text-align:right;}  .add {color:#000066;} .add2 {color:#004400;} .red {background-color:#ffdddd;} .red2 {background-color:#ffeeee;} .blue {background-color:#ddddff;} .green {background-color:#ddffdd;} .yellow {background-color:#ffffdd;} .white {background-color:#ffffff;} .gray {background-color:#dddddd;} --> </style>   <title> すごろく場「よろず屋」到達確率＠オラクルベリー　ドラクエ5　PS2版（DS版）</title> </head> <body class="sub"> <div class="frame1"> <h1>すごろく場「よろず屋」到達確率＠オラクルベリー　ドラクエ5　PS2版（DS版）<a name="top"></a></h1> <div class="under">研究・執筆 ： <a href="index.html">右弐</a>　　/　　作成 ： 2011.10.23　　/　　最終更新 ： 2011.11.14</div> <table width="100%" class="none"> <col><col width="20"><col> <tr> <td valign="middle"> 　<a href="../diary/diary.html">▲　日記へ戻る</a><br> 　<a href="../diary/dq5diary.html">▲　ドラクエ5日記へ戻る</a><br> 　<a href="../index.html">▲　メインページへ戻る</a><br> <td valign="middle" class="sp"> スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> <!--ここから本文-->  <h2><a name="1" href="#1">はじめに</a></h2> <p> このページは、オラクルベリーのカジノ地下にある「すごろく場」で、「よろず屋」のマスに止まれる確率を計算したものです。<br> この「よろず屋」では、（ばくだんいし）（ファイトいっぱつ）という、通常このタイミングでは手に入らないアイテムが購入可能であり、この確率は、やり込みの戦略に影響を与えます。なお、計算過程の説明も後半に付記しています。ドラクエに関係ない、単なるすごろくの計算手法としても参考になるかもしれません。<br> <span class="add">追記：2011.10.24　「ふりだしに戻る」を利用するリカバリーに関する記述を追加しました。</span><br> <span class="add2">追記：2011.10.28　「ふりだしに戻る」を利用する方針での厳密計算、「？」を利用する方針での記述を追加しました。</span> </p> <h2><a name="2" href="#2">まとめ</a></h3> <div style="float:right;padding:2px 10px 3px 20px;"> <img src="sugo04.png" width="225" height="381"> <div class="c">図1：オラクルベリーのすごろく場マップ</div> </div> <h3>目的</h3> <p>																 	（すごろくけん）の所持数に応じた、「よろず屋」に到達できる確率を算出する。						<br>										 	ただし、この所持数には、「すごろく場」のタンスのものは含まない。すごろく挑戦前に所持している数である。 </p> <h3>仮定</h3> <p> ・サイコロの出る目は、1～6が等確率として計算。<br> ・途中の敵出現で全滅する確率は0として計算。<br> <span class="add2"> ・途中でＧがなくなって失敗となる確率は0として計算。<br> ・「？」に止まった時に「ふりだしに戻る」の効果が出る確率は、1/8として計算。<br> ※この1/8は、適当な値であるが、「？」は狙わない方針が前提のため、結論に示した確率には影響を与えない。<br> 詳しくは後述されています。</span><br> </p> <h3>結論</h3> <p> 「ふりだしに戻る」と「？」を狙わず、スタートから直接「よろず屋」を狙う方針で挑戦を繰り返す場合は次のようになる。 </p> <div class="c">表1：「よろず屋」への到達率　（スタートから直接「よろず屋」を狙う方針の場合）</div> <table class="simple" align="center"> <tr><td>すごろくけん所持数　(n)<td>1<td>2<td>3<td>4<td>5<td>6<td>7<td>8<td>9<td>10 </tr> <tr class="green"><td> よろず屋到達率　(Ptotal)<td>0.289 <td>0.487 <td>0.626 <td>0.725 <td>0.797 <td>0.849 <td>0.887 <td>0.915 <td>0.936 <td>0.952  </tr> <tr><td> すごろく場内の券回収なし前提<td>0.242 <td>0.426 <td>0.565 <td>0.670 <td>0.750 <td>0.811 <td>0.856 <td>0.891 <td>0.918 <td>0.938  </tr> </table> <p></p> <h3>すごろく挑戦1回ごとの確率　　（2011.10.24、28　追記）</h3> <p> ■挑戦1回ごとの「よろず屋」への到達率は、方針により異なり、次のようになる。<br> <span class="blue">α = 0.242158922</span>　　　スタートから直接のみ狙う<br> <span class="red">σ = 0.252706137</span>　　　「ふりだしに戻る」も狙う　　　（0.010547215　の確率向上）<br> Σ = 0.2585　　　　　　「ふりだしに戻る」「？」ともに狙う　　　（0.0058　の確率向上）　[推定確率1/8を使用して計算]<br> </p> <p> ■サイコロを振った回数ごとの「よろず屋」到達率は次のようになる。 </p> <center> <table class="none"> <tr> <td valign="top">  <div class="c">表2：サイコロ回数と到達率（スタートから直接のみ狙う）</div> <table class="simple"> <tr><td>サイコロ<br>回数(n)<td>確率<br>n 回目でちょうど<br>「よろず屋」に到達 <td>確率<br>n 回目<strong>までに</strong><br> 「よろず屋」に到達 <tr><td>	1	<td>	0 	<td>	0  <tr><td>	2	<td>	0.138888889 	<td>	0.138888889  <tr><td>	3	<td>	0.083333333 	<td>	0.222222222  <tr><td>	4	<td>	0.017746914 	<td>	0.239969136  <tr><td>	5	<td>	0.002057613 	<td>	0.242026749  <tr><td>	6	<td>	0.000128601 	<td>	0.242155350  <tr><td>	7	<td>	0.000003572 	<td class="blue">	0.242158922  <tr><td>	8以降	<td>	0 	<td>同上  </table> <td width="10px"> <td valign="top"> <div class="c">表3：サイコロ回数と到達率（「ふりだしに戻る」も狙う）</div> <table class="simple"> <tr><td>サイコロ<br>回数(n)<td>確率<br>n 回目でちょうど<br>「よろず屋」に到達 <td>確率<br>n 回目<strong>までに</strong><br> 「よろず屋」に到達 <tr><td>	1	<td>	0 	<td>	0  <tr><td>	2	<td>	0.138888889 	<td>	0.138888889  <tr><td>	3	<td>	0.083333333 	<td>	0.222222222  <tr><td>	4	<td>	0.017746914 	<td>	0.239969136  <tr><td>	5	<td>	0.005272634 	<td>	0.245241770  <tr><td>	6	<td>	0.004093793 	<td>	0.249335562  <tr><td>	7	<td>	0.002136203 	<td>	0.251471765  <tr><td>	8	<td>	0.000741836 	<td>	0.252213601  <tr><td>	9	<td>	0.000275162 	<td>	0.252488763  <tr><td>	10	<td>	0.000138226 	<td>	0.252626989  <tr><td>	11	<td>	0.000060028 	<td>	0.252687017  <tr><td>	12	<td>	0.000016161 	<td>	0.252703178  <tr><td>	13	<td>	0.000002707 	<td>	0.252705885  <tr><td>	14	<td>	0.000000248 	<td>	0.252706133  <tr><td>	15	<td>	0.000000004 	<td class="red">	0.252706137  </table> </tr> </table> </center> <p> ■以下は、挑戦1回ごとの各事象の確率である。（α、σ、Σについても再掲）<br> α = 0.242158922　　スタートから直接、「よろず屋」に到達する確率　　<br> β = 0.231374314　　スタートから直接、（すごろくけん）のタンスに到達する確率<br> γ = 0.041863736　　スタートから直接、「ふりだしに戻る」に到達する確率<br> δ = 0.21563(+0.0001程度の誤差)　　スタートから直接、「？」に到達する確率[近似計算]<br> ε = 0.02710 = δ×(1/8)　　スタートから直接、「？」に到達し、スタートに戻る確率[推定確率1/8を使用]<br> <br> σ = 0.252706137　　「ふりだしに戻る」も狙う方針で、「よろず屋」に到達する確率<br> Σ = 0.2585　　　　　「ふりだしに戻る」「？」をともに狙う方針で、「よろず屋」に到達する確率[推定確率1/8を使用]<br>  <br> 　　※スタートから直接、とは、「ふりだしに戻る」「？」を一度も経由しないことを意味する。<br> 　　※「ふりだしに戻る」を狙うのは、直進すると「よろず屋」を通り過ぎるサイコロの目が出た場合のみとする。<br> 　　※「？」を狙うのは、「よろず屋」または「ふりだしに戻る」を通り過ぎた場合のみとする。</span> </p>  <h3>補足</h3> <p> ■「すごろく場内の券回収なし前提」の確率　<br> <span class="add2">結局、「すごろくへの挑戦回数」と「よろず屋への到達率」の関係を表しています。 </span> <br> また、次のような場合にも使える数値です。<br> （すごろくけん）を5枚所持して挑戦<br> →すごろく場内のタンスにある（すごろくけん）を回収できて合計6回挑戦したがクリアできなかった<br> →本来回収する予定のなかった、宿屋2Fと防具屋2Fのものを<b>2枚</b>回収して再挑戦する<br> →この場合「すごろく場内の券回収なし前提」にあてはまるので、この状態からの突破率は0.426<br> 挑戦1回ごとに時々刻々と変わる「この時点からの突破率」を把握する際にも使えます。 </p> <p> ■「ふりだしに戻る」「？」を期待したリカバリー について　　（2011.10.24、28追記）<br> 「ふりだしに戻る」は、スタートから12マス目にあります。5マス目の「分岐点」を左折した場合のみ狙えます。<br> また、「よろず屋」は、スタートから8マス目にあります。5マス目の「分岐点」を直進した場合のみ狙えます。<br> 5マス目の分岐点の前で振ったサイコロの目が大きく、「よろず屋」を通り過ぎることが確定した場合には、左折して「ふりだしに戻る」に止まることを期待すれば、「よろず屋」に到達できる可能性が残ります。<br> また、「？」は、スタートから20マス目の合流点にあり、ここでは低確率で「ふりだしに戻る」効果が発動することがあり、「よろず屋」「ふりだしに戻る」を通り過ぎた場合に同様の効果が期待できます。<br> しかし、両リカバリー策ともに、戦闘の発生率が上がるため、タイム的な期待値は「やめる」を選んでやり直した場合よりも悪くなると筆者は考えております。このため、本ページの結論の項では<strong>「ふりだしに戻る」「？」を期待したリカバリーは狙わない前提での確率を計算しています。</strong><br> ただし、最後の1枚の（すごろくけん）を使った挑戦のような場合は、間違いなく有効に機能するリカバリー策になります。<br> なお、12マス目の「ふりだしに戻る」を狙うリカバリー策については、<a href="http://harapan.exblog.jp/16726916/">腹黒パンダさんのblog記事</a>に記述があり、筆者はそれを読んでこの分岐に気づきました。<br> </p>  <p> ■すごろくけん　所持数について<br> このすごろくに初めて挑めるストーリー進行度で回収できる（すごろくけん）は通常7個です。このうち、比較的タイムロスが少ないもののみ回収すると5個となります。（最初の船2、古代の遺跡1、ヘンリー1、カジノ地下1）<br> また、コロマージが宝として落とすことがあるようです。　<br> 　（参考：<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757511841/uniright2-22" target="_blank">ドラゴンクエストV 天空の花嫁公式ガイドブック上下巻プレイステーション2 版</a>） </p> <p> ■サイコロを振れる回数<br> 10回です。ただし、止まるマスにより、これが変動する可能性があります。 </p> <p>　<a href="#top">▲　このページのトップへ戻る</a></p>  																	 <h2><a name="3" href="#3">計算の流れ</a></h2> <h3>すごろくけん　の所持数だけ複数回挑戦した後の確率計算　　1,2,3,4</h3> <span style="float:right;padding-right:20px;"> <table class="simple" align="center"> <tr class="gray"><td><td>マスの属性<td>ID <tr><td rowspan="9">進<br>行<br>方<br>向<br>↓<td class="blue">スタート<td class="blue">0 <tr><td><td>1 <tr><td><td>2 <tr><td>3マス進む<td>3 <tr><td><td>4 <tr><td>分岐点<td>5 <tr><td><td>6 <tr><td class="red">すごろくけん<td class="red">7 <tr><td class="green">よろず屋<td class="green">8 </table> <div class="c">図2：直進マップ</div> </span> <p> 1．よろず屋に到達しない確率<br> 2．よろず屋に到達しない、かつ、すごろくけんを取れる確率<br> 3．すごろく場で取得した（すごろくけん）を使った最後の挑戦で、よろず屋に止まる確率<br> 　　これは2の確率に、1回分の到達率をかけて得られる。	<br> <br> 1と3の確率から、全到達率を算出できる<br> <br> 上述2の計算のために必要な量<br> 4．よろず屋に到達しない、かつ、すごろくけんを取れない、確率<br> 　　1から4を引いて、2を得る	<br> </p>  <h3>挑戦1回ごとの確率計算　　a,b,c</h3> <p> 1．のために必要な量<br> 　　a　よろず屋に到達しない確率	<br> 4．のために必要な量<br> 　　b　よろず屋に到達しない、かつ、すごろくけんを取れない、確率	<br> b のために必要な量	<br> 　　c　よろず屋に到達しない、かつ、すごろくけんを取れる　確率	<br> 　　aからc引いてbを得る	<br> <br> 　　※上記cは、マス目の順番から、すごろくけん取れたのち、よろず屋に止まれない、と解釈でき、計算が楽	<br> 　　　このため、bよりもcが求めやすそうと判断した。	<br> </p>  <h3>計算式</h3> <span style="float:right;">  <img src="sugo01.gif" width="328" height="440"> <div class="c">図3：確率計算の概念図</div> </span> <p> すごろくけん 所持数は n とする。<br> P 複数回施行後の確率<br> p 挑戦1回ごとの確率<br> それぞれ添え字を打つ。添え字は、上述に対応。<br> 全到達率はPtotal<br> </p> <p> 	Ptotal	=	(1-P1)+P3		<br>					 	P1	=	pa^n		<br> 	P2	=	P1-P4		<br> 	P3	=	P2×(1-pa)		<br> 	P4	=	pb^n		<br> <br> 	<span class="yellow">pa	=	0.757841078</span>　　　別途計算した値。過程は後述<br> 	pb	=	pa-pc		<br> 	<span class="yellow">pc	=	0.192811928</span>　　　別途計算した値。過程は後述<br> <br> 以上より、計算に必要な基礎パラメータは、2つである。<br> pa,pc　である。<br> その後の計算は、pbからP4を求めるところが考え方の中心。	<br>			 なお、上記を代入すると、結局paとpcのみの以下の式を得る。<br> <br> 　Ptotal	=	(1 - pa^n)＋{ pa^n - (pa-pc)^n }×(1 - pa)		<br> <br> </p>  <p>　<a href="#top">▲　このページのトップへ戻る</a></p>  <h2><a name="5" href="#5">基礎パラメータ pa pc の計算</a></h2> <h3>計算結果</h3> <p> 		pa	=	0.757841078 = 1-α	<br>  		pc	=	0.192811928 = β×(5/6)		<br> <br>					 参考パラメータ：<br> 	α = 0.242158922　　　よろず屋に止まれる確率<br> 	β = 0.231374314　　　すごろくけんに止まれる確率<br> </p> <h3>計算方針</h3> <p>			 ・行列　　　A　　オラクルベリーすごろく行列		<br> ・ベクトル　vk　　k回サイコロを振ったあとの、所在マス目の確率分布ベクトル		<br> として、Aによる、vkの時間発展を調べる方法で計算しました。<br> </p> <h3>計算方法の説明</h3> <p> たとえば、スタートから1回だけサイコロを振ったあと、どういう状態になっているでしょうか？	<br> サイコロは1～6の目が出るので、1/6の確率で、1～6マス目にいる・・・かと思いきや、オラクルベリーのすごろく場には、3マス目に「3マス進む」のマスが配置されているため、実際は次のようになります。	<br> </p> <div class="c">表4：サイコロ1回振った場合の確率分布</div> <table class="simple" align="center"> <tr class="gray"><td>マスの属性<td>ID<td>確率<br> 列ベクトル v1 <tr><td class="blue">スタート<td class="blue">0<td>0 <tr><td><td>1<td> 1/6 <tr><td><td>2<td> 1/6 <tr><td>3マス進む<td>3<td>0 <tr><td><td>4<td> 1/6 <tr><td>分岐点<td>5<td> 1/6 <tr><td><td>6<td> 2/6 <tr><td class="red">すごろくけん<td class="red">7<td>0 <tr><td class="green">よろず屋<td class="green">8<td>0 </table> <p> つまり、「1回サイコロを振った後の状態」は、右列の確率分布、すなわち「列ベクトル」ひとつで表されることになります。<br> 同様に、「k回サイコロを振った後の状態」の確率分布も、ひとつの列ベクトル　vk　で表すことができます。<br> <br> さて、次にこの「1回サイコロをふる」という操作を、<strong>行列との積をとる操作</strong>として考えてみます。<br> ためしに、v1=A v0　を満たす、行列Aを考えてみます。<br> </p>  <table class="none" align="center"> <col span="1" class="blue"> <col span="1" width="20px"> <col span="9" class="yellow"> <col span="1" width="20px"> <col span="1" class="blue">  <tr><td>v1<td>=<td colspan="9" style="text-align:center;">A<td><td>v0 <tr><td class="white"><br> <tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>1 <tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td> 2/6<td><td> 2/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 <tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0 </table>  <p> つまり、0番目のマスから移動する場合の、移動先の確率は、行列Aの0列目に書いておけばよいことになります。<br> <span class="green">同様にして、ｊ　番目のマスから、i　番目のマスに移動する確率を、 i 行 j 列成分に書いていけば、これがオラクルベリーのすごろく場において、確率分布の時間発展を決める行列Aになります。</span> （便宜上、行、列の開始を0からとしていることに注意）<br> 分母の1/6はすべてに共通するので、外に出しておくと、Aは次のように定義されます。<br> </p> <table class="none" align="center"> <col span="1"> <col span="9" class="yellow"> <tr> <td>　  <td>　 0 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 1 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 1 <td>　 1 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 0 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　 A　＝　1/6　×　 <td>　 1 <td>　 1 <td>　 1 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 1 <td>　 1 <td>　 1 <td>　 ※ <td>　 1 <td>　 0 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 2 <td>　 2 <td>　 2 <td>　 ※ <td>　 1 <td>　 1 <td>　 0 <td>　 0 <td>　 0 <tr> <td>　  <td>　 0 <td>　 1 <td>　 1 <td>　 ※ <td>　 1 <td>　 1 <td>　 1 <td>　 0 <td>　 0 <tr> <td>　  <td>　 0 <td>　 0 <td>　 1 <td>　 ※ <td>　 1 <td>　 1 <td>　 1 <td>　 1 <td>　 0 </table> <p class="green"> この行列を用いれば、　v2 = A v1　以下、<br> 　vk = A vk-1 　　により順次、確率分布ベクトルが定まります。結局、以下の式を得ます。<br> 　vk = A^k v0<br>  </p> <p> なお、3マス目には止まることがないので、対応する列の成分は定義できません。実際、何が入っていてもよいです。<br> また、この3マス目に対応する行も列もそもそも必要ないので、消して8×8行列にしてしまっても支障はないです。 </p> <p> 最後に確率計算です。<br> よろず屋のマスに止まる可能性があるのは、サイコロを2～7回振ったときなので、	<br> それぞれの回数サイコロを振ったあとの、確率分布ベクトルの和を取ればよいです。	<br> <br> 　vtotal = v2+v3+・・・+v7　の、一番下の成分が、よろず屋に「止まれる」確率αになります。<br> 　これを1から引いて、paを得ます。<br> <br> 実際の計算では、<br> 　vtotal = v2+v3+・・・+v7 = (A^2+A^3+・・・+A^7)v0　<br> 　なので、A^2+A^3+・・・+A^7　の左下スミの成分の和を取って計算しました。<br> <br> すごろくけんの回収率についても、ほぼ同様の計算で算出できます。	<br> 　「止まれる」確率βに、次のサイコロの目が1以外となる（＝よろず屋に止まれない）確率5/6をかけ、pcを得ます。<br> <br> なお、数値計算はすべてエクセルを用いて行っています。	<br> </p> <p>　<a href="#top">▲　このページのトップへ戻る</a></p>   <h2><a name="10" href="#10">付録　「ふりだしに戻る」、「？」を狙う方針での確率計算</a></h2> <h3>付録１　　γ＝「ふりだしに戻る」に到達する確率　　（2011.10.24追記）</h3> <p> γ = 0.041863736　　　スタートから直接、「ふりだしに戻る」に到達する確率<br> <br> 計算した結果は以上になりました。<br> これを踏まえ、「ふりだしに戻る」を期待したリカバリーを狙う方針の場合、γ×α = 0.0101 より、<br> 概算で<span class="red">『挑戦1回ごとの「よろず屋」到達率』は、 1.0%　程度、向上する</span>と考えられます。<br> <br> 以下は　γ　の計算過程です。<br> 合理的に判断すると、「ふりだしに戻る」に狙いを変更するのは、次の場合に限られます。<br> (i)　 4番目のマスに止まっているときに、サイコロの目が5か6である。<br> (ii)　5番目のマスに止まっているときに、サイコロの目が4か5か6である。<br> <br> これを踏まえ、『合理的な場合には、「ふりだしに戻る」も狙うすごろく行列』　B を定義すると、次のようになります。<br> </p> <table class="none" align="center" style="font-size:0.7em;"> <col span="1" class="white"> <col span="9" class="yellow"> <col span="4" class="blue"> <tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td>　 B　＝　1/6　×　 <td>2 　<td>　 2 　<td>　 2 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td rowspan="4" class="white"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 </table> <p> 確率分布ベクトルは、0～12マス目に対応する13成分となるので、13×13行列になります。<br> 9～12マス目にあたる青地の部分が、行列Aにつけ足された形です。9～12マス目は、左折したあとのマスが対応しています。<br> あとは同様の計算をして、γの値を得ています。もちろん、この行列からα、βも得られます。<br> </p> <p> なお、このγを用いて、リカバリーを狙う方針での突破率を厳密に計算するのは簡単ではありません。<br> <span class="red">　問題１　サイコロの回数が尽きている可能性　サイコロの回数は変動する<br> 　問題２　2回以上「ふりだしに戻る」を経て、つまり複数回ループして、「よろず屋」に到達する可能性もある</span><br> という事情があり、状況が一気に複雑化するためです。<br> </p> <p class="add2"> しかし、これら2つの問題を解消し、厳密な計算することも可能です。付録２、付録３で、その方法を用いて計算を行います。なお、以下で行う厳密な計算では、結局　γ　の値は使用しません。<br> ただし、上述した　「+1.0%の向上」は、かなり良い近似になっているので、実用上これで支障はありません。<br> </p>  <h3>付録２　複数回ループの計算方法　問題２の解消　（2011.10.28追記）</h3> <p> 付録１示した議論から、問題２を解消してさらに厳密に計算することが可能です。<br> 行列Bで、「ふりだしに戻る」への到達率を求めるために設定していた「12マス目」に対応する12行目の成分を、0行目に移すことで、そのままスタート地点に戻る確率を表現できます。<br> この行列 B ' を累乗計算し、よろず屋に到達する成分の和を取ればよいだけです。<br> </p> <table class="none" align="center" style="font-size:0.7em;"> <col span="1" class="white"> <col span="9" class="yellow"> <col span="4" class="blue"> <tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td class="red">　 1 　<td class="red">　 1 　<td class="red">　 1 　<td>　 0 <tr><td><td>1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td>　 B '　＝　1/6　×　 <td>2 　<td>　 2 　<td>　 2 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr><td><td>0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td rowspan="4" class="white"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 <tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 </table> <p> この計算方針でも、問題１は解消されておらず、サイコロの回数が尽きる可能性があります。<br> 振ることのできる回数は一定せず、10回～15回のいずれかになるので、何乗の成分まで和を取ればよいのかわかりません。<br> したがって、これだけでは挑戦1回あたりの「よろず屋」到達率は厳密には計算できません。この問題１の解消方法については、付録３に示し、そこで厳密な値を計算します。<br> </p> <p> ちなみにこの計算の結果も、十分実用的には耐えうる精度となります。<br> 　0.252626989　サイコロを10回振れるとした場合<br> 　0.252737877　サイコロを15回振れるとした場合<br> 付録１での近似計算「+1.0%の向上」が良い近似であったことがわかります。実用上は、スタートに戻るループは、1回まで考慮すれば十分ということが確かめられた結果となりました。<br> </p>   <!--■■■■■■■■■■■■■■■■■■■■■■■--> <h3>付録３　サイコロ回数変動の計算方法　問題１の解消（2011.10.28追記）</h3> <p> 前述のように、サイコロを振れる総回数を変動させるマスの存在により、行列の何乗までの和をとればよいのかがわからなくなります。<br> <br> これは行列を拡張することで対処することが可能です。これによりやっと、「ふりだしに戻るを狙う方針でのよろず屋到達率」　σ　の値が厳密に計算できます。なお、厳密という言葉の意味は、このページで用いている意味においてです。サイコロの目の等確率など仮定が崩れている場合はこの限りではありません。<br> <br> 結果は次のようになります。<br> <br> <span class="red">σ = 0.252706137　　　「ふりだしに戻る」も狙う方針での、「よろず屋」到達率</span><br> <br> 計算方法は単純です。「振れるサイコロの総回数」の分岐の数だけ、すごろく場そのものが存在すると考えます。<br> そして、「サイコロの回数+1回」とかなったら、「サイコロを11回振れる別のすごろく場」の同じマスにワープしたと考えればよいです。サイコロの振れる回数は、10回～15回になるので、6つのすごろく場を想定すれば済みます。<br> 必要ないマスに相当するベクトルの成分を消すと、必要な成分は11個です。これを6つのすごろく場の分考えて、11×6=66<br> <br> つまり、66次元ベクトルを使えば、「現在いるマス目」「サイコロを振れる回数」の両方を含めた確率分布が表せます。<br> このベクトルの時間発展を表すには、66×66行列があればよいです。任意の2状態間の遷移確率を定義して行列を作り、それを15乗すればよいです。<br> <br> この場合、「よろず屋」に止まる確率は、6つのすごろく場においてありえるので、6つの成分が対応します。<br> ただし、それぞれサイコロを振れる回数が異なるので、行列の10乗～15乗の適切なところまでの和を取る必要があります。<br> こうして得た6つのすごろく場での確率の総和を取れば、全体の到達率が厳密に計算できることになります。<br> </p> <p> なお、計算チェックとしては、以下の3つを確認しました。<br> ・近似計算との比較<br> ・すべてのすごろく場で15回までの和をとると、付録2の15回の値と同じになる<br> ・計算過程で、「15回のすごろく場に、サイコロを13回振った時点で入ってくる」のは5マス目のみで、81通りであった<br> </p> <p> 実際に計算に用いた行列を下に示します。画面の都合上、全体の1/4にあたる33×33のみ示しますが、この外側に繰り返しで広がっていきます。<br> 確率になおすには、値にすべて1/6をかけます。<br> 赤地のところが、サイコロ回数の遷移にあたる「別のすごろく場へのワープ」的な成分になっています。 </p>  <img src="sugo03.png" width="623" height="472" style="margin-left:10px;">  <!--■■■■■■■■■■■■■■■■■■■■■■■--> <h3>付録４　δ＝「？」に到達する確率　（2011.10.28追記）</h3> <p> 結果は次のようになります。<br> <br> <span class="yellow">δ = 0.21563(+0.0001程度の誤差)　　スタートから直接、「？」に到達する確率</span><br> <br> 計算過程は、例のごとく行列の累乗です。この計算に用いた行列は、この節の最後に示しますので、興味がある方はご覧ください。<br> </p> <p> スタートから20マス目にある「？」のマスに止まり、「ふりだしに戻る」効果が出れば、それでもリカバリーが可能なので、これを狙う方針でプレイすれば、「よろず屋」に止まれる確率はわずかに上がります。ここで求めた　δ　の値は、この計算に使えます。<br> この「？」のマスによるループも、実際は複数回起きた上で「よろず屋」に止まれることがあり得るのですが、それを考慮しても実用的な意味がほとんど生じないことは、付録１～３よりわかりますので、ここでは「付録１」で行った水準までの近似計算に留めたいと思います。厳密な計算については、付録５でアイデアのみ紹介します。<br> <br> 上記の計算結果は、サイコロ9回以内で「？」に到達する確率です、サイコロを10振れる、11回振れる可能性もあり、この場合はその分が加算されます。なお、12回振って「？」に止まる可能性がありますが、これは「よろず屋」に到達するには回数が足りないため意味がありません。<br> 参考までに、各サイコロ回数に対応する「？」到達率を以下に示します。<br> </p> <div class="c">表5：スタートから直接「？」に到達する確率</div> <table class="simple" align="center"> <tr><td>サイコロ回数(n)<td>確率<br>n 回目でちょうど<br>「？」に到達 <td>確率<br>n 回目<strong>までに</strong><br> 「？」に到達 <tr><td>3以下<td>0<td>0 <tr><td>4<td>0.032407407 <td>0.032407407  <tr><td>5<td>0.071630658 <td>0.104038066  <tr><td>6<td>0.062778635 <td>0.166816701  <tr><td>7<td>0.032853938 <td>0.199670639  <tr><td>8<td>0.012284355 <td>0.211954994  <tr><td>9<td>0.003678420 <td class="yellow">0.215633415  <tr><td>10<td>0.000967185 <td>0.216600600  <tr><td>11<td>0.000241945 <td>0.216842545  </table> <p> さて、ここで「21.5%って、ずいぶんの高確率じゃないか！」・・・と喜んではいけません。<br> <strong>これは単に「？」に止まる確率であって、スタートに戻るには、さらに「？」の複数の効果のうち、ふりだしに戻る効果が出なくてはなりません。</strong><br> </p> <p> この確率は調査していませんが、<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757512295/uniright2-22" target="_blank">ドラゴンクエストVのあるきかた</a>　によると、ここで出る効果は全部で8種類のようです。<br> そこで、これらの効果が等確率で起きると仮定し<strong>「ふりだしに戻る」効果が出る確率は 1/8 という仮定のもとに</strong>計算してみます。<br> 　ε = 0.02710 = δ×(1/8)　　推定確率1/8を使用<br> これが、「？」のマスを使ってスタートに戻れる確率になります。2.7%程度と、結構高い確率です。<br> <br> しかし、ここでもまだ喜んではいけません。スタートに戻った後に、サイコロを振れる回数が十分に残されているかわからないからです。残り回数と、「よろず屋」到達率については、「まとめ」にある表で述べたとおりです。<br> サイコロを振れる回数が不確定なので、適当に設定し、<br> 「？」に8回以内でまず到達、以降「よろず屋」に3回くらいで到達　という前提で計算すれば<br> 　0.005887 = 0.211954994 × (1/8) × 0.222222222　<br> <span class="red">0.58%程度、「よろず屋」に到達できる確率が向上する</span>ことがわかりました。<br> <br> この程度の議論で近似計算を終えたいと思いますが、実用の精度としては問題ないでしょう。これ以上、計算上で厳密さを求めるよりも、上で使った「推定確率1/8」を精度の良いものに取り換えるための調査の方がはるかに重要そうです。<br> ただ、さらに厳密な計算手法が気になる方には、付録５の記述が参考になるかもしれません。<br>  <br> 最後に、δを計算するために用いた行列を画像ファイルとして添付しておきます。<br> </p> <img src="sugo02.png" width="709" height="522" style="margin-left:10px;">   <h3>付録５　すべてを厳密に計算するには　（2011.10.28追記）</h3> <p> 付録２、付録３に示したように、複数回ループも、サイコロ回数変動も、厳密に取り扱うことが可能です。したがって、すごろくのマス目とサイコロの回数が有限である限り、行列を拡張することで厳密に計算することが可能です。<br> ここでは、実際に計算は行いませんが、そのアイデアだけ紹介します。アイデアといっても、付録２、付録３で示したものとほぼ同様ですので、詳しくはそちらの記述も参照ください。<br> <br> もうこの際、ゴールまで含め、そして分岐まで含めて、すべてのマス41に対して確率分布を考えてしまいましょう。こうすると、「よろず屋」だけでなく、「ゴール」に到達する確率など、好きな確率が求められます。<br> そして、サイコロの回数は、7～15回くらいになるはずですので、9つのすごろく場の分考えます。<br> 41×9=369　つまり、369次元ベクトルで確率分布を表し、369×369行列で、時間発展を表します。この行列を15乗して適切なところまで和を取ればよいだけです。<br> <br> なお、この節で議論した、7～15や、41×9などの値はざっと計算しているので実際とは異なるかもしれませんが、それが議論の本質に影響しないことは（ここまで議論についてきてくださった読者の方には）伝わると思い、考察を終えたいと思います。<br> また、本ページは、ここで示した方法で「計算できる」ということを紹介しているだけです。これよりもエレガントな方法があるような気がします。ご存じの方は、掲示板等で教えていただけると嬉しいです。 </p>  <p>　<a href="#top">▲　このページのトップへ戻る</a></p> <h2>おわりに</h2> <h3>感想など</h3> <p> 前半の確率計算は高校数学のような内容です。もっと良い計算方法があるかもしれません。複数回試行する際には、「少なくとも1回成功する」という事象よりも、「1回も成功しない」という事象のほうが純粋種のイメージなので確率も求めやすい、という方針のもと計算方法を考えています。<br> 行列計算は、ゲーム関連の活動には初めて使いました。エクセルが非常に便利です。<br> このページで紹介した手法は、この程度の単純なモデルであれば応用が効くかと思います。需要が少なそうですが（笑）<br> やり込み、その他への効率化のヒントになれば幸いです。　なお、計算ミス等あれば指摘いただけると助かります。	<br> 　2011.10.28　－　2011.10.23　　右弐 </p>  <h3>参考情報　</h3> <p> ■プレイヤー<br> ○　腹黒パンダ 様　<a href="http://harapan.exblog.jp/16726916/">該当のblog記事</a><br> 「ふりだしに戻る」を期待したリカバリー策について参考にさせていただきました。<br> <br> ■書籍<br> ○　<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757512295/uniright2-22" target="_blank">ドラゴンクエストVのあるきかた</a>（CB's PROJECT 　著）<br> 　オラクルベリーのすごろく場の「？」のマスで出る効果について参考にさせていただきました。<br> 　また、すごろく場における敵との遭遇率を参考にさせていただきました。<br> <br> ○　<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757511841/uniright2-22" target="_blank">ドラゴンクエストV 天空の花嫁公式ガイドブック上下巻プレイステーション2 版</a>（スクウェア・エニックス）<br> 　（すごろくけん）を落とす敵の情報を参考にさせていただきました。 </p>  <h3>関連情報</h3> <p> ○　<a href="http://www.amazon.co.jp/exec/obidos/ISBN/4924460893/uniright2-22" target="_blank">物理数学の直観的方法 第2版</a>（長沼 伸一郎　著）<br> 理工系の大学生には有名と思われる本です。第11章にて「作用マトリックス」という名前で上述の議論と似た行列の使い方の話が紹介され、初学者にもわかりやすい記述となっています。 </p> <hr>  <table width="100%" class="none"> <col><col width="10"><col> <tr><td valign="middle"> 　<a href="../diary/diary.html">▲　日記へ戻る</a><br> 　<a href="../index.html">▲　メインページへ戻る</a><br> 　感想・質問・注文・呪文はこちら⇒<a href="../../../guestbook/guestbook.html">掲示板</a> <td> <td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br> <iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe> </tr> </table> </div> <!--shinobi1--> <script type="text/javascript" src="http://x8.tudura.com/ufo/09228670n"></script> <noscript><a href="http://x8.tudura.com/bin/gg?09228670n" target="_blank"> <img src="http://x8.tudura.com/bin/ll?09228670n" border="0"></a><br> <span style="font-size:9px"><img style="margin:0;vertical-align:text-bottom;" src="http://img.shinobi.jp/tadaima/fj.gif" width="19" height="11"> <a href="http://watch.rentalurl.net" target="_blank">腕時計</a> <a href="http://sapporo_lease.rentalurl.net" target="_blank">札幌　賃貸</a></span></noscript> <!--shinobi2--> </body> </html>  
+<html><meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="keywords" content="ドラゴンクエスト,ドラクエ,DQ,攻略,短時間,快適,RTA,タイムアタック">
+<meta name="author" content="右弐(うに)">
+<meta name="description" content="ドラクエ5のすごろく場の研究です。オラクルベリーで「よろず屋」のマスに止まれる確率を計算しています。">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+
+<style type="text/css">
+<!--
+body.campus{
+	font-size:0.9em;
+	line-height:1.5em;
+ 	padding:10px;
+ 	background-color:#ffffff;
+}
+
+body.sub{
+/* padding:10px;*/
+	background-color:#ffddff;
+	font-size:0.9em;
+	line-height:1.5em;
+/*	text-align:center;*/
+}
+
+
+a{
+	text-decoration:none;
+}
+a:hover{
+	color:#00aa44;
+	text-decoration:underline;
+}
+
+
+p{
+	margin:10px 10px 10px 10px;
+	padding:3px 5px 3px 5px;
+}
+
+ul li{
+	margin:10px 10px 10px 5px;
+	padding:3px 5px 3px 5px;
+}
+
+pre{font-size:100%;
+	padding:0px 15px 0px 15px;
+}
+
+
+div.frame1{
+	text-align:left; 
+	width:760px;
+	margin: 0px auto 0px auto ;
+	padding: 4px 4px 4px 4px ;
+	background-color:white;
+	border:1px solid #ff66ff;
+}
+
+div.frame2{
+	text-align:left; 
+	background-color:white;
+	border:1px solid #8844ff; 
+	padding:5px 10px 5px 10px;
+	margin:5px 10px 5px 10px;
+}
+
+span.boss{float:right;background-color:#f8e5ff;padding:5px;margin:8px;}
+div.boss{background-color:#f8e5ff;padding:5px;margin:8px;}
+
+table.none{
+ border:none; border-collapse:collapse;
+ }
+
+table.tab{
+ border:none; border-collapse:collapse;
+ 
+ }
+
+table.simple{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+table.simple td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ padding:0px 5px 0px 5px;
+ }
+
+table.simpleleft{
+ border:1px solid black; border-collapse:collapse;
+ }
+
+tr.c td{
+	text-align:center !important;
+}
+
+table.simpleleft td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:left;
+ padding:0px 5px 0px 5px;
+ }
+
+table.data{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.data td,th{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+table.timetable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.9em;
+	line-height:1.1em;	
+}
+
+table.timetable td{
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.timetable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.itemtable{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.itemtable td{
+	padding:3px 0px 1px 1px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+table.itemtable th{
+	border:1px solid black;border-collapse:collapse;
+}
+
+
+table.gold{
+	background-color:white; border-collapse:collapse;
+	border:2px solid black;
+	font-size:0.8em;
+	line-height:1.1em;	
+}
+
+table.gold td{
+	padding:3px 2px 1px 2px;
+	border:1px solid black; border-collapse:collapse;
+	text-align:center;
+}
+
+td.b{color:#aa0000; font-size:1.0em; font-weight:normal; }
+
+
+tr.left td{
+ text-align:left;
+}
+
+tr.simple td{
+ border:1px solid black; border-collapse:collapse;
+ }
+ 
+td.simple{
+ border:1px solid black; border-collapse:collapse;
+ text-align:center;
+ }
+
+h1,h2,h3,h4,div.under{
+	background-color:#ffccee;
+	color:#882266 !important;
+	border-style:solid;
+	border-color:#662266;
+}
+
+h1{	font-size:1.5em;
+	padding:6px 15px 4px 15px; 
+	margin-top:2px;
+	margin-bottom:0px;
+	border-width:0px 0px 1px 3px;	
+}
+
+div.under{
+	background-color:white;
+	padding:2px 15px 2px 15px;
+	border-width:1px 0px 1px 3px;
+	text-align:right;
+	margin-top:0px;
+	margin-right:0px;
+	margin-bottom:2px;
+	font-size:80%;
+}
+
+h2{	font-size:1.2em;
+	padding:6px 10px 4px 10px; 
+	border-width:0px 0px 1px 3px;
+	margin-top:5px;
+}
+
+h3{	font-size:1.0em;	
+	background-color:white;
+	padding:2px 10px 2px 10px;
+	border-width:0px 0px 1px 3px;
+	width:60%;
+}	
+
+span.r{
+	float:right;
+	text-align:center;
+}
+
+div.under a{
+	text-decoration:none;
+}
+
+td.sp{
+	text-align:center;
+	font-size:80%;
+	background-color:#ffeeee;
+	width:468px;
+}
+
+div.update{
+	text-align:right;
+	font-size:90%;
+	line-height:1.2em;
+}
+
+.l {text-align:left;}
+.c {text-align:center;font-size:0.9em;}
+.r {text-align:right;}
+
+.add {color:#000066;}
+.add2 {color:#004400;}
+.red {background-color:#ffdddd;}
+.red2 {background-color:#ffeeee;}
+.blue {background-color:#ddddff;}
+.green {background-color:#ddffdd;}
+.yellow {background-color:#ffffdd;}
+.white {background-color:#ffffff;}
+.gray {background-color:#dddddd;}
+-->
+</style>
+
+
+<title>
+すごろく場「よろず屋」到達確率＠オラクルベリー　ドラクエ5　PS2版（DS版）</title>
+</head>
+<body class="sub">
+<div class="frame1">
+<h1>すごろく場「よろず屋」到達確率＠オラクルベリー　ドラクエ5　PS2版（DS版）<a name="top"></a></h1>
+<div class="under">研究・執筆 ： <a href="index.html">右弐</a>　　/　　作成 ： 2011.10.23　　/　　最終更新 ： 2011.11.14</div>
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+　<a href="../diary/diary.html">▲　日記へ戻る</a><br>
+　<a href="../diary/dq5diary.html">▲　ドラクエ5日記へ戻る</a><br>
+　<a href="../index.html">▲　メインページへ戻る</a><br>
+<td valign="middle" class="sp">
+スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+<!--ここから本文-->
+
+<h2><a name="1" href="#1">はじめに</a></h2>
+<p>
+このページは、オラクルベリーのカジノ地下にある「すごろく場」で、「よろず屋」のマスに止まれる確率を計算したものです。<br>
+この「よろず屋」では、（ばくだんいし）（ファイトいっぱつ）という、通常このタイミングでは手に入らないアイテムが購入可能であり、この確率は、やり込みの戦略に影響を与えます。なお、計算過程の説明も後半に付記しています。ドラクエに関係ない、単なるすごろくの計算手法としても参考になるかもしれません。<br>
+<span class="add">追記：2011.10.24　「ふりだしに戻る」を利用するリカバリーに関する記述を追加しました。</span><br>
+<span class="add2">追記：2011.10.28　「ふりだしに戻る」を利用する方針での厳密計算、「？」を利用する方針での記述を追加しました。</span>
+</p>
+<h2><a name="2" href="#2">まとめ</a></h3>
+<div style="float:right;padding:2px 10px 3px 20px;">
+<img src="sugo04.png" width="225" height="381">
+<div class="c">図1：オラクルベリーのすごろく場マップ</div>
+</div>
+<h3>目的</h3>
+<p>																
+	（すごろくけん）の所持数に応じた、「よろず屋」に到達できる確率を算出する。						<br>										
+	ただし、この所持数には、「すごろく場」のタンスのものは含まない。すごろく挑戦前に所持している数である。
+</p>
+<h3>仮定</h3>
+<p>
+・サイコロの出る目は、1～6が等確率として計算。<br>
+・途中の敵出現で全滅する確率は0として計算。<br>
+<span class="add2">
+・途中でＧがなくなって失敗となる確率は0として計算。<br>
+・「？」に止まった時に「ふりだしに戻る」の効果が出る確率は、1/8として計算。<br>
+※この1/8は、適当な値であるが、「？」は狙わない方針が前提のため、結論に示した確率には影響を与えない。<br>
+詳しくは後述されています。</span><br>
+</p>
+<h3>結論</h3>
+<p>
+「ふりだしに戻る」と「？」を狙わず、スタートから直接「よろず屋」を狙う方針で挑戦を繰り返す場合は次のようになる。
+</p>
+<div class="c">表1：「よろず屋」への到達率　（スタートから直接「よろず屋」を狙う方針の場合）</div>
+<table class="simple" align="center">
+<tr><td>すごろくけん所持数　(n)<td>1<td>2<td>3<td>4<td>5<td>6<td>7<td>8<td>9<td>10
+</tr>
+<tr class="green"><td>
+よろず屋到達率　(Ptotal)<td>0.289 <td>0.487 <td>0.626 <td>0.725 <td>0.797 <td>0.849 <td>0.887 <td>0.915 <td>0.936 <td>0.952 
+</tr>
+<tr><td>
+すごろく場内の券回収なし前提<td>0.242 <td>0.426 <td>0.565 <td>0.670 <td>0.750 <td>0.811 <td>0.856 <td>0.891 <td>0.918 <td>0.938 
+</tr>
+</table>
+<p></p>
+<h3>すごろく挑戦1回ごとの確率　　（2011.10.24、28　追記）</h3>
+<p>
+■挑戦1回ごとの「よろず屋」への到達率は、方針により異なり、次のようになる。<br>
+<span class="blue">α = 0.242158922</span>　　　スタートから直接のみ狙う<br>
+<span class="red">σ = 0.252706137</span>　　　「ふりだしに戻る」も狙う　　　（0.010547215　の確率向上）<br>
+Σ = 0.2585　　　　　　「ふりだしに戻る」「？」ともに狙う　　　（0.0058　の確率向上）　[推定確率1/8を使用して計算]<br>
+</p>
+<p>
+■サイコロを振った回数ごとの「よろず屋」到達率は次のようになる。
+</p>
+<center>
+<table class="none">
+<tr>
+<td valign="top">
+
+<div class="c">表2：サイコロ回数と到達率（スタートから直接のみ狙う）</div>
+<table class="simple">
+<tr><td>サイコロ<br>回数(n)<td>確率<br>n 回目でちょうど<br>「よろず屋」に到達
+<td>確率<br>n 回目<strong>までに</strong><br>
+「よろず屋」に到達
+<tr><td>	1	<td>	0 	<td>	0 
+<tr><td>	2	<td>	0.138888889 	<td>	0.138888889 
+<tr><td>	3	<td>	0.083333333 	<td>	0.222222222 
+<tr><td>	4	<td>	0.017746914 	<td>	0.239969136 
+<tr><td>	5	<td>	0.002057613 	<td>	0.242026749 
+<tr><td>	6	<td>	0.000128601 	<td>	0.242155350 
+<tr><td>	7	<td>	0.000003572 	<td class="blue">	0.242158922 
+<tr><td>	8以降	<td>	0 	<td>同上
+
+</table>
+<td width="10px">
+<td valign="top">
+<div class="c">表3：サイコロ回数と到達率（「ふりだしに戻る」も狙う）</div>
+<table class="simple">
+<tr><td>サイコロ<br>回数(n)<td>確率<br>n 回目でちょうど<br>「よろず屋」に到達
+<td>確率<br>n 回目<strong>までに</strong><br>
+「よろず屋」に到達
+<tr><td>	1	<td>	0 	<td>	0 
+<tr><td>	2	<td>	0.138888889 	<td>	0.138888889 
+<tr><td>	3	<td>	0.083333333 	<td>	0.222222222 
+<tr><td>	4	<td>	0.017746914 	<td>	0.239969136 
+<tr><td>	5	<td>	0.005272634 	<td>	0.245241770 
+<tr><td>	6	<td>	0.004093793 	<td>	0.249335562 
+<tr><td>	7	<td>	0.002136203 	<td>	0.251471765 
+<tr><td>	8	<td>	0.000741836 	<td>	0.252213601 
+<tr><td>	9	<td>	0.000275162 	<td>	0.252488763 
+<tr><td>	10	<td>	0.000138226 	<td>	0.252626989 
+<tr><td>	11	<td>	0.000060028 	<td>	0.252687017 
+<tr><td>	12	<td>	0.000016161 	<td>	0.252703178 
+<tr><td>	13	<td>	0.000002707 	<td>	0.252705885 
+<tr><td>	14	<td>	0.000000248 	<td>	0.252706133 
+<tr><td>	15	<td>	0.000000004 	<td class="red">	0.252706137 
+</table>
+</tr>
+</table>
+</center>
+<p>
+■以下は、挑戦1回ごとの各事象の確率である。（α、σ、Σについても再掲）<br>
+α = 0.242158922　　スタートから直接、「よろず屋」に到達する確率　　<br>
+β = 0.231374314　　スタートから直接、（すごろくけん）のタンスに到達する確率<br>
+γ = 0.041863736　　スタートから直接、「ふりだしに戻る」に到達する確率<br>
+δ = 0.21563(+0.0001程度の誤差)　　スタートから直接、「？」に到達する確率[近似計算]<br>
+ε = 0.02710 = δ×(1/8)　　スタートから直接、「？」に到達し、スタートに戻る確率[推定確率1/8を使用]<br>
+<br>
+σ = 0.252706137　　「ふりだしに戻る」も狙う方針で、「よろず屋」に到達する確率<br>
+Σ = 0.2585　　　　　「ふりだしに戻る」「？」をともに狙う方針で、「よろず屋」に到達する確率[推定確率1/8を使用]<br>
+
+<br>
+　　※スタートから直接、とは、「ふりだしに戻る」「？」を一度も経由しないことを意味する。<br>
+　　※「ふりだしに戻る」を狙うのは、直進すると「よろず屋」を通り過ぎるサイコロの目が出た場合のみとする。<br>
+　　※「？」を狙うのは、「よろず屋」または「ふりだしに戻る」を通り過ぎた場合のみとする。</span>
+</p>
+
+<h3>補足</h3>
+<p>
+■「すごろく場内の券回収なし前提」の確率　<br>
+<span class="add2">結局、「すごろくへの挑戦回数」と「よろず屋への到達率」の関係を表しています。
+</span>
+<br>
+また、次のような場合にも使える数値です。<br>
+（すごろくけん）を5枚所持して挑戦<br>
+→すごろく場内のタンスにある（すごろくけん）を回収できて合計6回挑戦したがクリアできなかった<br>
+→本来回収する予定のなかった、宿屋2Fと防具屋2Fのものを<b>2枚</b>回収して再挑戦する<br>
+→この場合「すごろく場内の券回収なし前提」にあてはまるので、この状態からの突破率は0.426<br>
+挑戦1回ごとに時々刻々と変わる「この時点からの突破率」を把握する際にも使えます。
+</p>
+<p>
+■「ふりだしに戻る」「？」を期待したリカバリー について　　（2011.10.24、28追記）<br>
+「ふりだしに戻る」は、スタートから12マス目にあります。5マス目の「分岐点」を左折した場合のみ狙えます。<br>
+また、「よろず屋」は、スタートから8マス目にあります。5マス目の「分岐点」を直進した場合のみ狙えます。<br>
+5マス目の分岐点の前で振ったサイコロの目が大きく、「よろず屋」を通り過ぎることが確定した場合には、左折して「ふりだしに戻る」に止まることを期待すれば、「よろず屋」に到達できる可能性が残ります。<br>
+また、「？」は、スタートから20マス目の合流点にあり、ここでは低確率で「ふりだしに戻る」効果が発動することがあり、「よろず屋」「ふりだしに戻る」を通り過ぎた場合に同様の効果が期待できます。<br>
+しかし、両リカバリー策ともに、戦闘の発生率が上がるため、タイム的な期待値は「やめる」を選んでやり直した場合よりも悪くなると筆者は考えております。このため、本ページの結論の項では<strong>「ふりだしに戻る」「？」を期待したリカバリーは狙わない前提での確率を計算しています。</strong><br>
+ただし、最後の1枚の（すごろくけん）を使った挑戦のような場合は、間違いなく有効に機能するリカバリー策になります。<br>
+なお、12マス目の「ふりだしに戻る」を狙うリカバリー策については、<a href="http://harapan.exblog.jp/16726916/">腹黒パンダさんのblog記事</a>に記述があり、筆者はそれを読んでこの分岐に気づきました。<br>
+</p>
+
+<p>
+■すごろくけん　所持数について<br>
+このすごろくに初めて挑めるストーリー進行度で回収できる（すごろくけん）は通常7個です。このうち、比較的タイムロスが少ないもののみ回収すると5個となります。（最初の船2、古代の遺跡1、ヘンリー1、カジノ地下1）<br>
+また、コロマージが宝として落とすことがあるようです。　<br>
+　（参考：<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757511841/uniright2-22" target="_blank">ドラゴンクエストV 天空の花嫁公式ガイドブック上下巻プレイステーション2 版</a>）
+</p>
+<p>
+■サイコロを振れる回数<br>
+10回です。ただし、止まるマスにより、これが変動する可能性があります。
+</p>
+<p>　<a href="#top">▲　このページのトップへ戻る</a></p>
+
+																	
+<h2><a name="3" href="#3">計算の流れ</a></h2>
+<h3>すごろくけん　の所持数だけ複数回挑戦した後の確率計算　　1,2,3,4</h3>
+<span style="float:right;padding-right:20px;">
+<table class="simple" align="center">
+<tr class="gray"><td><td>マスの属性<td>ID
+<tr><td rowspan="9">進<br>行<br>方<br>向<br>↓<td class="blue">スタート<td class="blue">0
+<tr><td><td>1
+<tr><td><td>2
+<tr><td>3マス進む<td>3
+<tr><td><td>4
+<tr><td>分岐点<td>5
+<tr><td><td>6
+<tr><td class="red">すごろくけん<td class="red">7
+<tr><td class="green">よろず屋<td class="green">8
+</table>
+<div class="c">図2：直進マップ</div>
+</span>
+<p>
+1．よろず屋に到達しない確率<br>
+2．よろず屋に到達しない、かつ、すごろくけんを取れる確率<br>
+3．すごろく場で取得した（すごろくけん）を使った最後の挑戦で、よろず屋に止まる確率<br>
+　　これは2の確率に、1回分の到達率をかけて得られる。	<br>
+<br>
+1と3の確率から、全到達率を算出できる<br>
+<br>
+上述2の計算のために必要な量<br>
+4．よろず屋に到達しない、かつ、すごろくけんを取れない、確率<br>
+　　1から4を引いて、2を得る	<br>
+</p>
+
+<h3>挑戦1回ごとの確率計算　　a,b,c</h3>
+<p>
+1．のために必要な量<br>
+　　a　よろず屋に到達しない確率	<br>
+4．のために必要な量<br>
+　　b　よろず屋に到達しない、かつ、すごろくけんを取れない、確率	<br>
+b のために必要な量	<br>
+　　c　よろず屋に到達しない、かつ、すごろくけんを取れる　確率	<br>
+　　aからc引いてbを得る	<br>
+<br>
+　　※上記cは、マス目の順番から、すごろくけん取れたのち、よろず屋に止まれない、と解釈でき、計算が楽	<br>
+　　　このため、bよりもcが求めやすそうと判断した。	<br>
+</p>
+
+<h3>計算式</h3>
+<span style="float:right;">
+
+<img src="sugo01.gif" width="328" height="440">
+<div class="c">図3：確率計算の概念図</div>
+</span>
+<p>
+すごろくけん 所持数は n とする。<br>
+P 複数回施行後の確率<br>
+p 挑戦1回ごとの確率<br>
+それぞれ添え字を打つ。添え字は、上述に対応。<br>
+全到達率はPtotal<br>
+</p>
+<p>
+	Ptotal	=	(1-P1)+P3		<br>					
+	P1	=	pa^n		<br>
+	P2	=	P1-P4		<br>
+	P3	=	P2×(1-pa)		<br>
+	P4	=	pb^n		<br>
+<br>
+	<span class="yellow">pa	=	0.757841078</span>　　　別途計算した値。過程は後述<br>
+	pb	=	pa-pc		<br>
+	<span class="yellow">pc	=	0.192811928</span>　　　別途計算した値。過程は後述<br>
+<br>
+以上より、計算に必要な基礎パラメータは、2つである。<br>
+pa,pc　である。<br>
+その後の計算は、pbからP4を求めるところが考え方の中心。	<br>			
+なお、上記を代入すると、結局paとpcのみの以下の式を得る。<br>
+<br>
+　Ptotal	=	(1 - pa^n)＋{ pa^n - (pa-pc)^n }×(1 - pa)		<br>
+<br>
+</p>
+
+<p>　<a href="#top">▲　このページのトップへ戻る</a></p>
+
+<h2><a name="5" href="#5">基礎パラメータ pa pc の計算</a></h2>
+<h3>計算結果</h3>
+<p>
+		pa	=	0.757841078 = 1-α	<br>
+
+		pc	=	0.192811928 = β×(5/6)		<br>
+<br>					
+参考パラメータ：<br>
+	α = 0.242158922　　　よろず屋に止まれる確率<br>
+	β = 0.231374314　　　すごろくけんに止まれる確率<br>
+</p>
+<h3>計算方針</h3>
+<p>			
+・行列　　　A　　オラクルベリーすごろく行列		<br>
+・ベクトル　vk　　k回サイコロを振ったあとの、所在マス目の確率分布ベクトル		<br>
+として、Aによる、vkの時間発展を調べる方法で計算しました。<br>
+</p>
+<h3>計算方法の説明</h3>
+<p>
+たとえば、スタートから1回だけサイコロを振ったあと、どういう状態になっているでしょうか？	<br>
+サイコロは1～6の目が出るので、1/6の確率で、1～6マス目にいる・・・かと思いきや、オラクルベリーのすごろく場には、3マス目に「3マス進む」のマスが配置されているため、実際は次のようになります。	<br>
+</p>
+<div class="c">表4：サイコロ1回振った場合の確率分布</div>
+<table class="simple" align="center">
+<tr class="gray"><td>マスの属性<td>ID<td>確率<br>
+列ベクトル v1
+<tr><td class="blue">スタート<td class="blue">0<td>0
+<tr><td><td>1<td> 1/6
+<tr><td><td>2<td> 1/6
+<tr><td>3マス進む<td>3<td>0
+<tr><td><td>4<td> 1/6
+<tr><td>分岐点<td>5<td> 1/6
+<tr><td><td>6<td> 2/6
+<tr><td class="red">すごろくけん<td class="red">7<td>0
+<tr><td class="green">よろず屋<td class="green">8<td>0
+</table>
+<p>
+つまり、「1回サイコロを振った後の状態」は、右列の確率分布、すなわち「列ベクトル」ひとつで表されることになります。<br>
+同様に、「k回サイコロを振った後の状態」の確率分布も、ひとつの列ベクトル　vk　で表すことができます。<br>
+<br>
+さて、次にこの「1回サイコロをふる」という操作を、<strong>行列との積をとる操作</strong>として考えてみます。<br>
+ためしに、v1=A v0　を満たす、行列Aを考えてみます。<br>
+</p>
+
+<table class="none" align="center">
+<col span="1" class="blue">
+<col span="1" width="20px">
+<col span="9" class="yellow">
+<col span="1" width="20px">
+<col span="1" class="blue">
+
+<tr><td>v1<td>=<td colspan="9" style="text-align:center;">A<td><td>v0
+<tr><td class="white"><br>
+<tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>1
+<tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td> 1/6<td><td> 1/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td> 2/6<td><td> 2/6<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+<tr><td>0<td><td>0<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td>？<td><td>0
+</table>
+
+<p>
+つまり、0番目のマスから移動する場合の、移動先の確率は、行列Aの0列目に書いておけばよいことになります。<br>
+<span class="green">同様にして、ｊ　番目のマスから、i　番目のマスに移動する確率を、 i 行 j 列成分に書いていけば、これがオラクルベリーのすごろく場において、確率分布の時間発展を決める行列Aになります。</span>
+（便宜上、行、列の開始を0からとしていることに注意）<br>
+分母の1/6はすべてに共通するので、外に出しておくと、Aは次のように定義されます。<br>
+</p>
+<table class="none" align="center">
+<col span="1">
+<col span="9" class="yellow">
+<tr> <td>　  <td>　 0 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 1 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 1 <td>　 1 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 0 <td>　 0 <td>　 0 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　 A　＝　1/6　×　 <td>　 1 <td>　 1 <td>　 1 <td>　 ※ <td>　 0 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 1 <td>　 1 <td>　 1 <td>　 ※ <td>　 1 <td>　 0 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 2 <td>　 2 <td>　 2 <td>　 ※ <td>　 1 <td>　 1 <td>　 0 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 0 <td>　 1 <td>　 1 <td>　 ※ <td>　 1 <td>　 1 <td>　 1 <td>　 0 <td>　 0
+<tr> <td>　  <td>　 0 <td>　 0 <td>　 1 <td>　 ※ <td>　 1 <td>　 1 <td>　 1 <td>　 1 <td>　 0
+</table>
+<p class="green">
+この行列を用いれば、　v2 = A v1　以下、<br>
+　vk = A vk-1 　　により順次、確率分布ベクトルが定まります。結局、以下の式を得ます。<br>
+　vk = A^k v0<br>
+
+</p>
+<p>
+なお、3マス目には止まることがないので、対応する列の成分は定義できません。実際、何が入っていてもよいです。<br>
+また、この3マス目に対応する行も列もそもそも必要ないので、消して8×8行列にしてしまっても支障はないです。
+</p>
+<p>
+最後に確率計算です。<br>
+よろず屋のマスに止まる可能性があるのは、サイコロを2～7回振ったときなので、	<br>
+それぞれの回数サイコロを振ったあとの、確率分布ベクトルの和を取ればよいです。	<br>
+<br>
+　vtotal = v2+v3+・・・+v7　の、一番下の成分が、よろず屋に「止まれる」確率αになります。<br>
+　これを1から引いて、paを得ます。<br>
+<br>
+実際の計算では、<br>
+　vtotal = v2+v3+・・・+v7 = (A^2+A^3+・・・+A^7)v0　<br>
+　なので、A^2+A^3+・・・+A^7　の左下スミの成分の和を取って計算しました。<br>
+<br>
+すごろくけんの回収率についても、ほぼ同様の計算で算出できます。	<br>
+　「止まれる」確率βに、次のサイコロの目が1以外となる（＝よろず屋に止まれない）確率5/6をかけ、pcを得ます。<br>
+<br>
+なお、数値計算はすべてエクセルを用いて行っています。	<br>
+</p>
+<p>　<a href="#top">▲　このページのトップへ戻る</a></p>
+
+
+<h2><a name="10" href="#10">付録　「ふりだしに戻る」、「？」を狙う方針での確率計算</a></h2>
+<h3>付録１　　γ＝「ふりだしに戻る」に到達する確率　　（2011.10.24追記）</h3>
+<p>
+γ = 0.041863736　　　スタートから直接、「ふりだしに戻る」に到達する確率<br>
+<br>
+計算した結果は以上になりました。<br>
+これを踏まえ、「ふりだしに戻る」を期待したリカバリーを狙う方針の場合、γ×α = 0.0101 より、<br>
+概算で<span class="red">『挑戦1回ごとの「よろず屋」到達率』は、 1.0%　程度、向上する</span>と考えられます。<br>
+<br>
+以下は　γ　の計算過程です。<br>
+合理的に判断すると、「ふりだしに戻る」に狙いを変更するのは、次の場合に限られます。<br>
+(i)　 4番目のマスに止まっているときに、サイコロの目が5か6である。<br>
+(ii)　5番目のマスに止まっているときに、サイコロの目が4か5か6である。<br>
+<br>
+これを踏まえ、『合理的な場合には、「ふりだしに戻る」も狙うすごろく行列』　B を定義すると、次のようになります。<br>
+</p>
+<table class="none" align="center" style="font-size:0.7em;">
+<col span="1" class="white">
+<col span="9" class="yellow">
+<col span="4" class="blue">
+<tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td>　 B　＝　1/6　×　 <td>2 　<td>　 2 　<td>　 2 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td rowspan="4" class="white"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0
+</table>
+<p>
+確率分布ベクトルは、0～12マス目に対応する13成分となるので、13×13行列になります。<br>
+9～12マス目にあたる青地の部分が、行列Aにつけ足された形です。9～12マス目は、左折したあとのマスが対応しています。<br>
+あとは同様の計算をして、γの値を得ています。もちろん、この行列からα、βも得られます。<br>
+</p>
+<p>
+なお、このγを用いて、リカバリーを狙う方針での突破率を厳密に計算するのは簡単ではありません。<br>
+<span class="red">　問題１　サイコロの回数が尽きている可能性　サイコロの回数は変動する<br>
+　問題２　2回以上「ふりだしに戻る」を経て、つまり複数回ループして、「よろず屋」に到達する可能性もある</span><br>
+という事情があり、状況が一気に複雑化するためです。<br>
+</p>
+<p class="add2">
+しかし、これら2つの問題を解消し、厳密な計算することも可能です。付録２、付録３で、その方法を用いて計算を行います。なお、以下で行う厳密な計算では、結局　γ　の値は使用しません。<br>
+ただし、上述した　「+1.0%の向上」は、かなり良い近似になっているので、実用上これで支障はありません。<br>
+</p>
+
+<h3>付録２　複数回ループの計算方法　問題２の解消　（2011.10.28追記）</h3>
+<p>
+付録１示した議論から、問題２を解消してさらに厳密に計算することが可能です。<br>
+行列Bで、「ふりだしに戻る」への到達率を求めるために設定していた「12マス目」に対応する12行目の成分を、0行目に移すことで、そのままスタート地点に戻る確率を表現できます。<br>
+この行列 B ' を累乗計算し、よろず屋に到達する成分の和を取ればよいだけです。<br>
+</p>
+<table class="none" align="center" style="font-size:0.7em;">
+<col span="1" class="white">
+<col span="9" class="yellow">
+<col span="4" class="blue">
+<tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td class="red">　 1 　<td class="red">　 1 　<td class="red">　 1 　<td>　 0
+<tr><td><td>1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td>　 B '　＝　1/6　×　 <td>2 　<td>　 2 　<td>　 2 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr><td><td>0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td rowspan="4" class="white"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 0 　<td>　 0
+<tr class="blue"><td>0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 0 　<td>　 1 　<td>　 1 　<td>　 1 　<td>　 0
+</table>
+<p>
+この計算方針でも、問題１は解消されておらず、サイコロの回数が尽きる可能性があります。<br>
+振ることのできる回数は一定せず、10回～15回のいずれかになるので、何乗の成分まで和を取ればよいのかわかりません。<br>
+したがって、これだけでは挑戦1回あたりの「よろず屋」到達率は厳密には計算できません。この問題１の解消方法については、付録３に示し、そこで厳密な値を計算します。<br>
+</p>
+<p>
+ちなみにこの計算の結果も、十分実用的には耐えうる精度となります。<br>
+　0.252626989　サイコロを10回振れるとした場合<br>
+　0.252737877　サイコロを15回振れるとした場合<br>
+付録１での近似計算「+1.0%の向上」が良い近似であったことがわかります。実用上は、スタートに戻るループは、1回まで考慮すれば十分ということが確かめられた結果となりました。<br>
+</p>
+
+
+<!--■■■■■■■■■■■■■■■■■■■■■■■-->
+<h3>付録３　サイコロ回数変動の計算方法　問題１の解消（2011.10.28追記）</h3>
+<p>
+前述のように、サイコロを振れる総回数を変動させるマスの存在により、行列の何乗までの和をとればよいのかがわからなくなります。<br>
+<br>
+これは行列を拡張することで対処することが可能です。これによりやっと、「ふりだしに戻るを狙う方針でのよろず屋到達率」　σ　の値が厳密に計算できます。なお、厳密という言葉の意味は、このページで用いている意味においてです。サイコロの目の等確率など仮定が崩れている場合はこの限りではありません。<br>
+<br>
+結果は次のようになります。<br>
+<br>
+<span class="red">σ = 0.252706137　　　「ふりだしに戻る」も狙う方針での、「よろず屋」到達率</span><br>
+<br>
+計算方法は単純です。「振れるサイコロの総回数」の分岐の数だけ、すごろく場そのものが存在すると考えます。<br>
+そして、「サイコロの回数+1回」とかなったら、「サイコロを11回振れる別のすごろく場」の同じマスにワープしたと考えればよいです。サイコロの振れる回数は、10回～15回になるので、6つのすごろく場を想定すれば済みます。<br>
+必要ないマスに相当するベクトルの成分を消すと、必要な成分は11個です。これを6つのすごろく場の分考えて、11×6=66<br>
+<br>
+つまり、66次元ベクトルを使えば、「現在いるマス目」「サイコロを振れる回数」の両方を含めた確率分布が表せます。<br>
+このベクトルの時間発展を表すには、66×66行列があればよいです。任意の2状態間の遷移確率を定義して行列を作り、それを15乗すればよいです。<br>
+<br>
+この場合、「よろず屋」に止まる確率は、6つのすごろく場においてありえるので、6つの成分が対応します。<br>
+ただし、それぞれサイコロを振れる回数が異なるので、行列の10乗～15乗の適切なところまでの和を取る必要があります。<br>
+こうして得た6つのすごろく場での確率の総和を取れば、全体の到達率が厳密に計算できることになります。<br>
+</p>
+<p>
+なお、計算チェックとしては、以下の3つを確認しました。<br>
+・近似計算との比較<br>
+・すべてのすごろく場で15回までの和をとると、付録2の15回の値と同じになる<br>
+・計算過程で、「15回のすごろく場に、サイコロを13回振った時点で入ってくる」のは5マス目のみで、81通りであった<br>
+</p>
+<p>
+実際に計算に用いた行列を下に示します。画面の都合上、全体の1/4にあたる33×33のみ示しますが、この外側に繰り返しで広がっていきます。<br>
+確率になおすには、値にすべて1/6をかけます。<br>
+赤地のところが、サイコロ回数の遷移にあたる「別のすごろく場へのワープ」的な成分になっています。
+</p>
+
+<img src="sugo03.png" width="623" height="472" style="margin-left:10px;">
+
+<!--■■■■■■■■■■■■■■■■■■■■■■■-->
+<h3>付録４　δ＝「？」に到達する確率　（2011.10.28追記）</h3>
+<p>
+結果は次のようになります。<br>
+<br>
+<span class="yellow">δ = 0.21563(+0.0001程度の誤差)　　スタートから直接、「？」に到達する確率</span><br>
+<br>
+計算過程は、例のごとく行列の累乗です。この計算に用いた行列は、この節の最後に示しますので、興味がある方はご覧ください。<br>
+</p>
+<p>
+スタートから20マス目にある「？」のマスに止まり、「ふりだしに戻る」効果が出れば、それでもリカバリーが可能なので、これを狙う方針でプレイすれば、「よろず屋」に止まれる確率はわずかに上がります。ここで求めた　δ　の値は、この計算に使えます。<br>
+この「？」のマスによるループも、実際は複数回起きた上で「よろず屋」に止まれることがあり得るのですが、それを考慮しても実用的な意味がほとんど生じないことは、付録１～３よりわかりますので、ここでは「付録１」で行った水準までの近似計算に留めたいと思います。厳密な計算については、付録５でアイデアのみ紹介します。<br>
+<br>
+上記の計算結果は、サイコロ9回以内で「？」に到達する確率です、サイコロを10振れる、11回振れる可能性もあり、この場合はその分が加算されます。なお、12回振って「？」に止まる可能性がありますが、これは「よろず屋」に到達するには回数が足りないため意味がありません。<br>
+参考までに、各サイコロ回数に対応する「？」到達率を以下に示します。<br>
+</p>
+<div class="c">表5：スタートから直接「？」に到達する確率</div>
+<table class="simple" align="center">
+<tr><td>サイコロ回数(n)<td>確率<br>n 回目でちょうど<br>「？」に到達
+<td>確率<br>n 回目<strong>までに</strong><br>
+「？」に到達
+<tr><td>3以下<td>0<td>0
+<tr><td>4<td>0.032407407 <td>0.032407407 
+<tr><td>5<td>0.071630658 <td>0.104038066 
+<tr><td>6<td>0.062778635 <td>0.166816701 
+<tr><td>7<td>0.032853938 <td>0.199670639 
+<tr><td>8<td>0.012284355 <td>0.211954994 
+<tr><td>9<td>0.003678420 <td class="yellow">0.215633415 
+<tr><td>10<td>0.000967185 <td>0.216600600 
+<tr><td>11<td>0.000241945 <td>0.216842545 
+</table>
+<p>
+さて、ここで「21.5%って、ずいぶんの高確率じゃないか！」・・・と喜んではいけません。<br>
+<strong>これは単に「？」に止まる確率であって、スタートに戻るには、さらに「？」の複数の効果のうち、ふりだしに戻る効果が出なくてはなりません。</strong><br>
+</p>
+<p>
+この確率は調査していませんが、<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757512295/uniright2-22" target="_blank">ドラゴンクエストVのあるきかた</a>　によると、ここで出る効果は全部で8種類のようです。<br>
+そこで、これらの効果が等確率で起きると仮定し<strong>「ふりだしに戻る」効果が出る確率は 1/8 という仮定のもとに</strong>計算してみます。<br>
+　ε = 0.02710 = δ×(1/8)　　推定確率1/8を使用<br>
+これが、「？」のマスを使ってスタートに戻れる確率になります。2.7%程度と、結構高い確率です。<br>
+<br>
+しかし、ここでもまだ喜んではいけません。スタートに戻った後に、サイコロを振れる回数が十分に残されているかわからないからです。残り回数と、「よろず屋」到達率については、「まとめ」にある表で述べたとおりです。<br>
+サイコロを振れる回数が不確定なので、適当に設定し、<br>
+「？」に8回以内でまず到達、以降「よろず屋」に3回くらいで到達　という前提で計算すれば<br>
+　0.005887 = 0.211954994 × (1/8) × 0.222222222　<br>
+<span class="red">0.58%程度、「よろず屋」に到達できる確率が向上する</span>ことがわかりました。<br>
+<br>
+この程度の議論で近似計算を終えたいと思いますが、実用の精度としては問題ないでしょう。これ以上、計算上で厳密さを求めるよりも、上で使った「推定確率1/8」を精度の良いものに取り換えるための調査の方がはるかに重要そうです。<br>
+ただ、さらに厳密な計算手法が気になる方には、付録５の記述が参考になるかもしれません。<br>
+
+<br>
+最後に、δを計算するために用いた行列を画像ファイルとして添付しておきます。<br>
+</p>
+<img src="sugo02.png" width="709" height="522" style="margin-left:10px;">
+
+
+<h3>付録５　すべてを厳密に計算するには　（2011.10.28追記）</h3>
+<p>
+付録２、付録３に示したように、複数回ループも、サイコロ回数変動も、厳密に取り扱うことが可能です。したがって、すごろくのマス目とサイコロの回数が有限である限り、行列を拡張することで厳密に計算することが可能です。<br>
+ここでは、実際に計算は行いませんが、そのアイデアだけ紹介します。アイデアといっても、付録２、付録３で示したものとほぼ同様ですので、詳しくはそちらの記述も参照ください。<br>
+<br>
+もうこの際、ゴールまで含め、そして分岐まで含めて、すべてのマス41に対して確率分布を考えてしまいましょう。こうすると、「よろず屋」だけでなく、「ゴール」に到達する確率など、好きな確率が求められます。<br>
+そして、サイコロの回数は、7～15回くらいになるはずですので、9つのすごろく場の分考えます。<br>
+41×9=369　つまり、369次元ベクトルで確率分布を表し、369×369行列で、時間発展を表します。この行列を15乗して適切なところまで和を取ればよいだけです。<br>
+<br>
+なお、この節で議論した、7～15や、41×9などの値はざっと計算しているので実際とは異なるかもしれませんが、それが議論の本質に影響しないことは（ここまで議論についてきてくださった読者の方には）伝わると思い、考察を終えたいと思います。<br>
+また、本ページは、ここで示した方法で「計算できる」ということを紹介しているだけです。これよりもエレガントな方法があるような気がします。ご存じの方は、掲示板等で教えていただけると嬉しいです。
+</p>
+
+<p>　<a href="#top">▲　このページのトップへ戻る</a></p>
+<h2>おわりに</h2>
+<h3>感想など</h3>
+<p>
+前半の確率計算は高校数学のような内容です。もっと良い計算方法があるかもしれません。複数回試行する際には、「少なくとも1回成功する」という事象よりも、「1回も成功しない」という事象のほうが純粋種のイメージなので確率も求めやすい、という方針のもと計算方法を考えています。<br>
+行列計算は、ゲーム関連の活動には初めて使いました。エクセルが非常に便利です。<br>
+このページで紹介した手法は、この程度の単純なモデルであれば応用が効くかと思います。需要が少なそうですが（笑）<br>
+やり込み、その他への効率化のヒントになれば幸いです。　なお、計算ミス等あれば指摘いただけると助かります。	<br>
+　2011.10.28　－　2011.10.23　　右弐
+</p>
+
+<h3>参考情報　</h3>
+<p>
+■プレイヤー<br>
+○　腹黒パンダ 様　<a href="http://harapan.exblog.jp/16726916/">該当のblog記事</a><br>
+「ふりだしに戻る」を期待したリカバリー策について参考にさせていただきました。<br>
+<br>
+■書籍<br>
+○　<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757512295/uniright2-22" target="_blank">ドラゴンクエストVのあるきかた</a>（CB's PROJECT 　著）<br>
+　オラクルベリーのすごろく場の「？」のマスで出る効果について参考にさせていただきました。<br>
+　また、すごろく場における敵との遭遇率を参考にさせていただきました。<br>
+<br>
+○　<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4757511841/uniright2-22" target="_blank">ドラゴンクエストV 天空の花嫁公式ガイドブック上下巻プレイステーション2 版</a>（スクウェア・エニックス）<br>
+　（すごろくけん）を落とす敵の情報を参考にさせていただきました。
+</p>
+
+<h3>関連情報</h3>
+<p>
+○　<a href="http://www.amazon.co.jp/exec/obidos/ISBN/4924460893/uniright2-22" target="_blank">物理数学の直観的方法 第2版</a>（長沼 伸一郎　著）<br>
+理工系の大学生には有名と思われる本です。第11章にて「作用マトリックス」という名前で上述の議論と似た行列の使い方の話が紹介され、初学者にもわかりやすい記述となっています。
+</p>
+<hr>
+
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="../diary/diary.html">▲　日記へ戻る</a><br>
+　<a href="../index.html">▲　メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../../../guestbook/guestbook.html">掲示板</a>
+<td>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=bn1&mode=books-jp&browse=466290&fc1=000000&lt1=_blank&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+</div>
+
+</body>
+</html>
+
+
