@@ -1,1 +1,164 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> <html lang="ja"> <head> <meta http-equiv="Content-Script-Type" content="text/javascript"> <meta http-equiv="Content-Style-Type" content="text/css"> <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS"> <meta name="keywords" content="ドラゴンクエスト,ドラクエ,DQ,攻略,短時間,快適,RTA,DS,PS,PS2,タイムアタック,ステータス"> <meta name="author" content="右弐(うに)"> <meta name="description" content="短時間で快適にクリアするための情報サイトです。ドラゴンクエスト,ドラクエ,DQ,レベル,lv,成長,強さ,アップ,タイムアタック,ステータス"> <!--これより上は固定--> <!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日--> <link rel="stylesheet" type="text/css" href="dq5ds.css"> <title>レベルアップによる能力上昇値の決定法則　＜　ドラクエ5短時間攻略館(ニンテンドーDS館)</title> </head> <body class="sub"> <div class="frame1">  <h1><a name="top">レベルアップによる能力上昇値の決定法則</a></h1> <div class="under">上昇値の決定法則　＜　レベルと能力値　＜　<a href="./index.html">ドラクエ5短時間攻略館(ニンテンドーDS館)</a></div>  <table width="100%" class="none"> <col><col width="20"><col> <tr> <td valign="middle"> 　<a href="./index.html">メインページへ戻る</a><br> <div class="update"> 最終更新　2008.09.08<br> 作成　2008.08.26<br> 調査・分析　右弐</div> <td> <td valign="middle" class="sp"> </tr> </table> <!--ここから本文--> <h2>上昇値の決定法則</h2> <p>レベルアップにおける能力上昇値は、次の１～４のプロセスにしたがって決定されます。</p> <div class="frame2"> １　上昇値をおおまかに決める整数値が、あらかじめ設定されている。以降、この整数値を「<strong>基準値</strong>※」と呼びます。<br> ２　「基準値」×（3/4～5/4の間の一様乱数※）　を計算する。<br> ３　計算結果を四捨五入する。<br> ４　その値が「基準値」以上の場合は、上昇値とするが、<br> 　　その値が「基準値」よりも小さい場合、「基準値」を上昇値とする補正をかける。<br> </div> <p> ※　　これは「各キャラクターの、各レベルアップの、各能力上昇値」に対してひとつずつ設定されています。<br> ※　　一様乱数とは、区間内のどの値も等確率で出るような乱数です。<br> 　　　この場合は、3/4～5/4の間のランダムな数を掛けることになります。 </p> <hr> <p> なお、PS2版ドラクエ5における上昇能力値は、上記のプロセス３までを行い、４を行わない処理をしたものと考えられています。<br> PS2版でのこの仮説の初出は、<a target="_blank" href="http://www.geocities.jp/dqmaniac/ultimate/discography.html">極限攻略研究会 会誌第6号（2004年発行）</a>での、nma氏による記述と思われます。 </p>  <h2>基準値が3以上の場合は、基準値以上の値が出る可能性がある</h2> <p>この決定法則により、基準値が3以上に設定されている場合には、基準値よりも大きい値が出る可能性があります。<br> また、基準値が実質的な最低値となります。<br> 以下、例を挙げてどのように上昇値が決定されるのかを見ていきましょう。</p> <p> 例：基準値3の場合<br><br>  １　基準値は3<br> ２　　3×（3/4～5/4の間の一様乱数）<br> 　　＝(9/4～15/4の間の一様乱数)<br> 　　＝(2.25～3.75の間の一様乱数)<br> 　　　掛け算後の値が散らばる区間の大きさは1.5（＝基準値×1/2）となります。<br> <br> ３　計算結果の四捨五入<br> 　　(2.25～2.50) ⇒ 2　出現率1/6（＝0.25/1.5）<br> 　　(2.50～3.50) ⇒ 3　出現率4/6（＝1.00/1.5）<br> 　　(3.50～3.75) ⇒ 4　出現率1/6（＝0.25/1.5）<br> <br> ４　基準値より小さい場合の補正<br> 　　四捨五入後の値が2となる場合は、基準値3よりも小さいため、上昇値は基準値の3となります。<br> 　　四捨五入後 2,3 ⇒　<b>上昇能力値 3　出現率5/6</b><br> 　　四捨五入後 4 　⇒　<b>上昇能力値 4　出現率1/6</b><br> </p> <p> 以上のように、<b>「上昇値は3と4が出るが、等確率ではない」</b>ということがお分かりいただけると思います。</p>  <p>また、以上プロセスを図にまとめると、下のようになり、視覚的にイメージしやすいかと思います。</p> <table class="none" align="center"> <tr> <td> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> <td width="15"> </tr> 	 <tr> <td align="center">値 <td colspan="2" align="center"><b>2</b> <td colspan="2" align="center">　 <td colspan="2" align="center">2.5 <td colspan="2" align="center">　 <td colspan="2" align="center"><b>3</b> <td colspan="2" align="center">　 <td colspan="2" align="center">3.5 <td colspan="2" align="center">　 <td colspan="2" align="center"><b>4</b> </tr>  <tr class="simple"> <td align="center">×(3/4～5/4)した<br>値の分布域 <td>　 <td colspan="2">　 <td colspan="2" bgcolor="#ff9999">　 <td colspan="2" bgcolor="#99ff99">　 <td colspan="2" bgcolor="#99ff99">　 <td colspan="2" bgcolor="#99ff99">　 <td colspan="2" bgcolor="#99ff99">　 <td colspan="2" bgcolor="#9999ff">　 <td colspan="2">　 <td>　 </tr>  <tr class="simple"> <td align="center">四捨五入後の値<br>面積比(＝出現比)<br>確率 <td colspan="5" align="center">2<br>1<br>1/6 <td colspan="8" align="center">3<br>4<br>4/6 <td colspan="5" align="center">4<br>1<br>1/6 </tr>  <tr class="simple"> <td align="center">補正後の値(＝上昇値)<br>面積比(＝出現比)<br>確率 <td colspan="13" align="center">3<br>5<br>5/6 <td colspan="5" align="center">4<br>1<br>1/6 </tr> </table> <div class="c">  図1：基準値3での上昇能力値 </div> <hr> <table width="100%" class="none"> <col><col width="10"><col> <tr><td valign="middle"> 　<a href="#top">このページのトップへ戻る</a><br> 　<a href="./index.html">メインページへ戻る</a><br> <td> </tr> </table> <div class="under">上昇値の決定法則　＜　レベルと能力値　＜　<a href="./index.html">ドラクエ5短時間攻略館(ニンテンドーDS館)</a></div> </div> </html>  
+<html><head>
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="keywords" content="ドラゴンクエスト,ドラクエ,DQ,攻略,短時間,快適,RTA,DS,PS,PS2,タイムアタック,ステータス">
+<meta name="author" content="右弐(うに)">
+<meta name="description" content="短時間で快適にクリアするための情報サイトです。ドラゴンクエスト,ドラクエ,DQ,レベル,lv,成長,強さ,アップ,タイムアタック,ステータス">
+<!--これより上は固定-->
+<!--スタイルシート、タイトル2箇所、サブ上下、作成日、更新日-->
+<link rel="stylesheet" type="text/css" href="dq5ds.css">
+<title>レベルアップによる能力上昇値の決定法則　＜　ドラクエ5短時間攻略館(ニンテンドーDS館)</title>
+</head>
+<body class="sub">
+<div class="frame1">
+
+<h1><a name="top">レベルアップによる能力上昇値の決定法則</a></h1>
+<div class="under">上昇値の決定法則　＜　レベルと能力値　＜　<a href="./index.html">ドラクエ5短時間攻略館(ニンテンドーDS館)</a></div>
+
+<table width="100%" class="none">
+<col><col width="20"><col>
+<tr>
+<td valign="middle">
+　<a href="./index.html">メインページへ戻る</a><br>
+<div class="update">
+最終更新　2008.09.08<br>
+作成　2008.08.26<br>
+調査・分析　右弐</div>
+<td>
+<td valign="middle" class="sp">
+スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=st1&mode=toys-jp&search=%E3%83%89%E3%83%A9%E3%82%B4%E3%83%B3%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88&fc1=000000&lt1=&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+<!--ここから本文-->
+<h2>上昇値の決定法則</h2>
+<p>レベルアップにおける能力上昇値は、次の１～４のプロセスにしたがって決定されます。</p>
+<div class="frame2">
+１　上昇値をおおまかに決める整数値が、あらかじめ設定されている。以降、この整数値を「<strong>基準値</strong>※」と呼びます。<br>
+２　「基準値」×（3/4～5/4の間の一様乱数※）　を計算する。<br>
+３　計算結果を四捨五入する。<br>
+４　その値が「基準値」以上の場合は、上昇値とするが、<br>
+　　その値が「基準値」よりも小さい場合、「基準値」を上昇値とする補正をかける。<br>
+</div>
+<p>
+※　　これは「各キャラクターの、各レベルアップの、各能力上昇値」に対してひとつずつ設定されています。<br>
+※　　一様乱数とは、区間内のどの値も等確率で出るような乱数です。<br>
+　　　この場合は、3/4～5/4の間のランダムな数を掛けることになります。
+</p>
+<hr>
+<p>
+なお、PS2版ドラクエ5における上昇能力値は、上記のプロセス３までを行い、４を行わない処理をしたものと考えられています。<br>
+PS2版でのこの仮説の初出は、<a target="_blank" href="http://www.geocities.jp/dqmaniac/ultimate/discography.html">極限攻略研究会 会誌第6号（2004年発行）</a>での、nma氏による記述と思われます。
+</p>
+
+<h2>基準値が3以上の場合は、基準値以上の値が出る可能性がある</h2>
+<p>この決定法則により、基準値が3以上に設定されている場合には、基準値よりも大きい値が出る可能性があります。<br>
+また、基準値が実質的な最低値となります。<br>
+以下、例を挙げてどのように上昇値が決定されるのかを見ていきましょう。</p>
+<p>
+例：基準値3の場合<br><br>
+
+１　基準値は3<br>
+２　　3×（3/4～5/4の間の一様乱数）<br>
+　　＝(9/4～15/4の間の一様乱数)<br>
+　　＝(2.25～3.75の間の一様乱数)<br>
+　　　掛け算後の値が散らばる区間の大きさは1.5（＝基準値×1/2）となります。<br>
+<br>
+３　計算結果の四捨五入<br>
+　　(2.25～2.50) ⇒ 2　出現率1/6（＝0.25/1.5）<br>
+　　(2.50～3.50) ⇒ 3　出現率4/6（＝1.00/1.5）<br>
+　　(3.50～3.75) ⇒ 4　出現率1/6（＝0.25/1.5）<br>
+<br>
+４　基準値より小さい場合の補正<br>
+　　四捨五入後の値が2となる場合は、基準値3よりも小さいため、上昇値は基準値の3となります。<br>
+　　四捨五入後 2,3 ⇒　<b>上昇能力値 3　出現率5/6</b><br>
+　　四捨五入後 4 　⇒　<b>上昇能力値 4　出現率1/6</b><br>
+</p>
+<p>
+以上のように、<b>「上昇値は3と4が出るが、等確率ではない」</b>ということがお分かりいただけると思います。</p>
+
+<p>また、以上プロセスを図にまとめると、下のようになり、視覚的にイメージしやすいかと思います。</p>
+<table class="none" align="center">
+<tr>
+<td>
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+<td width="15">
+</tr>
+	
+<tr>
+<td align="center">値
+<td colspan="2" align="center"><b>2</b>
+<td colspan="2" align="center">　
+<td colspan="2" align="center">2.5
+<td colspan="2" align="center">　
+<td colspan="2" align="center"><b>3</b>
+<td colspan="2" align="center">　
+<td colspan="2" align="center">3.5
+<td colspan="2" align="center">　
+<td colspan="2" align="center"><b>4</b>
+</tr>
+
+<tr class="simple">
+<td align="center">×(3/4～5/4)した<br>値の分布域
+<td>　
+<td colspan="2">　
+<td colspan="2" bgcolor="#ff9999">　
+<td colspan="2" bgcolor="#99ff99">　
+<td colspan="2" bgcolor="#99ff99">　
+<td colspan="2" bgcolor="#99ff99">　
+<td colspan="2" bgcolor="#99ff99">　
+<td colspan="2" bgcolor="#9999ff">　
+<td colspan="2">　
+<td>　
+</tr>
+
+<tr class="simple">
+<td align="center">四捨五入後の値<br>面積比(＝出現比)<br>確率
+<td colspan="5" align="center">2<br>1<br>1/6
+<td colspan="8" align="center">3<br>4<br>4/6
+<td colspan="5" align="center">4<br>1<br>1/6
+</tr>
+
+<tr class="simple">
+<td align="center">補正後の値(＝上昇値)<br>面積比(＝出現比)<br>確率
+<td colspan="13" align="center">3<br>5<br>5/6
+<td colspan="5" align="center">4<br>1<br>1/6
+</tr>
+</table>
+<div class="c">
+ 図1：基準値3での上昇能力値
+</div>
+<hr>
+<table width="100%" class="none">
+<col><col width="10"><col>
+<tr><td valign="middle">
+　<a href="#top">このページのトップへ戻る</a><br>
+　<a href="./index.html">メインページへ戻る</a><br>
+　感想・質問・注文・呪文はこちら⇒<a href="../guestbook/guestbook.html">掲示板</a>
+<td>
+<td valign="middle" class="sp">スポンサーサイト広告（提供：Amazon）<br>
+<iframe src="http://rcm-jp.amazon.co.jp/e/cm?t=uniright2-22&o=9&p=13&l=st1&mode=books-jp&search=%E3%83%89%E3%83%A9%E3%82%B4%E3%83%B3%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88&fc1=000000&lt1=&lc1=3366FF&bg1=FFFFFF&f=ifr" marginwidth="0" marginheight="0" width="468" height="60" border="0" frameborder="0" style="border:none;" scrolling="no"></iframe>
+</tr>
+</table>
+<div class="under">上昇値の決定法則　＜　レベルと能力値　＜　<a href="./index.html">ドラクエ5短時間攻略館(ニンテンドーDS館)</a></div>
+</div>
+</body>
+</html>
+
+
