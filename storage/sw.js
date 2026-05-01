@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dq-rta-v13';
+const CACHE_NAME = 'dq-metal-simu-v1';
 const ASSETS = [
   './index.html',
   './manifest.json'
