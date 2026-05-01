@@ -3,110 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <title>メタル狩りなど所要時間シミュレーター</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- 基本デザイン（テイストを維持しつつシンプルに） --- */
+        /* --- 全般 --- */
         body {
-            font-family: sans-serif; /* 標準的なフォント */
-            background-color: #e3f2fd; /* やわらかい空色 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8f9fa; /* 薄いグレー */
             margin: 0;
             padding: 20px;
+            overflow-x: hidden; /* 横スクロール防止 */
+            overscroll-behavior-y: contain; /* スクロール時のバウンス防止 */
         }
 
         .container {
-            max-width: 500px;
+            max-width: 500px; /* PCでの最大幅 */
             margin: 0 auto;
-            background-color: #ffffff;
+            background: white;
             padding: 20px;
-            border-radius: 15px; /* 角を少し丸く */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
+        /* --- タイトル（スマホで1行にするための調整） --- */
         h2 {
-            font-size: 1.1rem;
-            color: #0d47a1;
-            border-left: 5px solid #2196f3; /* 左側の線をシンプルに */
+            font-size: 1.1rem; /* 少し小さくして1行に収める */
+            color: #004494; /* 濃い青 */
+            border-left: 4px solid #004494;
             padding-left: 10px;
             margin-bottom: 5px;
-            margin-top: 0;
+            white-space: nowrap; /* 強制的に1行にする */
+            overflow: hidden; /* はみ出た場合は隠す（念のため） */
+            text-overflow: ellipsis; /* はみ出た場合は「...」にする（念のため） */
         }
 
+        /* --- 使い方 --- */
         .usage-guide {
             font-size: 0.85rem;
-            color: #555555;
+            color: #555;
             margin-bottom: 20px;
-            padding-left: 15px;
+            padding-left: 14px;
             line-height: 1.5;
         }
 
-        /* --- スライダー部分（凝った装飾をカット） --- */
+        /* --- 入力エリア（スライダー） --- */
         #sliders-container {
             display: flex;
             flex-direction: column;
-            gap: 12px; /* 間隔 */
+            gap: 12px;
+            touch-action: none; /* スライダー操作時のスクロールを抑制 */
         }
 
         .slider-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            white-space: nowrap;
+            white-space: nowrap; /* ラベルの改行を防ぐ */
         }
 
         .slider-item label {
-            min-width: 90px; /* ラベルの幅 */
-            font-weight: bold;
+            min-width: 95px; /* ラベルの幅を統一 */
+            font-weight: 500;
+            line-height: 1.2;
             font-size: 0.85rem;
-            color: #333333;
         }
 
         /* 数値表示 */
         .val-container {
-            min-width: 40px;
+            min-width: 45px;
             text-align: right;
+            font-variant-numeric: tabular-nums; /* 数字の幅を統一 */
             font-size: 0.9rem;
-            font-weight: bold;
-            color: #1565c0;
         }
 
-        /* 標準的なスライダー */
+        /* 標準のスライダー */
         .slider-item input[type="range"] {
             flex: 1;
-            height: 30px; /* タップしやすく */
-            cursor: pointer;
+            height: 30px; /* タップ領域を確保 */
         }
 
-        /* --- グラフエリア（元のテイストを維持） --- */
+        /* --- 凡例（スマホで1行にするための調整） --- */
         #chart-legend {
             display: flex;
             justify-content: center;
-            gap: 4px;
+            gap: 4px; /* 項目間の隙間を極小に */
             margin: 25px 0 10px 0;
-            font-size: 0.6rem;
+            font-size: 0.6rem; /* 文字を極小にして1行に収める */
             font-weight: bold;
-            flex-wrap: wrap;
         }
 
         .legend-chip {
             display: flex;
             align-items: center;
-            color: #555555;
-            white-space: nowrap;
+            color: #555;
+            white-space: nowrap; /* 凡例内の改行を防ぐ */
         }
 
+        /* 色の四角形 */
         .legend-chip i {
-            width: 8px;
+            width: 8px; /* チップを小さく */
             height: 8px;
             display: inline-block;
-            margin-right: 2px;
+            margin-right: 2px; /* チップと文字の隙間を狭く */
             border: 1px solid rgba(0,0,0,0.1);
         }
 
+        /* --- グラフ --- */
         .chart-container {
             position: relative;
-            height: 180px;
+            height: 180px; /* 高さを少し低くして全体を収める */
             width: 100%;
         }
 
@@ -115,7 +121,7 @@
             margin-top: 30px;
             text-align: center;
             font-size: 0.8rem;
-            color: #777777;
+            color: #777;
         }
 
         footer a {
@@ -137,20 +143,20 @@
         <!-- ラベル、数値、スライダーの順 -->
         <div class="slider-item">
             <label>必ずかかる:<br><span style="font-size: 0.75rem; color: #777;">(LvUPなど)</span></label>
-            <span class="val-container"><span id="offset-val">7</span>分</span>
+            <span class="val-container"><strong id="offset-val">7</strong>分</span>
             <input type="range" id="offset-slider" min="0" max="15" step="1" value="7" oninput="updateMultiChart()">
         </div>
 
-        <div class="slider-item">1匹目:<span class="val-container"><span class="val">5</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"></div>
-        <div class="slider-item">2匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
-        <div class="slider-item">3匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
-        <div class="slider-item">4匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
-        <div class="slider-item">5匹目:<span class="val-container"><span class="val">3</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
-        <div class="slider-item">6匹目:<span class="val-container"><span class="val">3</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
+        <div class="slider-item">1匹目:<span class="val-container"><strong class="val">5</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"></div>
+        <div class="slider-item">2匹目:<span class="val-container"><strong class="val">4</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">3匹目:<span class="val-container"><strong class="val">4</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">4匹目:<span class="val-container"><strong class="val">4</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">5匹目:<span class="val-container"><strong class="val">3</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
+        <div class="slider-item">6匹目:<span class="val-container"><strong class="val">3</strong>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
     </div>
 
+    <!-- 凡例エリア：スマホで1行に収まるようにCSSで調整 -->
     <div id="chart-legend">
-        <!-- 凡例エリア -->
         <span class="legend-chip"><i style="background:rgba(150,0,180,0.45); border-color:rgb(100,0,130);"></i>〜10%</span>
         <span class="legend-chip"><i style="background:rgba(0,0,255,0.45); border-color:rgb(0,0,180);"></i>〜20%</span>
         <span class="legend-chip"><i style="background:rgba(0,180,255,0.45); border-color:rgb(0,120,200);"></i>〜50%</span>
@@ -173,6 +179,7 @@
 /* --- グラフのロジック（そのまま維持） --- */
 let multiChart;
 
+// グラフの色定義（そのまま）
 const rainbowColors = [
     { bg: 'rgba(150, 0, 180, 0.45)',   border: 'rgb(100, 0, 130)' },    // 紫
     { bg: 'rgba(0, 0, 255, 0.45)',     border: 'rgb(0, 0, 180)' },     // 青
@@ -236,6 +243,7 @@ function updateMultiChart() {
 
     const thresholds = [0, ...p, 80];
     
+    // グラフの描画設定（そのまま維持）
     const datasets = rainbowColors.map((color, idx) => ({
         data: resultPdf.map((v, i) => (displayLabels[i] >= thresholds[idx] && displayLabels[i] <= thresholds[idx+1]) ? v : null),
         borderColor: color.border,
@@ -274,4 +282,4 @@ function updateMultiChart() {
 window.addEventListener('load', updateMultiChart);
 </script>
 </body>
-</html>
+</html>    
