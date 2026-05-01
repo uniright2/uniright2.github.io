@@ -1,0 +1,15 @@
+{
+  "short_name": "DQ_RTA",
+  "name": "ドラクエRTA攻略",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#004494",
+  "theme_color": "#004494"
+}

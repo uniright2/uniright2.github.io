@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>メタル狩りなど所要時間シミュレーター</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* --- 基本デザイン（テイストを維持しつつシンプルに） --- */
+        body {
+            font-family: sans-serif; /* 標準的なフォント */
+            background-color: #e3f2fd; /* やわらかい空色 */
+            margin: 0;
+            padding: 20px;
+        }
 
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px; /* 角を少し丸く */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: #0d47a1;
+            border-left: 5px solid #2196f3; /* 左側の線をシンプルに */
+            padding-left: 10px;
+            margin-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .usage-guide {
+            font-size: 0.85rem;
+            color: #555555;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            line-height: 1.5;
+        }
+
+        /* --- スライダー部分（凝った装飾をカット） --- */
+        #sliders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* 間隔 */
+        }
+
+        .slider-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .slider-item label {
+            min-width: 90px; /* ラベルの幅 */
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #333333;
+        }
+
+        /* 数値表示 */
+        .val-container {
+            min-width: 40px;
+            text-align: right;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #1565c0;
+        }
+
+        /* 標準的なスライダー */
+        .slider-item input[type="range"] {
+            flex: 1;
+            height: 30px; /* タップしやすく */
+            cursor: pointer;
+        }
+
+        /* --- グラフエリア（元のテイストを維持） --- */
+        #chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 25px 0 10px 0;
+            font-size: 0.6rem;
+            font-weight: bold;
+            flex-wrap: wrap;
+        }
+
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            color: #555555;
+            white-space: nowrap;
+        }
+
+        .legend-chip i {
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            margin-right: 2px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 180px;
+            width: 100%;
+        }
+
+        /* --- フッター --- */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777777;
+        }
+
+        footer a {
+            color: #004494;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>メタル狩りなど所要時間シミュレーター</h2>
+    <div class="usage-guide">
+        平均時間を入力しよう！<br>
+        狩らない場合は「0分」にしてね！
+    </div>
+    
+    <div id="sliders-container">
+        <!-- ラベル、数値、スライダーの順 -->
+        <div class="slider-item">
+            <label>必ずかかる:<br><span style="font-size: 0.75rem; color: #777;">(LvUPなど)</span></label>
+            <span class="val-container"><span id="offset-val">7</span>分</span>
+            <input type="range" id="offset-slider" min="0" max="15" step="1" value="7" oninput="updateMultiChart()">
+        </div>
+
+        <div class="slider-item">1匹目:<span class="val-container"><span class="val">5</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"></div>
+        <div class="slider-item">2匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">3匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">4匹目:<span class="val-container"><span class="val">4</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"></div>
+        <div class="slider-item">5匹目:<span class="val-container"><span class="val">3</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
+        <div class="slider-item">6匹目:<span class="val-container"><span class="val">3</span>分</span><input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"></div>
+    </div>
+
+    <div id="chart-legend">
+        <!-- 凡例エリア -->
+        <span class="legend-chip"><i style="background:rgba(150,0,180,0.45); border-color:rgb(100,0,130);"></i>〜10%</span>
+        <span class="legend-chip"><i style="background:rgba(0,0,255,0.45); border-color:rgb(0,0,180);"></i>〜20%</span>
+        <span class="legend-chip"><i style="background:rgba(0,180,255,0.45); border-color:rgb(0,120,200);"></i>〜50%</span>
+        <span class="legend-chip"><i style="background:rgba(0,160,0,0.45); border-color:rgb(0,100,0);"></i>〜80%</span>
+        <span class="legend-chip"><i style="background:rgba(255,215,0,0.5); border-color:rgb(180,140,0);"></i>〜90%</span>
+        <span class="legend-chip"><i style="background:rgba(255,100,0,0.45); border-color:rgb(220,80,0);"></i>〜95%</span>
+        <span class="legend-chip"><i style="background:rgba(255,0,0,0.45); border-color:rgb(200,0,0);"></i>95%〜</span>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="multiChart"></canvas>
+    </div>
+
+    <footer>
+        制作：右弐 / <a href="https://x.com/uniright2" target="_blank">@uniright2</a>
+    </footer>
+</div>
+
+<script>
+/* --- グラフのロジック（そのまま維持） --- */
+let multiChart;
+
+const rainbowColors = [
+    { bg: 'rgba(150, 0, 180, 0.45)',   border: 'rgb(100, 0, 130)' },    // 紫
+    { bg: 'rgba(0, 0, 255, 0.45)',     border: 'rgb(0, 0, 180)' },     // 青
+    { bg: 'rgba(0, 180, 255, 0.45)',   border: 'rgb(0, 120, 200)' },   // 水
+    { bg: 'rgba(0, 160, 0, 0.45)',     border: 'rgb(0, 100, 0)' },     // 緑
+    { bg: 'rgba(255, 215, 0, 0.5)',    border: 'rgb(180, 140, 0)' },   // 黄
+    { bg: 'rgba(255, 100, 0, 0.45)',   border: 'rgb(220, 80, 0)' },    // 橙
+    { bg: 'rgba(255, 0, 0, 0.45)',     border: 'rgb(200, 0, 0)' }      // 赤
+];
+
+function updateMultiChart() {
+    const offset = parseInt(document.getElementById('offset-slider').value);
+    document.getElementById('offset-val').innerText = offset;
+
+    const sliders = document.querySelectorAll('.theta-slider');
+    const thetas = Array.from(sliders).map(s => {
+        const val = parseFloat(s.value);
+        s.parentElement.querySelector('.val').innerText = val;
+        return val;
+    }).filter(v => v > 0);
+
+    const step = 0.5;
+    const maxCalcRange = 100;
+    const points = Math.floor(maxCalcRange / step);
+    let baseLabels = Array.from({length: points}, (_, i) => i * step);
+    let displayLabels = baseLabels.map(x => x + offset);
+    
+    if (thetas.length === 0) {
+        if(multiChart) multiChart.destroy();
+        multiChart = null;
+        return;
+    }
+
+    let resultPdf = new Array(points).fill(0);
+    const t0 = thetas[0];
+    resultPdf = baseLabels.map(x => (1/t0) * Math.exp(-x/t0));
+
+    for (let i = 1; i < thetas.length; i++) {
+        const ti = thetas[i];
+        let nextPdf = new Array(points).fill(0);
+        const currentExp = baseLabels.map(x => (1/ti) * Math.exp(-x/ti));
+        for (let j = 0; j < points; j++) {
+            for (let k = 0; k <= j; k++) {
+                nextPdf[j] += resultPdf[k] * currentExp[j - k];
+            }
+            nextPdf[j] *= step;
+        }
+        resultPdf = nextPdf;
+    }
+
+    let totalArea = resultPdf.reduce((a, b) => a + b, 0) * step;
+    let targets = [0.1, 0.2, 0.5, 0.8, 0.9, 0.95];
+    let p = targets.map(target => {
+        let cum = 0;
+        for (let i = 0; i < points; i++) {
+            cum += resultPdf[i] * step;
+            if (cum / totalArea >= target) return displayLabels[i];
+        }
+        return 80;
+    });
+
+    const thresholds = [0, ...p, 80];
+    
+    const datasets = rainbowColors.map((color, idx) => ({
+        data: resultPdf.map((v, i) => (displayLabels[i] >= thresholds[idx] && displayLabels[i] <= thresholds[idx+1]) ? v : null),
+        borderColor: color.border,
+        backgroundColor: color.bg,
+        fill: true,
+        pointRadius: 0,
+        borderWidth: 1,
+        tension: 0.1,
+        spanGaps: false
+    }));
+
+    if (multiChart) {
+        multiChart.data.labels = displayLabels;
+        multiChart.data.datasets = datasets;
+        multiChart.options.scales.x.max = 80;
+        multiChart.update('none');
+    } else {
+        const ctx = document.getElementById('multiChart').getContext('2d');
+        multiChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: displayLabels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { 
+                    x: { type: 'linear', min: 0, max: 80 },
+                    y: { beginAtZero: true, display: false }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+}
+
+// 起動時に実行
+window.addEventListener('load', updateMultiChart);
+</script>
+</body>
+</html>
