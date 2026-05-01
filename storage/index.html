@@ -1,6 +1,121 @@
-<h1>ひっこし作業中！</h1>
-<p>
-<a href="page1.html">ぺーじ１</a><br>
-<a href="./storage/">倉庫、昔の</a><br>
-<a href="http://uniright2.fc2web.com/">まえのところ</a><br>
-</p>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="./manifest.json">
+    <title>ドラクエRTAの世界</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #004494;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h2 {
+            border-left: 5px solid #004494;
+            padding-left: 10px;
+            color: #004494;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #eef;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('PWA準備完了！'))
+      .catch((err) => console.log('エラー:', err));
+  }
+</script>
+<body>
+
+<header>
+    <h1>ドラゴンクエスト RTA 解説</h1>
+</header>
+
+<section>
+    <h2>RTAとは？</h2>
+    <p>RTAは<strong>「Real Time Attack」</strong>の略称です。ゲーム開始からクリアまでの「現実の時間」の短さを競います。ゲーム内のプレイ時間ではなく、タイマーを止めずに計測するのが特徴です。</p>
+    
+    <h3>ドラクエRTAの魅力</h3>
+    <ul>
+        <li><strong>運要素の管理：</strong> 逃げられるか、会心の一撃が出るかといった運をどうリカバーするか。</li>
+        <li><strong>戦略性：</strong> どのレベルでボスに挑むか、どのアイテムを回収するかのルート構築。</li>
+        <li><strong>並走の熱さ：</strong> 複数のプレイヤーが同時にスタートするイベントが盛んです。</li>
+    </ul>
+</section>
+
+<section>
+    <h2>基本テクニック</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>テクニック名</th>
+                <th>内容</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>デスルーラ</td>
+                <td>全滅して最後にセーブした場所へ戻り、移動時間を短縮する。</td>
+            </tr>
+            <tr>
+                <td>エンカウント飛ばし</td>
+                <td>歩数や乱数を調整して、敵との遭遇を回避する。</td>
+            </tr>
+            <tr>
+                <td>トヘロス調整</td>
+                <td>聖水やトヘロスを使い、レベル差を利用して雑魚敵を完封する。</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>有名なレギュレーション</h2>
+    <p>ドラクエRTAには、プレイヤー間で決められたルール（レギュレーション）が存在します。</p>
+    <ul>
+        <li><span class="highlight">SFC版 DQ3:</span> 最も人気のあるカテゴリーの一つ。</li>
+        <li><span class="highlight">並走ルール:</span> 外部ツールやバグ利用の制限など、公平性を保つための共通ルール。</li>
+    </ul>
+</section>
+
+<footer>
+    <p style="text-align: center; font-size: 0.8em; color: #777;">&copy; 2026 ドラクエRTAファンページ</p>
+</footer>
+
+</body>
+</html>
