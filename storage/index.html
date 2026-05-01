@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>エンカウント・シミュレーター</title>
+    <title>メタル狩りなど所要時間シミュレーター</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -25,29 +25,37 @@
         }
 
         h2 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: #004494;
             border-left: 4px solid #004494;
             padding-left: 10px;
+            margin-bottom: 5px; /* 説明文との間隔 */
+        }
+
+        .usage-guide {
+            font-size: 0.85rem;
+            color: #555;
             margin-bottom: 20px;
+            padding-left: 14px;
+            line-height: 1.5;
         }
 
         #sliders-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            touch-action: none; /* スマホのぐらつき防止 */
+            touch-action: none;
         }
 
         .slider-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             white-space: nowrap;
         }
 
         .slider-item label {
-            min-width: 60px;
+            min-width: 85px;
             font-weight: 500;
         }
 
@@ -57,7 +65,7 @@
         }
 
         .val-container {
-            min-width: 50px;
+            min-width: 45px;
             text-align: right;
             font-variant-numeric: tabular-nums;
         }
@@ -95,27 +103,41 @@
 
         .chart-container {
             position: relative;
-            height: 200px;
+            height: 180px;
             width: 100%;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        footer a {
+            color: #004494;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>エンカウント・シミュレーター</h2>
+    <h2>メタル狩りなど所要時間シミュレーター</h2>
+    <div class="usage-guide">
+        自分の思う時間を入力しよう！<br>
+        狩らない場合は「0分」にしてね！
+    </div>
     
     <div id="sliders-container">
-        <!-- 固定時間 -->
         <div class="slider-item">
-            <label>必ず:</label>
+            <label>必ずかかる:</label>
             <input type="range" id="offset-slider" min="0" max="15" step="1" value="7" oninput="updateMultiChart()">
             <span class="val-container"><strong id="offset-val">7</strong>分</span>
         </div>
 
         <hr>
 
-        <!-- 変数 1-6 -->
         <div class="slider-item">1匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">5</strong>分</span></div>
         <div class="slider-item">2匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">4</strong>分</span></div>
         <div class="slider-item">3匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">4</strong>分</span></div>
@@ -137,6 +159,10 @@
     <div class="chart-container">
         <canvas id="multiChart"></canvas>
     </div>
+
+    <footer>
+        制作：右弐 / <a href="https://x.com/uniright2" target="_blank">@uniright2</a>
+    </footer>
 </div>
 
 <script>
@@ -191,11 +217,11 @@ function updateMultiChart() {
             cum += resultPdf[i] * step;
             if (cum / totalArea >= target) return displayLabels[i];
         }
-        return 100;
+        return 80;
     });
 
     const colors = ['#800080', '#0000FF', '#008000', '#9ACD32', '#FFFF00', '#FFA500', '#FF0000'];
-    const thresholds = [0, ...p, 100];
+    const thresholds = [0, ...p, 80];
     
     const datasets = colors.map((color, idx) => ({
         data: resultPdf.map((v, i) => (displayLabels[i] >= thresholds[idx] && displayLabels[i] <= thresholds[idx+1]) ? v : null),
@@ -203,6 +229,7 @@ function updateMultiChart() {
         backgroundColor: color + '66',
         fill: true,
         pointRadius: 0,
+        borderWidth: 1,
         tension: 0.1,
         spanGaps: false
     }));
@@ -210,6 +237,7 @@ function updateMultiChart() {
     if (multiChart) {
         multiChart.data.labels = displayLabels;
         multiChart.data.datasets = datasets;
+        multiChart.options.scales.x.max = 80;
         multiChart.update('none');
     } else {
         const ctx = document.getElementById('multiChart').getContext('2d');
@@ -220,7 +248,7 @@ function updateMultiChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: { 
-                    x: { type: 'linear', min: 0, max: 100 },
+                    x: { type: 'linear', min: 0, max: 80 },
                     y: { beginAtZero: true, display: false }
                 },
                 plugins: { legend: { display: false } }
