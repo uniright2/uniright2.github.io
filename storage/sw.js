@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dq-rta-v1';
+const CACHE_NAME = 'dq-rta-v5';
 const ASSETS = [
   './index.html',
   './manifest.json'
