@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dq-rta-v5';
+const CACHE_NAME = 'dq-rta-v7';
 const ASSETS = [
   './index.html',
   './manifest.json'
@@ -18,4 +18,15 @@ self.addEventListener('fetch', (event) => {
       return response || fetch(event.request);
     })
   );
+});
+
+// 追加した部分
+// インストール後、すぐに新しいService Workerを有効化する
+self.addEventListener('install', (event) => {
+    event.waitUntil(self.skipWaiting());
+});
+
+// 有効化されたら、即座に制御を開始する
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
 });

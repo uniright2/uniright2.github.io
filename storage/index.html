@@ -251,6 +251,307 @@ window.addEventListener('DOMContentLoaded', () => {
     marker.style.left = '50%';
     marker.style.top = '50%';
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+    const pad = document.getElementById('battle-pad');
+    const marker = document.getElementById('marker');
+    const lapList = document.getElementById('lapList');
+
+    // --- 1. 保存されたデータを読み込む ---
+    const savedAtk = localStorage.getItem('rta_atk') || 250;
+    const savedDef = localStorage.getItem('rta_def') || 250;
+    const savedLaps = JSON.parse(localStorage.getItem('rta_laps')) || [];
+
+    // 初期位置とデータの反映
+    updateDamageCoord(savedAtk, savedDef);
+    marker.style.left = (savedAtk / 500 * 100) + '%';
+    marker.style.top = (savedDef / 500 * 100) + '%';
+
+    savedLaps.forEach(lapText => {
+        const li = document.createElement('li');
+        li.innerHTML = lapText;
+        lapList.appendChild(li);
+    });
+
+    // --- 2. ダメージ計算 & 保存 ---
+    function handlePointer(e) {
+        const rect = pad.getBoundingClientRect();
+        let x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+        let y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+
+        const atk = Math.round((x / rect.width) * 500);
+        const def = Math.round((y / rect.height) * 500);
+
+        updateDamageCoord(atk, def);
+
+        // LocalStorageに保存（数値）
+        localStorage.setItem('rta_atk', atk);
+        localStorage.setItem('rta_def', def);
+    }
+
+    function updateDamageCoord(atk, def) {
+        document.getElementById('stat-atk').innerText = atk;
+        document.getElementById('stat-def').innerText = def;
+        let damage = Math.round((atk / 2) - (def / 4));
+        if (damage < 0) damage = 0;
+        document.getElementById('final-damage-coord').innerText = damage;
+    }
+
+    pad.addEventListener('pointerdown', (e) => {
+        pad.setPointerCapture(e.pointerId);
+        handlePointer(e);
+    });
+    pad.addEventListener('pointermove', (e) => {
+        if (e.buttons > 0) handlePointer(e);
+    });
+});
+
+// --- 3. ラップタイムの保存 ---
+// 既存のrecordLap関数を修正
+function recordLap() {
+    if (elapsedTime === 0) return;
+    const lapList = document.getElementById('lapList');
+    const lapNum = lapList.children.length + 1;
+    const lapContent = `<span>ラップ ${lapNum}</span> <span>${formatTime(elapsedTime)}</span>`;
+    
+    const li = document.createElement('li');
+    li.innerHTML = lapContent;
+    lapList.prepend(li);
+
+    // 配列として保存
+    const currentLaps = JSON.parse(localStorage.getItem('rta_laps')) || [];
+    currentLaps.push(lapContent);
+    localStorage.setItem('rta_laps', JSON.stringify(currentLaps));
+}
+
+// リセット時に保存データも消す
+function reset() {
+    if (!confirm('データをすべてリセットしますか？')) return;
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    document.getElementById('display').innerText = "00:00:00.000";
+    document.getElementById('lapList').innerHTML = '';
+    localStorage.removeItem('rta_laps'); // ラップ履歴を削除
+}
+
+
+let myChart;
+
+// ガンマ関数の近似 (Lanczos近似)
+function gamma(n) {
+    var g = 7, p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (n < 0.5) return Math.PI / (Math.sin(Math.PI * n) * gamma(1 - n));
+    n -= 1;
+    var x = p[0];
+    for (var i = 1; i < g + 2; i++) x += p[i] / (n + i);
+    var t = n + g + 0.5;
+    return Math.sqrt(2 * Math.PI) * Math.pow(t, (n + 0.5)) * Math.exp(-t) * x;
+}
+
+// ガンマ分布の密度関数
+function gammaPDF(x, k, theta) {
+    if (x < 0) return 0;
+    return (Math.pow(x, k - 1) * Math.exp(-x / theta)) / (Math.pow(theta, k) * gamma(k));
+}
+
+function updateChart() {
+    const k = parseFloat(document.getElementById('k-slider').value);
+    const theta = parseFloat(document.getElementById('theta-slider').value);
+    
+    document.getElementById('k-val').innerText = k.toFixed(1);
+    document.getElementById('theta-val').innerText = theta.toFixed(1);
+
+    const labels = [];
+    const pdfValues = [];
+    const step = 0.5;
+    const maxPath = 100; // グラフの描画範囲
+
+    // 1. まず全データのPDFを計算
+    for (let x = 0; x <= maxPath; x += step) {
+        labels.push(x);
+        pdfValues.push(gammaPDF(x, k, theta));
+    }
+
+    // 2. 境界値（中央値と上位20%点）を累積分布から算出
+    let cumulative = 0;
+    let medianX = 0;
+    let top20X = 0;
+    const totalArea = pdfValues.reduce((a, b) => a + b, 0) * step;
+
+    for (let i = 0; i < pdfValues.length; i++) {
+        cumulative += pdfValues[i] * step;
+        const progress = cumulative / totalArea;
+        if (!medianX && progress >= 0.5) medianX = labels[i];
+        if (!top20X && progress >= 0.8) top20X = labels[i]; // 上位20% = 累積80%
+    }
+
+    // 3. データセットを3つに分割（重なりを作ることで隙間を消す）
+    const dataBlue = pdfValues.map((v, i) => labels[i] <= medianX ? v : null);
+    const dataGreen = pdfValues.map((v, i) => (labels[i] >= medianX && labels[i] <= top20X) ? v : null);
+    const dataRed = pdfValues.map((v, i) => labels[i] >= top20X ? v : null);
+
+    if (myChart) {
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = dataBlue;
+        myChart.data.datasets[1].data = dataGreen;
+        myChart.data.datasets[2].data = dataRed;
+        myChart.update();
+    } else {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '下位50% (通常)',
+                        data: dataBlue,
+                        borderColor: '#004494',
+                        backgroundColor: 'rgba(0, 68, 148, 0.2)',
+                        fill: true, pointRadius: 0, tension: 0.1
+                    },
+                    {
+                        label: '中央値〜上位20%',
+                        data: dataGreen,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.4)',
+                        fill: true, pointRadius: 0, tension: 0.1
+                    },
+                    {
+                        label: '上位20% (レア)',
+                        data: dataRed,
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.6)',
+                        fill: true, pointRadius: 0, tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { type: 'linear', title: { display: true, text: '値' } },
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+}
+
+// 初期描画
+window.addEventListener('load', updateChart);
+
+
+let multiChart;
+
+function updateMultiChart() {
+    const offset = parseInt(document.getElementById('offset-slider').value);
+    document.getElementById('offset-val').innerText = offset;
+
+    const sliders = document.querySelectorAll('.theta-slider');
+    const thetas = Array.from(sliders).map(s => {
+        const val = parseFloat(s.value);
+        s.nextElementSibling.innerText = val;
+        return val;
+    }).filter(v => v > 0);
+
+    const step = 0.5;
+    const maxLen = 150; // 計算上の長さ
+    const points = Math.floor(maxLen / step);
+    
+    // 計算用のベースとなるx軸（0から始まる）
+    let baseLabels = Array.from({length: points}, (_, i) => i * step);
+    
+    // 表示用のx軸（オフセットを加算）
+    let displayLabels = baseLabels.map(x => x + offset);
+    
+    if (thetas.length === 0) {
+        if(multiChart) multiChart.destroy();
+        return;
+    }
+
+    // 畳み込み計算（前回同様）
+    let resultPdf = new Array(points).fill(0);
+    const t0 = thetas[0];
+    resultPdf = baseLabels.map(x => (1/t0) * Math.exp(-x/t0));
+
+    for (let i = 1; i < thetas.length; i++) {
+        const ti = thetas[i];
+        let nextPdf = new Array(points).fill(0);
+        const currentExp = baseLabels.map(x => (1/ti) * Math.exp(-x/ti));
+        for (let j = 0; j < points; j++) {
+            for (let k = 0; k <= j; k++) {
+                nextPdf[j] += resultPdf[k] * currentExp[j - k];
+            }
+            nextPdf[j] *= step;
+        }
+        resultPdf = nextPdf;
+    }
+
+    // 累積分布から境界値を特定（displayLabelsを使用）
+    let cumulative = 0;
+    const totalArea = resultPdf.reduce((a, b) => a + b, 0) * step;
+    let p10, p20, p50, p80, p90;
+
+    for (let i = 0; i < points; i++) {
+        cumulative += resultPdf[i] * step;
+        const ratio = cumulative / totalArea;
+        if (!p10 && ratio >= 0.1) p10 = displayLabels[i];
+        if (!p20 && ratio >= 0.2) p20 = displayLabels[i];
+        if (!p50 && ratio >= 0.5) p50 = displayLabels[i];
+        if (!p80 && ratio >= 0.8) p80 = displayLabels[i];
+        if (!p90 && ratio >= 0.9) p90 = displayLabels[i];
+    }
+
+    // データセット作成（x軸にdisplayLabelsを適用）
+    const colors = ['#800080', '#0000FF', '#008000', '#FFFF00', '#FFA500', '#FF0000'];
+    const datasets = [
+        { label: '0-10%', range: [0, p10] },
+        { label: '10-20%', range: [p10, p20] },
+        { label: '20-50%', range: [p20, p50] },
+        { label: '50-80%', range: [p50, p80] },
+        { label: '80-90%', range: [p80, p90] },
+        { label: '90-100%', range: [p90, 999] }
+    ].map((config, idx) => ({
+        label: config.label,
+        data: resultPdf.map((v, i) => (displayLabels[i] >= config.range[0] && displayLabels[i] <= config.range[1]) ? v : null),
+        borderColor: colors[idx],
+        backgroundColor: colors[idx] + '66',
+        fill: true,
+        pointRadius: 0,
+        tension: 0.1,
+        spanGaps: false
+    }));
+
+    if (multiChart) {
+        multiChart.data.labels = displayLabels;
+        multiChart.data.datasets = datasets;
+        multiChart.update('none');
+    } else {
+        const ctx = document.getElementById('multiChart').getContext('2d');
+        multiChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: displayLabels, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { 
+                    x: { type: 'linear', min: 0, max: 150 }, // 全体が見えるように固定
+                    y: { beginAtZero: true }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+}
+window.addEventListener('load', updateMultiChart);
+
 </script>
 
 <body>
@@ -270,6 +571,59 @@ window.addEventListener('DOMContentLoaded', () => {
         <li><strong>並走の熱さ：</strong> 複数のプレイヤーが同時にスタートするイベントが盛んです。</li>
     </ul>
 </section>
+
+<section id="multi-chart-section">
+    <h2>指数分布の和 + オフセット</h2>
+    
+    <div id="sliders-container" style="display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto;">
+        <!-- グラフ全体を右に移動させるスライダー -->
+        <div class="slider-item" style="background: #fdf2f2; padding: 10px; border-radius: 8px; border: 1px solid #ffcccc;">
+            <label>グラフの右移動: <strong id="offset-val" style="color: #d9534f;">0</strong></label>
+            <input type="range" id="offset-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()" style="width: 100%;">
+        </div>
+
+        <hr style="width: 100%; border: 0.5px solid #ccc;">
+
+        <!-- 確率変数のスライダー 6本 -->
+        <div class="slider-item">θ1: <input type="range" class="theta-slider" min="0" max="15" step="1" value="8" oninput="updateMultiChart()"> <span class="val">8</span></div>
+        <div class="slider-item">θ2: <input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"> <span class="val">5</span></div>
+        <div class="slider-item">θ3: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
+        <div class="slider-item">θ4: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
+        <div class="slider-item">θ5: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
+        <div class="slider-item">θ6: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
+    </div>
+
+    <div style="position: relative; height:400px; width:100%; margin-top:20px;">
+        <canvas id="multiChart"></canvas>
+    </div>
+</section>
+
+<style>
+    .slider-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .slider-item input { flex-grow: 1; }
+    .slider-item .val { min-width: 20px; font-weight: bold; }
+</style>
+
+
+
+<section id="chart-section">
+    <h2>分布グラフ (ガンま分布)</h2>
+    <div class="slider-group">
+        <label>形状 (k): <span id="k-val">3.0</span></label>
+        <input type="range" id="k-slider" min="1" max="10" step="0.1" value="3" oninput="updateChart()">
+        
+        <label>尺度 (θ): <span id="theta-val">8.0</span></label>
+        <input type="range" id="theta-slider" min="1" max="20" step="0.1" value="8" oninput="updateChart()">
+    </div>
+    <div style="position: relative; height:300px; width:100%">
+        <canvas id="myChart"></canvas>
+    </div>
+</section>
+
+<!-- Chart.jsを読み込み -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <section id="coord-section">
     <h2>座標ダメージ計算（バトルパッド）</h2>
     <div id="battle-pad">
