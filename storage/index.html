@@ -2,452 +2,144 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="./manifest.json">
-    <title>ドラクエRTAの世界</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>エンカウント・シミュレーター</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            overscroll-behavior-y: contain;
+        }
+
+        .container {
+            max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #004494;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-        }
-        section {
             background: white;
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
         h2 {
-            border-left: 5px solid #004494;
-            padding-left: 10px;
+            font-size: 1.25rem;
             color: #004494;
+            border-left: 4px solid #004494;
+            padding-left: 10px;
+            margin-bottom: 20px;
         }
-        table {
+
+        #sliders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            touch-action: none; /* スマホのぐらつき防止 */
+        }
+
+        .slider-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .slider-item label {
+            min-width: 60px;
+            font-weight: 500;
+        }
+
+        .slider-item input[type="range"] {
+            flex: 1;
+            height: 30px;
+        }
+
+        .val-container {
+            min-width: 50px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        hr {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 10px 0;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #eef;
-        }
-        .highlight {
+
+        #chart-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 20px 0 10px 0;
+            font-size: 0.7rem;
             font-weight: bold;
-            color: #d9534f;
+        }
+
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            color: #555;
+        }
+
+        .legend-chip i {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            margin-right: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
         }
     </style>
 </head>
+<body>
+
+<div class="container">
+    <h2>エンカウント・シミュレーター</h2>
+    
+    <div id="sliders-container">
+        <!-- 固定時間 -->
+        <div class="slider-item">
+            <label>必ず:</label>
+            <input type="range" id="offset-slider" min="0" max="15" step="1" value="7" oninput="updateMultiChart()">
+            <span class="val-container"><strong id="offset-val">7</strong>分</span>
+        </div>
+
+        <hr>
+
+        <!-- 変数 1-6 -->
+        <div class="slider-item">1匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">5</strong>分</span></div>
+        <div class="slider-item">2匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">4</strong>分</span></div>
+        <div class="slider-item">3匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">4</strong>分</span></div>
+        <div class="slider-item">4匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="4" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">4</strong>分</span></div>
+        <div class="slider-item">5匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">3</strong>分</span></div>
+        <div class="slider-item">6匹目:<input type="range" class="theta-slider" min="0" max="15" step="1" value="3" oninput="updateMultiChart()"> <span class="val-container"><strong class="val">3</strong>分</span></div>
+    </div>
+
+    <div id="chart-legend">
+        <span class="legend-chip"><i style="background:#80008066; border-color:#800080;"></i>〜10%</span>
+        <span class="legend-chip"><i style="background:#0000FF66; border-color:#0000FF;"></i>〜20%</span>
+        <span class="legend-chip"><i style="background:#00800066; border-color:#008000;"></i>〜50%</span>
+        <span class="legend-chip"><i style="background:#9ACD3266; border-color:#9ACD32;"></i>〜80%</span>
+        <span class="legend-chip"><i style="background:#FFFF0066; border-color:#FFFF00;"></i>〜90%</span>
+        <span class="legend-chip"><i style="background:#FFA50066; border-color:#FFA500;"></i>〜95%</span>
+        <span class="legend-chip"><i style="background:#FF000066; border-color:#FF0000;"></i>95%〜</span>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="multiChart"></canvas>
+    </div>
+</div>
 
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('PWA準備完了！'))
-      .catch((err) => console.log('エラー:', err));
-  }
-
-  let startTime;
-let elapsedTime = 0;
-let timerInterval;
-
-function startStop() {
-    const btn = document.getElementById('startStop');
-    if (btn.innerText === 'スタート') {
-        // スタート処理
-        startTime = Date.now() - elapsedTime;
-        timerInterval = setInterval(updateTime, 10);
-        btn.innerText = 'ストップ';
-        btn.style.background = '#d9534f';
-    } else {
-        // ストップ処理
-        clearInterval(timerInterval);
-        btn.innerText = 'スタート';
-        btn.style.background = '#004494';
-    }
-}
-
-function updateTime() {
-    const now = Date.now();
-    elapsedTime = now - startTime;
-    document.getElementById('display').innerText = formatTime(elapsedTime);
-}
-
-function formatTime(ms) {
-    const hours = Math.floor(ms / 3600000);
-    const minutes = Math.floor((ms % 3600000) / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    const milliseconds = ms % 1000;
-    return (
-        String(hours).padStart(2, '0') + ":" +
-        String(minutes).padStart(2, '0') + ":" +
-        String(seconds).padStart(2, '0') + "." +
-        String(milliseconds).padStart(3, '0')
-    );
-}
-
-function recordLap() {
-    if (elapsedTime === 0) return;
-    const li = document.createElement('li');
-    const lapNum = document.getElementById('lapList').children.length + 1;
-    li.innerHTML = `<span>ラップ ${lapNum}</span> <span>${formatTime(elapsedTime)}</span>`;
-    document.getElementById('lapList').prepend(li); // 新しい順に上に表示
-}
-
-function reset() {
-    clearInterval(timerInterval);
-    elapsedTime = 0;
-    document.getElementById('display').innerText = "00:00:00.000";
-    document.getElementById('startStop').innerText = 'スタート';
-    document.getElementById('startStop').style.background = '#004494';
-    document.getElementById('lapList').innerHTML = '';
-}
-
-function updateCalc() {
-    // スライダーの値を取得
-    const atk1 = parseInt(document.getElementById('atk1').value);
-    const atk2 = parseInt(document.getElementById('atk2').value);
-    const def1 = parseInt(document.getElementById('def1').value);
-    const def2 = parseInt(document.getElementById('def2').value);
-
-    // 合計値を算出
-    const totalAtk = atk1 + atk2;
-    const totalDef = def1 + def2;
-
-    // 表示を更新
-    document.getElementById('total-atk-val').innerText = totalAtk;
-    document.getElementById('total-def-val').innerText = totalDef;
-
-    // ダメージ計算: (攻撃力/2) - (守備力/4) を四捨五入
-    let damage = Math.round((totalAtk / 2) - (totalDef / 4));
-
-    // 0未満は0にする
-    if (damage < 0) damage = 0;
-
-    // 結果を表示
-    document.getElementById('final-damage').innerText = damage;
-}
-
-// ページ読み込み時にも一度計算を実行しておく
-window.onload = updateCalc;
-
-
-const pad = document.getElementById('battle-pad');
-const marker = document.getElementById('marker');
-
-// パッド上での操作を検知
-pad.addEventListener('pointerdown', handlePointer);
-pad.addEventListener('pointermove', (e) => {
-    if (e.buttons > 0) handlePointer(e);
-});
-
-function handlePointer(e) {
-    const rect = pad.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
-
-    // 範囲内に制限
-    x = Math.max(0, Math.min(x, rect.width));
-    y = Math.max(0, Math.min(y, rect.height));
-
-    // マーカーの位置を更新
-    marker.style.left = x + 'px';
-    marker.style.top = y + 'px';
-
-    // 座標を数値に変換 (0〜520の範囲)
-    const atk = Math.round((x / rect.width) * 520);
-    const def = Math.round((y / rect.height) * 520);
-
-    updateDamageCoord(atk, def);
-}
-
-function updateDamageCoord(atk, def) {
-    document.getElementById('stat-atk').innerText = atk;
-    document.getElementById('stat-def').innerText = def;
-
-    // ダメージ計算式: 四捨五入(攻撃力/2 - 守備力/4)
-    let damage = Math.round((atk / 2) - (def / 4));
-    if (damage < 0) damage = 0;
-
-    document.getElementById('final-damage-coord').innerText = damage;
-}
-
-// 初期表示用
-window.addEventListener('load', () => {
-    // 中央に配置
-    const rect = pad.getBoundingClientRect();
-    updateDamageCoord(260, 260);
-    marker.style.left = '50%';
-    marker.style.top = '50%';
-});
-</script>
-
-<script>
-window.addEventListener('DOMContentLoaded', () => {
-    const pad = document.getElementById('battle-pad');
-    const marker = document.getElementById('marker');
-    
-    if (!pad || !marker) return; // 要素がない場合は何もしない
-
-    function handlePointer(e) {
-        const rect = pad.getBoundingClientRect();
-        
-        // パッド内での相対座標を計算
-        let x = e.clientX - rect.left;
-        let y = e.clientY - rect.top;
-
-        // 範囲外にはみ出さないように制限
-        x = Math.max(0, Math.min(x, rect.width));
-        y = Math.max(0, Math.min(y, rect.height));
-
-        // マーカー位置の更新
-        marker.style.left = x + 'px';
-        marker.style.top = y + 'px';
-
-        // 数値への変換 (0～500)
-        const atk = Math.round((x / rect.width) * 500);
-        const def = Math.round((y / rect.height) * 500);
-
-        // ダメージ計算の実行
-        updateDamageCoord(atk, def);
-    }
-
-    function updateDamageCoord(atk, def) {
-        document.getElementById('stat-atk').innerText = atk;
-        document.getElementById('stat-def').innerText = def;
-
-        let damage = Math.round((atk / 2) - (def / 4));
-        if (damage < 0) damage = 0;
-
-        document.getElementById('final-damage-coord').innerText = damage;
-    }
-
-    // イベントリスナーの登録
-    pad.addEventListener('pointerdown', (e) => {
-        pad.setPointerCapture(e.pointerId); // 指がパッド外に出ても追跡し続ける
-        handlePointer(e);
-    });
-
-    pad.addEventListener('pointermove', (e) => {
-        if (e.buttons > 0) handlePointer(e); // 押している間だけ動かす
-    });
-
-    // 初期状態（真ん中）にセット
-    updateDamageCoord(250, 250);
-    marker.style.left = '50%';
-    marker.style.top = '50%';
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    const pad = document.getElementById('battle-pad');
-    const marker = document.getElementById('marker');
-    const lapList = document.getElementById('lapList');
-
-    // --- 1. 保存されたデータを読み込む ---
-    const savedAtk = localStorage.getItem('rta_atk') || 250;
-    const savedDef = localStorage.getItem('rta_def') || 250;
-    const savedLaps = JSON.parse(localStorage.getItem('rta_laps')) || [];
-
-    // 初期位置とデータの反映
-    updateDamageCoord(savedAtk, savedDef);
-    marker.style.left = (savedAtk / 500 * 100) + '%';
-    marker.style.top = (savedDef / 500 * 100) + '%';
-
-    savedLaps.forEach(lapText => {
-        const li = document.createElement('li');
-        li.innerHTML = lapText;
-        lapList.appendChild(li);
-    });
-
-    // --- 2. ダメージ計算 & 保存 ---
-    function handlePointer(e) {
-        const rect = pad.getBoundingClientRect();
-        let x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-        let y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-
-        marker.style.left = x + 'px';
-        marker.style.top = y + 'px';
-
-        const atk = Math.round((x / rect.width) * 500);
-        const def = Math.round((y / rect.height) * 500);
-
-        updateDamageCoord(atk, def);
-
-        // LocalStorageに保存（数値）
-        localStorage.setItem('rta_atk', atk);
-        localStorage.setItem('rta_def', def);
-    }
-
-    function updateDamageCoord(atk, def) {
-        document.getElementById('stat-atk').innerText = atk;
-        document.getElementById('stat-def').innerText = def;
-        let damage = Math.round((atk / 2) - (def / 4));
-        if (damage < 0) damage = 0;
-        document.getElementById('final-damage-coord').innerText = damage;
-    }
-
-    pad.addEventListener('pointerdown', (e) => {
-        pad.setPointerCapture(e.pointerId);
-        handlePointer(e);
-    });
-    pad.addEventListener('pointermove', (e) => {
-        if (e.buttons > 0) handlePointer(e);
-    });
-});
-
-// --- 3. ラップタイムの保存 ---
-// 既存のrecordLap関数を修正
-function recordLap() {
-    if (elapsedTime === 0) return;
-    const lapList = document.getElementById('lapList');
-    const lapNum = lapList.children.length + 1;
-    const lapContent = `<span>ラップ ${lapNum}</span> <span>${formatTime(elapsedTime)}</span>`;
-    
-    const li = document.createElement('li');
-    li.innerHTML = lapContent;
-    lapList.prepend(li);
-
-    // 配列として保存
-    const currentLaps = JSON.parse(localStorage.getItem('rta_laps')) || [];
-    currentLaps.push(lapContent);
-    localStorage.setItem('rta_laps', JSON.stringify(currentLaps));
-}
-
-// リセット時に保存データも消す
-function reset() {
-    if (!confirm('データをすべてリセットしますか？')) return;
-    clearInterval(timerInterval);
-    elapsedTime = 0;
-    document.getElementById('display').innerText = "00:00:00.000";
-    document.getElementById('lapList').innerHTML = '';
-    localStorage.removeItem('rta_laps'); // ラップ履歴を削除
-}
-
-
-let myChart;
-
-// ガンマ関数の近似 (Lanczos近似)
-function gamma(n) {
-    var g = 7, p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
-    if (n < 0.5) return Math.PI / (Math.sin(Math.PI * n) * gamma(1 - n));
-    n -= 1;
-    var x = p[0];
-    for (var i = 1; i < g + 2; i++) x += p[i] / (n + i);
-    var t = n + g + 0.5;
-    return Math.sqrt(2 * Math.PI) * Math.pow(t, (n + 0.5)) * Math.exp(-t) * x;
-}
-
-// ガンマ分布の密度関数
-function gammaPDF(x, k, theta) {
-    if (x < 0) return 0;
-    return (Math.pow(x, k - 1) * Math.exp(-x / theta)) / (Math.pow(theta, k) * gamma(k));
-}
-
-function updateChart() {
-    const k = parseFloat(document.getElementById('k-slider').value);
-    const theta = parseFloat(document.getElementById('theta-slider').value);
-    
-    document.getElementById('k-val').innerText = k.toFixed(1);
-    document.getElementById('theta-val').innerText = theta.toFixed(1);
-
-    const labels = [];
-    const pdfValues = [];
-    const step = 0.5;
-    const maxPath = 100; // グラフの描画範囲
-
-    // 1. まず全データのPDFを計算
-    for (let x = 0; x <= maxPath; x += step) {
-        labels.push(x);
-        pdfValues.push(gammaPDF(x, k, theta));
-    }
-
-    // 2. 境界値（中央値と上位20%点）を累積分布から算出
-    let cumulative = 0;
-    let medianX = 0;
-    let top20X = 0;
-    const totalArea = pdfValues.reduce((a, b) => a + b, 0) * step;
-
-    for (let i = 0; i < pdfValues.length; i++) {
-        cumulative += pdfValues[i] * step;
-        const progress = cumulative / totalArea;
-        if (!medianX && progress >= 0.5) medianX = labels[i];
-        if (!top20X && progress >= 0.8) top20X = labels[i]; // 上位20% = 累積80%
-    }
-
-    // 3. データセットを3つに分割（重なりを作ることで隙間を消す）
-    const dataBlue = pdfValues.map((v, i) => labels[i] <= medianX ? v : null);
-    const dataGreen = pdfValues.map((v, i) => (labels[i] >= medianX && labels[i] <= top20X) ? v : null);
-    const dataRed = pdfValues.map((v, i) => labels[i] >= top20X ? v : null);
-
-    if (myChart) {
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataBlue;
-        myChart.data.datasets[1].data = dataGreen;
-        myChart.data.datasets[2].data = dataRed;
-        myChart.update();
-    } else {
-        const ctx = document.getElementById('myChart').getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '下位50% (通常)',
-                        data: dataBlue,
-                        borderColor: '#004494',
-                        backgroundColor: 'rgba(0, 68, 148, 0.2)',
-                        fill: true, pointRadius: 0, tension: 0.1
-                    },
-                    {
-                        label: '中央値〜上位20%',
-                        data: dataGreen,
-                        borderColor: '#28a745',
-                        backgroundColor: 'rgba(40, 167, 69, 0.4)',
-                        fill: true, pointRadius: 0, tension: 0.1
-                    },
-                    {
-                        label: '上位20% (レア)',
-                        data: dataRed,
-                        borderColor: '#dc3545',
-                        backgroundColor: 'rgba(220, 53, 69, 0.6)',
-                        fill: true, pointRadius: 0, tension: 0.1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { type: 'linear', title: { display: true, text: '値' } },
-                    y: { beginAtZero: true }
-                },
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-    }
-}
-
-// 初期描画
-window.addEventListener('load', updateChart);
-
-
 let multiChart;
 
 function updateMultiChart() {
@@ -457,26 +149,22 @@ function updateMultiChart() {
     const sliders = document.querySelectorAll('.theta-slider');
     const thetas = Array.from(sliders).map(s => {
         const val = parseFloat(s.value);
-        s.nextElementSibling.innerText = val;
+        s.parentElement.querySelector('.val').innerText = val;
         return val;
     }).filter(v => v > 0);
 
     const step = 0.5;
-    const maxLen = 150; // 計算上の長さ
-    const points = Math.floor(maxLen / step);
-    
-    // 計算用のベースとなるx軸（0から始まる）
+    const maxCalcRange = 100;
+    const points = Math.floor(maxCalcRange / step);
     let baseLabels = Array.from({length: points}, (_, i) => i * step);
-    
-    // 表示用のx軸（オフセットを加算）
     let displayLabels = baseLabels.map(x => x + offset);
     
     if (thetas.length === 0) {
         if(multiChart) multiChart.destroy();
+        multiChart = null;
         return;
     }
 
-    // 畳み込み計算（前回同様）
     let resultPdf = new Array(points).fill(0);
     const t0 = thetas[0];
     resultPdf = baseLabels.map(x => (1/t0) * Math.exp(-x/t0));
@@ -494,35 +182,25 @@ function updateMultiChart() {
         resultPdf = nextPdf;
     }
 
-    // 累積分布から境界値を特定（displayLabelsを使用）
     let cumulative = 0;
     const totalArea = resultPdf.reduce((a, b) => a + b, 0) * step;
-    let p10, p20, p50, p80, p90;
+    let targets = [0.1, 0.2, 0.5, 0.8, 0.9, 0.95];
+    let p = targets.map(target => {
+        let cum = 0;
+        for (let i = 0; i < points; i++) {
+            cum += resultPdf[i] * step;
+            if (cum / totalArea >= target) return displayLabels[i];
+        }
+        return 100;
+    });
 
-    for (let i = 0; i < points; i++) {
-        cumulative += resultPdf[i] * step;
-        const ratio = cumulative / totalArea;
-        if (!p10 && ratio >= 0.1) p10 = displayLabels[i];
-        if (!p20 && ratio >= 0.2) p20 = displayLabels[i];
-        if (!p50 && ratio >= 0.5) p50 = displayLabels[i];
-        if (!p80 && ratio >= 0.8) p80 = displayLabels[i];
-        if (!p90 && ratio >= 0.9) p90 = displayLabels[i];
-    }
-
-    // データセット作成（x軸にdisplayLabelsを適用）
-    const colors = ['#800080', '#0000FF', '#008000', '#FFFF00', '#FFA500', '#FF0000'];
-    const datasets = [
-        { label: '0-10%', range: [0, p10] },
-        { label: '10-20%', range: [p10, p20] },
-        { label: '20-50%', range: [p20, p50] },
-        { label: '50-80%', range: [p50, p80] },
-        { label: '80-90%', range: [p80, p90] },
-        { label: '90-100%', range: [p90, 999] }
-    ].map((config, idx) => ({
-        label: config.label,
-        data: resultPdf.map((v, i) => (displayLabels[i] >= config.range[0] && displayLabels[i] <= config.range[1]) ? v : null),
-        borderColor: colors[idx],
-        backgroundColor: colors[idx] + '66',
+    const colors = ['#800080', '#0000FF', '#008000', '#9ACD32', '#FFFF00', '#FFA500', '#FF0000'];
+    const thresholds = [0, ...p, 100];
+    
+    const datasets = colors.map((color, idx) => ({
+        data: resultPdf.map((v, i) => (displayLabels[i] >= thresholds[idx] && displayLabels[i] <= thresholds[idx+1]) ? v : null),
+        borderColor: color,
+        backgroundColor: color + '66',
         fill: true,
         pointRadius: 0,
         tension: 0.1,
@@ -542,284 +220,16 @@ function updateMultiChart() {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: { 
-                    x: { type: 'linear', min: 0, max: 150 }, // 全体が見えるように固定
-                    y: { beginAtZero: true }
+                    x: { type: 'linear', min: 0, max: 100 },
+                    y: { beginAtZero: true, display: false }
                 },
                 plugins: { legend: { display: false } }
             }
         });
     }
 }
+
 window.addEventListener('load', updateMultiChart);
-
 </script>
-
-<body>
-
-<header>
-    <h1>ドラゴンクエスト RTA 解説</h1>
-</header>
-
-<section>
-    <h2>RTAとは？</h2>
-    <p>RTAは<strong>「Real Time Attack」</strong>の略称です。ゲーム開始からクリアまでの「現実の時間」の短さを競います。ゲーム内のプレイ時間ではなく、タイマーを止めずに計測するのが特徴です。</p>
-    
-    <h3>ドラクエRTAの魅力</h3>
-    <ul>
-        <li><strong>運要素の管理：</strong> 逃げられるか、会心の一撃が出るかといった運をどうリカバーするか。</li>
-        <li><strong>戦略性：</strong> どのレベルでボスに挑むか、どのアイテムを回収するかのルート構築。</li>
-        <li><strong>並走の熱さ：</strong> 複数のプレイヤーが同時にスタートするイベントが盛んです。</li>
-    </ul>
-</section>
-
-<section id="multi-chart-section">
-    <h2>指数分布の和 + オフセット</h2>
-    
-    <div id="sliders-container" style="display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto;">
-        <!-- グラフ全体を右に移動させるスライダー -->
-        <div class="slider-item" style="background: #fdf2f2; padding: 10px; border-radius: 8px; border: 1px solid #ffcccc;">
-            <label>グラフの右移動: <strong id="offset-val" style="color: #d9534f;">0</strong></label>
-            <input type="range" id="offset-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()" style="width: 100%;">
-        </div>
-
-        <hr style="width: 100%; border: 0.5px solid #ccc;">
-
-        <!-- 確率変数のスライダー 6本 -->
-        <div class="slider-item">θ1: <input type="range" class="theta-slider" min="0" max="15" step="1" value="8" oninput="updateMultiChart()"> <span class="val">8</span></div>
-        <div class="slider-item">θ2: <input type="range" class="theta-slider" min="0" max="15" step="1" value="5" oninput="updateMultiChart()"> <span class="val">5</span></div>
-        <div class="slider-item">θ3: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
-        <div class="slider-item">θ4: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
-        <div class="slider-item">θ5: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
-        <div class="slider-item">θ6: <input type="range" class="theta-slider" min="0" max="15" step="1" value="0" oninput="updateMultiChart()"> <span class="val">0</span></div>
-    </div>
-
-    <div style="position: relative; height:400px; width:100%; margin-top:20px;">
-        <canvas id="multiChart"></canvas>
-    </div>
-</section>
-
-<style>
-    .slider-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .slider-item input { flex-grow: 1; }
-    .slider-item .val { min-width: 20px; font-weight: bold; }
-</style>
-
-
-
-<section id="chart-section">
-    <h2>分布グラフ (ガンま分布)</h2>
-    <div class="slider-group">
-        <label>形状 (k): <span id="k-val">3.0</span></label>
-        <input type="range" id="k-slider" min="1" max="10" step="0.1" value="3" oninput="updateChart()">
-        
-        <label>尺度 (θ): <span id="theta-val">8.0</span></label>
-        <input type="range" id="theta-slider" min="1" max="20" step="0.1" value="8" oninput="updateChart()">
-    </div>
-    <div style="position: relative; height:300px; width:100%">
-        <canvas id="myChart"></canvas>
-    </div>
-</section>
-
-<!-- Chart.jsを読み込み -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<section id="coord-section">
-    <h2>座標ダメージ計算（バトルパッド）</h2>
-    <div id="battle-pad">
-        <div id="marker"></div>
-        <div class="axis-label x-label">攻撃力 →</div>
-        <div class="axis-label y-label">守備力 ↓</div>
-    </div>
-    
-    <div class="status-display">
-        <p>攻撃力: <span id="stat-atk">260</span> / 守備力: <span id="stat-def">260</span></p>
-        <div id="calc-result-coord">
-            ダメージ: <span id="final-damage-coord">--</span>
-        </div>
-    </div>
-</section>
-
-<style>
-    #battle-pad {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        background: #eef;
-        border: 2px solid #004494;
-        position: relative;
-        cursor: crosshair;
-        touch-action: none; /* スマホのスクロールと干渉させない */
-        border-radius: 8px;
-        background-image: 
-            linear-gradient(#ccc 1px, transparent 1px),
-            linear-gradient(90deg, #ccc 1px, transparent 1px);
-        background-size: 10% 10%;
-    }
-    #marker {
-        width: 30px; /* 少し大きく */
-        height: 30px;
-        background: rgba(255, 68, 68, 0.7); /* 少し透けさせる */
-        border: 2px solid white;
-        border-radius: 50%;
-        position: absolute;
-        transform: translate(-50%, -50%);
-        pointer-events: none; /* マーカー自体がクリックを邪魔しないようにする */
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-</style>
-
-
-<section id="calc-section">
-    <h2>ダメージ計算機</h2>
-    
-    <!-- 攻撃力設定 -->
-    <div class="calc-group">
-        <div class="calc-header">
-            <span>攻撃力: <strong id="total-atk-val">100</strong></span>
-        </div>
-        <input type="range" id="atk1" min="0" max="500" step="10" value="100" oninput="updateCalc()">
-        <input type="range" id="atk2" min="-20" max="20" step="1" value="0" oninput="updateCalc()">
-    </div>
-
-    <!-- 守備力設定 -->
-    <div class="calc-group">
-        <div class="calc-header">
-            <span>守備力: <strong id="total-def-val">40</strong></span>
-        </div>
-        <input type="range" id="def1" min="0" max="500" step="10" value="40" oninput="updateCalc()">
-        <input type="range" id="def2" min="-20" max="20" step="1" value="0" oninput="updateCalc()">
-    </div>
-
-    <div id="calc-result">
-        推定ダメージ: <span id="final-damage">--</span>
-    </div>
-</section>
-<style>
-    .calc-group {
-        background: #eee;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-    }
-    .calc-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        font-size: 1.1rem;
-    }
-    .calc-header strong {
-        color: #004494;
-        font-size: 1.4rem;
-    }
-    input[type="range"] {
-        width: 100%;
-        margin: 10px 0;
-        cursor: pointer;
-    }
-    #calc-result {
-        background: #222;
-        color: #fff;
-        padding: 20px;
-        text-align: center;
-        border-radius: 8px;
-        font-size: 1.5rem;
-    }
-    #final-damage {
-        color: #ff4444;
-        font-weight: bold;
-        font-size: 2rem;
-    }
-</style>
-
-<section id="timer-section">
-    <h2>RTAタイマー</h2>
-    <div id="display">00:00:00.000</div>
-    <div class="controls">
-        <button id="startStop" onclick="startStop()">スタート</button>
-        <button id="lap" onclick="recordLap()">ラップ</button>
-        <button id="reset" onclick="reset()">リセット</button>
-    </div>
-    <ul id="lapList"></ul>
-</section>
-
-<style>
-    /* タイマー用の追加デザイン */
-    #display {
-        font-family: monospace;
-        font-size: 3rem;
-        text-align: center;
-        background: #222;
-        color: #0f0;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    .controls {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 20px;
-    }
-    .controls button {
-        padding: 10px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-        background: #004494;
-        color: white;
-    }
-    .controls button:hover { background: #003377; }
-    #lapList {
-        list-style: none;
-        padding: 0;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-    #lapList li {
-        border-bottom: 1px solid #ddd;
-        padding: 5px;
-        display: flex;
-        justify-content: space-between;
-    }
-</style>
-<section>
-    <h2>基本テクニック</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>テクニック名</th>
-                <th>内容</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>デスルーラ</td>
-                <td>全滅して最後にセーブした場所へ戻り、移動時間を短縮する。</td>
-            </tr>
-            <tr>
-                <td>エンカウント飛ばし</td>
-                <td>歩数や乱数を調整して、敵との遭遇を回避する。</td>
-            </tr>
-            <tr>
-                <td>トヘロス調整</td>
-                <td>聖水やトヘロスを使い、レベル差を利用して雑魚敵を完封する。</td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-
-<section>
-    <h2>有名なレギュレーション</h2>
-    <p>ドラクエRTAには、プレイヤー間で決められたルール（レギュレーション）が存在します。</p>
-    <ul>
-        <li><span class="highlight">SFC版 DQ3:</span> 最も人気のあるカテゴリーの一つ。</li>
-        <li><span class="highlight">並走ルール:</span> 外部ツールやバグ利用の制限など、公平性を保つための共通ルール。</li>
-    </ul>
-</section>
-
-<footer>
-    <p style="text-align: center; font-size: 0.8em; color: #777;">&copy; 2026 ドラクエRTAファンページ</p>
-</footer>
-
 </body>
 </html>
