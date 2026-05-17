@@ -2,8 +2,13 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ドラクエ5(PS2版) HP確率計算ツール[ver1]</title>
+    <!-- PWA用の設定を追加 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <style>
         :root {
             --primary: #06b6d4; /* 初期表示（男の子）の水色 */
@@ -27,6 +32,9 @@
             justify-content: center;
             align-items: center;
             padding: 8px;
+            /* 画面全体の引っ張りバウンス（グラグラ揺れる挙動）を禁止 */
+            overscroll-behavior: none;
+            overflow: hidden;
         }
 
         .container {
@@ -192,14 +200,17 @@
             color: #4a5568;
         }
 
-        /* テーブルエリア（表示行数を増やすために拡張） */
+        /* テーブルエリア（1画面に収めるため、表示行数を減らす調整） */
         .table-container {
-            max-height: 280px;
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             background: #fff;
             position: relative;
+            /* スクロール端での親要素への伝播を防止 */
+            overscroll-behavior: contain; 
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -230,6 +241,20 @@
             color: #166534;
             border: 2px solid #22c55e;
         }
+
+        /* フッターのスタイル設定 */
+        .footer {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: #718096;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .footer a {
+            color: #4a5568;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -247,8 +272,7 @@
         <!-- レベル範囲スライダー (2本つまみ) -->
         <div class="form-group full-width">
             <div class="label-flex">
-                <label id="lvRangeTitle">レベル範囲</label>
-                <label id="lvRangeDisplay" style="color: var(--primary); font-weight: bold;"></label>
+                <label id="lvRangeTitle" style="color: var(--primary); font-weight: bold;"></label>
             </div>
             <div class="range-slider-container">
                 <div class="slider-track" id="sliderTrack"></div>
@@ -285,6 +309,12 @@
 
     <!-- 詳細一覧 -->
     <div class="table-container" id="tableContainer"></div>
+
+    <!-- 指定されたフッター行の追加 -->
+    <div class="footer">
+        制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
+        調査と仮説：<a href="https://uniright2.github.io/ancient/dq5/" target="_blank" rel="noopener">https://uniright2.github.io/ancient/dq5/</a>
+    </div>
 </div>
 
 <script>
@@ -402,6 +432,13 @@ function init() {
 
     selectCharacter(selectedChar);
     isInitialBoot = false; 
+
+    // サービスワーカーの登録
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => {
+            console.log('Service Worker Registered');
+        });
+    }
 }
 
 function selectCharacter(name) {
@@ -429,8 +466,6 @@ function selectCharacter(name) {
     startLvInput.max = bounds.max;
     endLvInput.min = bounds.min;
     endLvInput.max = bounds.max;
-
-    document.getElementById('lvRangeTitle').innerText = `レベル範囲 (${bounds.min}〜${bounds.max})`;
 
     if (isInitialBoot && selectedChar === "男の子") {
         startLvInput.value = 5;
@@ -465,14 +500,11 @@ function controlEndSlider() {
     updateSliderUI();
 }
 
-// ==========================================
-// 6. スライダーUIの更新
-// ==========================================
 function updateSliderUI() {
     const startLv = document.getElementById('startLv').value;
     const endLv = document.getElementById('endLv').value;
     
-    document.getElementById('lvRangeDisplay').innerText = `Lv.${startLv} 〜 Lv.${endLv}`;
+    document.getElementById('lvRangeTitle').innerText = `レベルアップ Lv ${startLv} → Lv ${endLv}`;
 
     const theme = charThemes[selectedChar];
     document.documentElement.style.setProperty('--primary', theme.primary);
@@ -601,7 +633,6 @@ function displayResults(dist, targetHp) {
         let cumStr = (cumulativeProb * 100).toFixed(2) + "%";
         
         let rowAttrs = "";
-        // 目標HPの1つ小さい値をハイライト
         if (hp === targetHp - 1) {
             rowAttrs += ' class="match-row"';
         }
