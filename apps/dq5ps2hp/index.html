@@ -287,10 +287,10 @@
             <select id="startHp" onchange="calculate()"></select>
         </div>
 
-        <!-- 目標HP -->
+        <!-- 目標HP (選択式に変更) -->
         <div class="form-group">
-            <label for="targetHp">目標HP（**未満**の確率）</label>
-            <input type="number" id="targetHp" value="216" min="1" oninput="calculate()">
+            <label for="targetHp">目標HP（未満の確率）</label>
+            <select id="targetHp" onchange="calculate()"></select>
         </div>
 
         <!-- 命の木の実 -->
@@ -428,6 +428,16 @@ function init() {
         opt.value = i; opt.textContent = `${i} 回`;
         if (i === 4) opt.selected = true; 
         nutsSelect.appendChild(opt);
+    }
+
+    // 目標HPのセレクトボックス生成 (24から333)
+    const targetHpSelect = document.getElementById('targetHp');
+    for (let hp = 24; hp <= 333; hp++) {
+        let opt = document.createElement('option');
+        opt.value = hp;
+        opt.textContent = hp;
+        if (hp === 216) opt.selected = true; // デフォルトを216に
+        targetHpSelect.appendChild(opt);
     }
 
     selectCharacter(selectedChar);
@@ -586,7 +596,7 @@ function calculate() {
     const targetHp = parseInt(document.getElementById('targetHp').value);
     const nutsCount = parseInt(document.getElementById('nutsCount').value);
 
-    if (isNaN(startHp)) return;
+    if (isNaN(startHp) || isNaN(targetHp)) return;
 
     let currentDist = { [startHp]: 1.0 };
 
