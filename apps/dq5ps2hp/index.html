@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HP確率計算シミュレーター</title>
+    <title>ドラクエ5(PS2版) HP確率計算ツール[ver1]</title>
     <style>
         :root {
             --primary: #06b6d4; /* 初期表示（男の子）の水色 */
@@ -89,29 +89,25 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
-        /* 横並びキャラクターボタン */
+        /* キャラクターボタンを横幅に収める（折り返しを許可） */
         .char-btn-container {
             display: flex;
+            flex-wrap: wrap;
             gap: 6px;
-            overflow-x: auto;
             padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .char-btn-container::-webkit-scrollbar {
-            display: none;
         }
 
         .char-btn {
-            flex: 0 0 auto;
-            padding: 8px 14px;
-            font-size: 0.85rem;
+            flex: 1 0 calc(33.333% - 6px); /* 3列でぴったり収める構成 */
+            padding: 6px 4px;
+            font-size: 0.8rem;
             font-weight: bold;
             border: 2px solid #cbd5e0;
             border-radius: 20px;
             background: #fff;
             color: #4a5568;
             cursor: pointer;
+            text-align: center;
             transition: all 0.2s ease;
         }
 
@@ -196,9 +192,9 @@
             color: #4a5568;
         }
 
-        /* テーブルエリア */
+        /* テーブルエリア（表示行数を増やすために拡張） */
         .table-container {
-            max-height: 120px;
+            max-height: 280px;
             overflow-y: auto;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -239,7 +235,7 @@
 <body>
 
 <div class="container">
-    <h1>HP確率計算ツール</h1>
+    <h1>ドラクエ5(PS2版) HP確率計算ツール[ver1]</h1>
 
     <div class="grid">
         <!-- キャラクター選択 (ボタン形式) -->
@@ -251,7 +247,7 @@
         <!-- レベル範囲スライダー (2本つまみ) -->
         <div class="form-group full-width">
             <div class="label-flex">
-                <label>レベル範囲 (1〜30)</label>
+                <label id="lvRangeTitle">レベル範囲</label>
                 <label id="lvRangeDisplay" style="color: var(--primary); font-weight: bold;"></label>
             </div>
             <div class="range-slider-container">
@@ -270,7 +266,7 @@
         <!-- 目標HP -->
         <div class="form-group">
             <label for="targetHp">目標HP（**未満**の確率）</label>
-            <input type="number" id="targetHp" value="215" min="1" oninput="calculate()">
+            <input type="number" id="targetHp" value="216" min="1" oninput="calculate()">
         </div>
 
         <!-- 命の木の実 -->
@@ -282,7 +278,6 @@
 
     <!-- 確率計算結果 -->
     <div class="result-box" id="resultBox">
-        <!-- 【修正箇所】ここの文言がJS側で動的に「HP 215未満になる確率」のように書き換わります -->
         <div class="result-title" id="resultTitle">HP - 未満になる確率</div>
         <div class="result-value" id="probValue">0.00%</div>
         <div class="result-summary" id="summaryText">最小: - / 最大: - / 平均: -</div>
@@ -294,14 +289,24 @@
 
 <script>
 // ==========================================
-// 1. 確率データの定義 (辞書形式)
+// 1. 確率パターンの定義 (分数表記でのベタ打ち)
 // ==========================================
 const growthPatterns = {
-    1: { 3: 0.25, 4: 0.50, 5: 0.25 },  
-    2: { 2: 0.20, 3: 0.60, 4: 0.20 },
-    3: { 4: 0.30, 5: 0.40, 6: 0.30 },
-    4: { 1: 0.10, 2: 0.40, 3: 0.40, 4: 0.10 },
-    'nuts': { 4: 0.33, 5: 0.34, 6: 0.33 } 
+    0:  { 0: 1 },
+    1:  { 1: 1 }, 
+    2:  { 2: 1 }, 
+    3:  { 2: 1/6, 3: 4/6, 4: 1/6 },
+    4:  { 3: 2/8, 4: 4/8, 5: 2/8 },
+    5:  { 4: 3/10, 5: 4/10, 6: 3/10 },
+    6:  { 5: 4/12, 6: 4/12, 7: 4/12 },
+    7:  { 5: 1/14, 6: 4/14, 7: 4/14, 8: 4/14, 9: 1/14 },
+    8:  { 6: 2/16, 7: 4/16, 8: 4/16, 9: 4/16, 10: 2/16 },
+    9:  { 7: 3/18, 8: 4/18, 9: 4/18, 10: 4/18, 11: 3/18 },
+    10: { 8: 4/20, 9: 4/20, 10: 4/20, 11: 4/20, 12: 4/20 },
+    11: { 8: 1/22, 9: 4/22, 10: 4/22, 11: 4/22, 12: 4/22, 13: 4/22, 14: 1/22 },
+    12: { 9: 2/24, 10: 4/24, 11: 4/24, 12: 4/24, 13: 4/24, 14: 4/24, 15: 2/24 },
+    13: { 10: 3/26, 11: 4/26, 12: 4/26, 13: 4/26, 14: 4/26, 15: 4/26, 16: 3/26 },
+    'nuts': { 4: 1/3, 5: 1/3, 6: 1/3 }
 };
 
 const patternBounds = {};
@@ -311,34 +316,70 @@ for (let id in growthPatterns) {
 }
 
 // ==========================================
-// 2. キャラクター名 & テーマカラーの定義
+// 2. キャラクター別の基本データ・固有レベル範囲定義
 // ==========================================
 const charNames = ["主人公", "アプール", "ピエール", "男の子", "女の子", "サンチョ"];
+
 const charInitialHp = {
-    "主人公": 28, "アプール": 38, "ピエール": 42, "男の子": 24, "女の子": 18, "サンチョ": 65
+    "主人公": 24, "アプール": 90, "ピエール": 40, "男の子": 74, "女の子": 67, "サンチョ": 214
+};
+
+const charLvBounds = {
+    "主人公":   { min: 1,  max: 30 },
+    "アプール": { min: 1,  max: 20 },
+    "ピエール": { min: 1,  max: 30 },
+    "男の子":   { min: 5,  max: 30 },
+    "女の子":   { min: 5,  max: 30 },
+    "サンチョ": { min: 20, max: 30 }
 };
 
 const charThemes = {
-    "主人公":   { primary: "#8b5cf6", bg: "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)", border: "#d8b4fe", text: "#6b21a8" }, // 紫
-    "アプール": { primary: "#f97316", bg: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)", border: "#fdba74", text: "#9a3412" }, // オレンジ
-    "ピエール": { primary: "#10b981", bg: "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)", border: "#6ee7b7", text: "#065f46" }, // 緑
-    "男の子":   { primary: "#06b6d4", bg: "linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)", border: "#67e8f9", text: "#075985" }, // 水色
-    "女の子":   { primary: "#ec4899", bg: "linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)", border: "#f472b6", text: "#9d174d" }, // ピンク
-    "サンチョ": { primary: "#78350f", bg: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", border: "#fcd34d", text: "#78350f" }  // 茶色
+    "主人公":   { primary: "#8b5cf6", bg: "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)", border: "#d8b4fe", text: "#6b21a8" }, 
+    "アプール": { primary: "#f97316", bg: "linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)", border: "#fdba74", text: "#9a3412" }, 
+    "ピエール": { primary: "#10b981", bg: "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)", border: "#6ee7b7", text: "#065f46" }, 
+    "男の子":   { primary: "#06b6d4", bg: "linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)", border: "#67e8f9", text: "#075985" }, 
+    "女の子":   { primary: "#ec4899", bg: "linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)", border: "#f472b6", text: "#9d174d" }, 
+    "サンチョ": { primary: "#78350f", bg: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", border: "#fcd34d", text: "#78350f" }  
+};
+
+// ==========================================
+// 3. キャラクター別 レベルアップ成長データ
+// ==========================================
+const characterGrowthSettings = {
+    "主人公": {
+        1: 4, 2: 4, 3: 4, 4: 4, 5: 7, 6: 7, 7: 7, 8: 7, 9: 8, 10: 8,
+        11: 8, 12: 8, 13: 8, 14: 8, 15: 8, 16: 8, 17: 8, 18: 8, 19: 8, 20: 8,
+        21: 8, 22: 8, 23: 8, 24: 8, 25: 8, 26: 8, 27: 8, 28: 8, 29: 8
+    },
+    "アプール": {
+        1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2,
+        11: 2, 12: 2, 13: 2, 14: 13, 15: 6, 16: 12, 17: 5, 18: 8, 19: 8
+    },
+    "ピエール": {
+        1: 6, 2: 6, 3: 6, 4: 6, 5: 4, 6: 4, 7: 4, 8: 4, 9: 5, 10: 9,
+        11: 10, 12: 10, 13: 10, 14: 10, 15: 5, 16: 5, 17: 5, 18: 5, 19: 6, 20: 9,
+        21: 9, 22: 9, 23: 9, 24: 9, 25: 9, 26: 9, 27: 9, 28: 9, 29: 9
+    },
+    "男の子": {
+        5: 8, 6: 9, 7: 9, 8: 9, 9: 9, 10: 2, 11: 2, 12: 3, 13: 2, 14: 3,
+        15: 10, 16: 10, 17: 10, 18: 10, 19: 10, 20: 2, 21: 3, 22: 2, 23: 3, 24: 2,
+        25: 3, 26: 2, 27: 3, 28: 2, 29: 3
+    },
+    "女の子": {
+        5: 5, 6: 5, 7: 6, 8: 5, 9: 6, 10: 6, 11: 7, 12: 6, 13: 7, 14: 7,
+        15: 11, 16: 12, 17: 11, 18: 12, 19: 12, 20: 2, 21: 3, 22: 3, 23: 2, 24: 3,
+        25: 3, 26: 2, 27: 3, 28: 3, 29: 3
+    },
+    "サンチョ": {
+        20: 11, 21: 12, 22: 12, 23: 12, 24: 12, 25: 12, 26: 11, 27: 12, 28: 12, 29: 12
+    }
 };
 
 let selectedChar = "男の子";
-
-const characterSettings = {};
-charNames.forEach((name, idx) => {
-    characterSettings[name] = {};
-    for (let lv = 1; lv <= 29; lv++) {
-        characterSettings[name][lv] = ((lv + idx) % 4) + 1; 
-    }
-});
+let isInitialBoot = true; 
 
 // ==========================================
-// 3. UIの初期化処理
+// 4. UIの初期化処理
 // ==========================================
 function init() {
     const btnContainer = document.getElementById('charBtnContainer');
@@ -355,11 +396,12 @@ function init() {
     for (let i = 0; i <= 6; i++) {
         let opt = document.createElement('option');
         opt.value = i; opt.textContent = `${i} 回`;
-        if (i === 4) opt.selected = true;
+        if (i === 4) opt.selected = true; 
         nutsSelect.appendChild(opt);
     }
 
     selectCharacter(selectedChar);
+    isInitialBoot = false; 
 }
 
 function selectCharacter(name) {
@@ -379,11 +421,31 @@ function selectCharacter(name) {
         }
     });
 
+    const bounds = charLvBounds[selectedChar];
+    const startLvInput = document.getElementById('startLv');
+    const endLvInput = document.getElementById('endLv');
+
+    startLvInput.min = bounds.min;
+    startLvInput.max = bounds.max;
+    endLvInput.min = bounds.min;
+    endLvInput.max = bounds.max;
+
+    document.getElementById('lvRangeTitle').innerText = `レベル範囲 (${bounds.min}〜${bounds.max})`;
+
+    if (isInitialBoot && selectedChar === "男の子") {
+        startLvInput.value = 5;
+        endLvInput.value = 27;
+        document.getElementById('targetHp').value = 216;
+    } else {
+        startLvInput.value = bounds.min;
+        endLvInput.value = Math.min(27, bounds.max);
+    }
+
     updateSliderUI();
 }
 
 // ==========================================
-// 4. スライダー & カラーテーマ制御
+// 5. スライダー制御・カラーテーマ制御
 // ==========================================
 function controlStartSlider() {
     const startLv = document.getElementById('startLv');
@@ -403,6 +465,9 @@ function controlEndSlider() {
     updateSliderUI();
 }
 
+// ==========================================
+// 6. スライダーUIの更新
+// ==========================================
 function updateSliderUI() {
     const startLv = document.getElementById('startLv').value;
     const endLv = document.getElementById('endLv').value;
@@ -419,37 +484,42 @@ function updateSliderUI() {
     document.getElementById('resultTitle').style.color = theme.text;
     document.getElementById('probValue').style.color = theme.text;
 
+    const bounds = charLvBounds[selectedChar];
+    const totalRange = bounds.max - bounds.min;
+    
+    const p1 = totalRange > 0 ? ((startLv - bounds.min) / totalRange) * 100 : 0;
+    const p2 = totalRange > 0 ? ((endLv - bounds.min) / totalRange) * 100 : 100;
+    
     const track = document.getElementById('sliderTrack');
-    const p1 = ((startLv - 1) / 29) * 100;
-    const p2 = ((endLv - 1) / 29) * 100;
     track.style.background = `linear-gradient(to right, #e2e8f0 ${p1}%, var(--primary) ${p1}%, var(--primary) ${p2}%, #e2e8f0 ${p2}%)`;
 
     updateStartHpOptions();
 }
 
 // ==========================================
-// 5. 開始時HPの動的生成
+// 7. 開始時HPの動的生成
 // ==========================================
 function updateStartHpOptions() {
     const startLv = parseInt(document.getElementById('startLv').value);
     const startHpSelect = document.getElementById('startHp');
+    const bounds = charLvBounds[selectedChar];
 
     let minHp = charInitialHp[selectedChar];
     let maxHp = charInitialHp[selectedChar];
 
-    for (let lv = 1; lv < startLv; lv++) {
-        const patternId = characterSettings[selectedChar][lv];
+    for (let lv = bounds.min; lv < startLv; lv++) {
+        const patternId = characterGrowthSettings[selectedChar][lv];
         if (patternBounds[patternId]) {
             minHp += patternBounds[patternId].min;
             maxHp += patternBounds[patternId].max;
         }
     }
-    maxHp += 36; 
 
     const midHp = Math.round((minHp + maxHp) / 2);
+    const allowedMaxHp = maxHp + 36; 
 
     startHpSelect.innerHTML = "";
-    for (let hp = minHp; hp <= maxHp; hp++) {
+    for (let hp = minHp; hp <= allowedMaxHp; hp++) {
         let opt = document.createElement('option');
         opt.value = hp; opt.textContent = hp;
         if (hp === midHp) opt.selected = true;
@@ -460,7 +530,7 @@ function updateStartHpOptions() {
 }
 
 // ==========================================
-// 6. 確率計算ロジック（畳み込み）
+// 8. 確率計算ロジック（畳み込み）
 // ==========================================
 function convolve(dist, pattern) {
     let nextDist = {};
@@ -489,7 +559,7 @@ function calculate() {
     let currentDist = { [startHp]: 1.0 };
 
     for (let lv = startLv; lv < endLv; lv++) {
-        const patternId = characterSettings[selectedChar][lv];
+        const patternId = characterGrowthSettings[selectedChar][lv];
         const pattern = growthPatterns[patternId];
         if (pattern) currentDist = convolve(currentDist, pattern);
     }
@@ -503,7 +573,7 @@ function calculate() {
 }
 
 // ==========================================
-// 7. 結果表示 & スクロール制御
+// 9. 結果表示 & スクロール制御
 // ==========================================
 function displayResults(dist, targetHp) {
     const hps = Object.keys(dist).map(Number).sort((a, b) => a - b);
@@ -531,7 +601,8 @@ function displayResults(dist, targetHp) {
         let cumStr = (cumulativeProb * 100).toFixed(2) + "%";
         
         let rowAttrs = "";
-        if (hp === targetHp) {
+        // 目標HPの1つ小さい値をハイライト
+        if (hp === targetHp - 1) {
             rowAttrs += ' class="match-row"';
         }
         
@@ -547,7 +618,6 @@ function displayResults(dist, targetHp) {
     if (targetHp > maxHp) targetLessProb = 1.0;
     if (targetHp <= minHp) targetLessProb = 0.0;
 
-    // 【修正点】入力された目標HPを元にタイトル表示を変更
     const displayTarget = isNaN(targetHp) ? "-" : targetHp;
     document.getElementById('resultTitle').innerText = `HP ${displayTarget} 未満になる確率`;
     
