@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ドラクエ5(PS2版) HP確率計算ツール[ver2.2]</title>
-    <!-- PWA用の設定を追加 -->
+    <title>ドラクエ5(PS2版) HP確率計算ツール</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="icon-192.png">
+    
     <style>
+        /* アプリ共通変数（テーマカラー等） */
         :root {
-            --primary: #06b6d4; /* 初期表示（男の子）の水色 */
+            --primary: #06b6d4; /* 選択中キャラクターのメインカラー（初期値：男の子） */
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --card-bg: rgba(255, 255, 255, 0.95);
             --text: #2d3748;
@@ -105,6 +107,7 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
+        /* キャラクター選択ボタン */
         .char-btn-container {
             display: flex;
             flex-wrap: wrap;
@@ -126,6 +129,7 @@
             transition: all 0.2s ease;
         }
 
+        /* 2本つまみスライダー */
         .range-slider-container {
             position: relative;
             width: 100%;
@@ -182,6 +186,7 @@
             z-index: 1;
         }
 
+        /* 確率マトリックス表 */
         .matrix-container {
             border: 1px solid #e2e8f0;
             border-radius: 12px;
@@ -241,16 +246,14 @@
 <body>
 
 <div class="container">
-    <h1>ドラクエ5(PS2版) HP確率計算ツール[ver2.2]</h1>
+    <h1>ドラクエ5(PS2版) HP確率計算ツール</h1>
 
     <div class="grid">
-        <!-- キャラクター選択 (ボタン形式) -->
         <div class="form-group full-width">
             <label>キャラクター</label>
             <div class="char-btn-container" id="charBtnContainer"></div>
         </div>
 
-        <!-- レベル範囲スライダー (2本つまみ) -->
         <div class="form-group full-width">
             <div class="label-flex">
                 <label id="lvRangeTitle" style="color: var(--primary); font-weight: bold;"></label>
@@ -262,32 +265,28 @@
             </div>
         </div>
 
-        <!-- 開始HP -->
         <div class="form-group">
             <label for="startHp">開始HP</label>
             <select id="startHp" onchange="onStartHpChange()"></select>
         </div>
 
-        <!-- 目標HP -->
         <div class="form-group">
-            <label for="targetHp">目標HP（未満になる確率が下表）</label>
+            <label for="targetHp">目標HP</label>
             <select id="targetHp" onchange="onTargetHpChange()"></select>
         </div>
     </div>
 
-    <!-- 21マスの確率マトリックス表を出力するコンテナ -->
     <div class="matrix-container" id="matrixContainer"></div>
 
-    <!-- 指定されたフッター行 -->
     <div class="footer">
-        制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
+        [ver2.6] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
         調査と仮説：<a href="https://uniright2.github.io/ancient/dq5/" target="_blank" rel="noopener">https://uniright2.github.io/ancient/dq5/</a>
     </div>
 </div>
 
 <script>
 // ==========================================
-// 1. 確率パターンの定義
+// 1. 確率パターンの定義（成長値＆木の実）
 // ==========================================
 const growthPatterns = {
     0:  { 0: 1 },
@@ -307,6 +306,7 @@ const growthPatterns = {
     'nuts': { 4: 1/3, 5: 1/3, 6: 1/3 }
 };
 
+// 各成長パターンの最小・最大上昇量を自動算出
 const patternBounds = {};
 for (let id in growthPatterns) {
     const gains = Object.keys(growthPatterns[id]).map(Number);
@@ -314,7 +314,7 @@ for (let id in growthPatterns) {
 }
 
 // ==========================================
-// 2. キャラクター別の基本データ
+// 2. キャラクター固有データの設定
 // ==========================================
 const charNames = ["主人公", "ピエール", "アプール", "男の子", "女の子", "サンチョ"];
 
@@ -340,7 +340,7 @@ const charThemes = {
     "サンチョ": { primary: "#78350f", bg: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", border: "#fcd34d", text: "#78350f" }  
 };
 
-// 新設：キャラクターごとの独立した選択状況を保存するメモリ
+// 各キャラクターの入力状態保持用
 let charStates = {
     "主人公":   { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
     "ピエール": { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
@@ -350,6 +350,7 @@ let charStates = {
     "サンチョ": { startLv: 20, endLv: 27, startHp: null, targetHp: 216 }
 };
 
+// レベルごとの成長パターン割り当てテーブル
 const characterGrowthSettings = {
     "主人公": {
         1: 4, 2: 4, 3: 4, 4: 4, 5: 7, 6: 7, 7: 7, 8: 7, 9: 8, 10: 8,
@@ -380,12 +381,14 @@ const characterGrowthSettings = {
     }
 };
 
+// アプリ起動時に選択されているキャラクター
 let selectedChar = "男の子";
 
 // ==========================================
-// 4. UIの初期化処理
+// 3. アプリケーション初期化処理
 // ==========================================
 function init() {
+    // キャラクター切り替えボタンの生成
     const btnContainer = document.getElementById('charBtnContainer');
     charNames.forEach(name => {
         const btn = document.createElement('button');
@@ -396,6 +399,7 @@ function init() {
         btnContainer.appendChild(btn);
     });
 
+    // 目標HPセレクトボックスの選択肢生成（24〜333）
     const targetHpSelect = document.getElementById('targetHp');
     for (let hp = 24; hp <= 333; hp++) {
         let opt = document.createElement('option');
@@ -404,8 +408,10 @@ function init() {
         targetHpSelect.appendChild(opt);
     }
 
+    // デフォルトキャラクターの読み込み
     selectCharacter(selectedChar);
 
+    // PWA用サービスワーカー登録
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').then(() => {
             console.log('Service Worker Registered');
@@ -413,10 +419,13 @@ function init() {
     }
 }
 
-// 変更点：キャラクター切り替え時に、そのキャラ専用の保存値をUIへ復元
+// ==========================================
+// 4. キャラクター選択・切り替え制御
+// ==========================================
 function selectCharacter(name) {
     selectedChar = name;
     
+    // ボタンの非アクティブ/アクティブ外観切り替え
     charNames.forEach(cName => {
         const btn = document.getElementById(`btn-${cName}`);
         const theme = charThemes[cName];
@@ -431,6 +440,7 @@ function selectCharacter(name) {
         }
     });
 
+    // スライダーの最小・最大限界値をキャラクター固有値へ変更
     const bounds = charLvBounds[selectedChar];
     const startLvInput = document.getElementById('startLv');
     const endLvInput = document.getElementById('endLv');
@@ -440,17 +450,18 @@ function selectCharacter(name) {
     endLvInput.min = bounds.min;
     endLvInput.max = bounds.max;
 
-    // 保存されている各ステータスをUIにロード
+    // キャラクターが保持している状態を反映
     const state = charStates[selectedChar];
     startLvInput.value = state.startLv;
     endLvInput.value = state.endLv;
     document.getElementById('targetHp').value = state.targetHp;
 
-    updateSliderUI();
+    // キャラクター変更時は、保存していたHPを優先してロードする（引数：false）
+    updateSliderUI(false);
 }
 
 // ==========================================
-// 5. スライダー制御・データ保存連動
+// 5. レベル選択スライダーの連動・制御
 // ==========================================
 function controlStartSlider() {
     const startLv = document.getElementById('startLv');
@@ -458,9 +469,9 @@ function controlStartSlider() {
     if (parseInt(startLv.value) > parseInt(endLv.value)) {
         startLv.value = endLv.value;
     }
-    // 現在のキャラクターの値を保存
     charStates[selectedChar].startLv = parseInt(startLv.value);
-    updateSliderUI();
+    // スライダー操作時は、開始HPを中央値へ強制連動させる（引数：true）
+    updateSliderUI(true);
 }
 
 function controlEndSlider() {
@@ -469,40 +480,44 @@ function controlEndSlider() {
     if (parseInt(endLv.value) < parseInt(startLv.value)) {
         endLv.value = startLv.value;
     }
-    // 現在のキャラクターの値を保存
     charStates[selectedChar].endLv = parseInt(endLv.value);
-    updateSliderUI();
+    // スライダー操作時は、開始HPを中央値へ強制連動させる（引数：true）
+    updateSliderUI(true);
 }
 
-function updateSliderUI() {
+function updateSliderUI(forceResetHp = false) {
     const startLv = charStates[selectedChar].startLv;
     const endLv = charStates[selectedChar].endLv;
     
+    // スライダー上部のテキストを更新
     document.getElementById('lvRangeTitle').innerHTML = `レベルアップ Lv <span class="lv-highlight">${startLv}</span> → Lv <span class="lv-highlight">${endLv}</span>`;
 
+    // キャラクター固有のテーマカラーを適用
     const theme = charThemes[selectedChar];
     document.documentElement.style.setProperty('--primary', theme.primary);
 
+    // スライダーのシークバー着色位置の計算
     const bounds = charLvBounds[selectedChar];
     const totalRange = bounds.max - bounds.min;
-    
     const p1 = totalRange > 0 ? ((startLv - bounds.min) / totalRange) * 100 : 0;
     const p2 = totalRange > 0 ? ((endLv - bounds.min) / totalRange) * 100 : 100;
     
     const track = document.getElementById('sliderTrack');
     track.style.background = `linear-gradient(to right, #e2e8f0 ${p1}%, var(--primary) ${p1}%, var(--primary) ${p2}%, #e2e8f0 ${p2}%)`;
 
-    updateStartHpOptions();
+    // 開始HPのドロップダウンメニューを再構築
+    updateStartHpOptions(forceResetHp);
 }
 
 // ==========================================
-// 6. 開始HPの動的生成・保存値の維持
+// 6. 開始HP選択肢の動的生成
 // ==========================================
-function updateStartHpOptions() {
+function updateStartHpOptions(forceMidHp = false) {
     const startLv = charStates[selectedChar].startLv;
     const startHpSelect = document.getElementById('startHp');
     const bounds = charLvBounds[selectedChar];
 
+    // 理論上の最小HP・最大HPをシミュレート
     let minHp = charInitialHp[selectedChar];
     let maxHp = charInitialHp[selectedChar];
 
@@ -515,24 +530,26 @@ function updateStartHpOptions() {
     }
 
     const midHp = Math.round((minHp + maxHp) / 2);
-    const allowedMaxHp = maxHp + 36; 
+    const allowedMaxHp = maxHp + 36; // ドーピングを考慮した上限幅
 
     startHpSelect.innerHTML = "";
     const savedHp = charStates[selectedChar].startHp;
     let hasSavedHp = false;
 
+    // 選択肢の生成
     for (let hp = minHp; hp <= allowedMaxHp; hp++) {
         let opt = document.createElement('option');
         opt.value = hp; opt.textContent = hp;
-        // 以前保存した値が今回のレベル範囲に存在すればそれを選択
-        if (savedHp !== null && hp === savedHp) {
+        
+        // スライダー操作による更新ではない、かつ有効な保存値がある場合は選択状態にする
+        if (!forceMidHp && savedHp !== null && hp === savedHp) {
             opt.selected = true;
             hasSavedHp = true;
         }
         startHpSelect.appendChild(opt);
     }
 
-    // 保存データがない、またはレベル変更により範囲外になった場合は中央値で自動補正
+    // 強制リセット、または既存の値が選択肢の範囲外になった場合は中央値を設定
     if (!hasSavedHp) {
         startHpSelect.value = midHp;
         charStates[selectedChar].startHp = midHp;
@@ -541,7 +558,6 @@ function updateStartHpOptions() {
     calculate();
 }
 
-// 変更点：ドロップダウン変更を検知して記憶に書き込む関数
 function onStartHpChange() {
     charStates[selectedChar].startHp = parseInt(document.getElementById('startHp').value);
     calculate();
@@ -553,7 +569,7 @@ function onTargetHpChange() {
 }
 
 // ==========================================
-// 7. 確率計算ロジック（畳み込み）
+// 7. 確率計算ロジック（離散確率分布の畳み込み）
 // ==========================================
 function convolve(dist, pattern) {
     let nextDist = {};
@@ -581,6 +597,7 @@ function calculate() {
     const bounds = charLvBounds[selectedChar];
     const endLvs = [targetEndLv - 1, targetEndLv, targetEndLv + 1];
 
+    // 各レベル（Lv-1, Lv, Lv+1）の確率分布を計算
     let baseDists = [];
     endLvs.forEach(lv => {
         if (lv < bounds.min || lv > bounds.max || lv < startLv) {
@@ -597,6 +614,7 @@ function calculate() {
         baseDists.push({ lv: lv, dist: currentDist, valid: true });
     });
 
+    // 表（テーブル）の生成開始
     let matrixHtml = `<table><thead><tr><th>命の木の実</th>`;
     endLvs.forEach((lv, idx) => {
         const isCenter = (idx === 1); 
@@ -608,6 +626,7 @@ function calculate() {
 
     const nutsPattern = growthPatterns['nuts'];
 
+    // 木の実 0〜6個追加時の確率をそれぞれ算出
     for (let nuts = 0; nuts <= 6; nuts++) {
         matrixHtml += `<tr><td style="font-weight: bold; background: #f8fafc;">${nuts}個追加</td>`;
         
@@ -626,17 +645,18 @@ function calculate() {
                 nutsDist = convolve(nutsDist, nutsPattern);
             }
             
-            let lessProb = 0;
+            // 「目標HP以上」になる確率の合計を算出
+            let gteProb = 0;
             for (let hpStr in nutsDist) {
-                if (parseInt(hpStr) < targetHp) {
-                    lessProb += nutsDist[hpStr];
+                if (parseInt(hpStr) >= targetHp) {
+                    gteProb += nutsDist[hpStr];
                 }
             }
             
-            if (lessProb > 1.0) lessProb = 1.0;
-            if (lessProb < 0) lessProb = 0;
+            if (gteProb > 1.0) gteProb = 1.0;
+            if (gteProb < 0) gteProb = 0;
             
-            const probStr = (lessProb * 100).toFixed(2) + "%";
+            const probStr = (gteProb * 100).toFixed(2) + "%";
             matrixHtml += `<td${cellClass}>${probStr}</td>`;
         }
         matrixHtml += `</tr>`;
