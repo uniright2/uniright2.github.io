@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />  <stop offset="60%" stop-color="#0369a1" /> <stop offset="100%" stop-color="#0f172a" /> </linearGradient>
+
+    <linearGradient id="arrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3" />   <stop offset="70%" stop-color="#34d399" stop-opacity="0.8" />  <stop offset="100%" stop-color="#65a30d" stop-opacity="0.9" /> </linearGradient>
+    
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#020617" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 60,430 L 180,350 L 280,290 L 440,130" stroke="url(#arrowGrad)" stroke-width="24" />
+    <path d="M 380,130 L 440,130 L 440,190" stroke="#34d399" stroke-width="24" opacity="0.9" />
+  </g>
+
+  <g fill="#ffffff" opacity="0.25">
+    <circle cx="180" cy="350" r="10" />
+    <circle cx="280" cy="290" r="10" />
+    <circle cx="440" cy="130" r="14" fill="#34d399" opacity="0.6" />
+  </g>
+
+  <g fill="none" stroke="#ffffff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)">
+    <path d="M 140,175 L 140,335" />
+    <path d="M 240,175 L 240,335" />
+    <path d="M 140,255 L 240,255" />
+    
+    <path d="M 335,175 L 335,335" />
+    <path d="M 335,175 L 385,175 C 425,175 425,255 385,255 L 335,255" />
+  </g>
+
+  <text x="282" y="408" 
+        fill="#ffffff" 
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="36" 
+        font-weight="800" 
+        letter-spacing="4" 
+        text-anchor="middle" 
+        opacity="0.85" 
+        filter="url(#shadow)">DQ5 (PS2)</text>
+</svg>
