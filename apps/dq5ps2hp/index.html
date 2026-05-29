@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ドラクエ5(PS2版) HP確率計算ツール[ver1]</title>
+    <title>ドラクエ5(PS2版) HP確率計算ツール[ver2.2]</title>
     <!-- PWA用の設定を追加 -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,9 +32,8 @@
             justify-content: center;
             align-items: center;
             padding: 8px;
-            /* 画面全体の引っ張りバウンス（グラグラ揺れる挙動）を禁止 */
             overscroll-behavior: none;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         .container {
@@ -57,7 +56,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .full-width {
@@ -79,6 +78,15 @@
         .label-flex {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            height: 24px;
+        }
+
+        .lv-highlight {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin: 0 2px;
+            vertical-align: middle;
         }
 
         select, input {
@@ -97,7 +105,6 @@
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
         }
 
-        /* キャラクターボタンを横幅に収める（折り返しを許可） */
         .char-btn-container {
             display: flex;
             flex-wrap: wrap;
@@ -106,7 +113,7 @@
         }
 
         .char-btn {
-            flex: 1 0 calc(33.333% - 6px); /* 3列でぴったり収める構成 */
+            flex: 1 0 calc(33.333% - 6px);
             padding: 6px 4px;
             font-size: 0.8rem;
             font-weight: bold;
@@ -119,7 +126,6 @@
             transition: all 0.2s ease;
         }
 
-        /* 2本つまみのレンジスライダー */
         .range-slider-container {
             position: relative;
             width: 100%;
@@ -143,31 +149,32 @@
         }
 
         .range-slider-container input[type="range"]::-webkit-slider-thumb {
-            height: 18px;
-            width: 18px;
+            height: 22px;
+            width: 22px;
             border-radius: 50%;
             background: var(--primary);
             pointer-events: auto;
             -webkit-appearance: none;
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
         }
 
         .range-slider-container input[type="range"]::-moz-range-thumb {
-            height: 18px;
-            width: 18px;
+            height: 22px;
+            width: 22px;
             border-radius: 50%;
             background: var(--primary);
             pointer-events: auto;
             cursor: pointer;
             border: none;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
         }
 
         .slider-track {
             position: absolute;
             height: 6px;
-            width: 100%;
+            width: calc(100% - 22px);
+            left: 11px;
             background: #e2e8f0;
             border-radius: 3px;
             top: 50%;
@@ -175,74 +182,48 @@
             z-index: 1;
         }
 
-        /* 結果表示エリア */
-        .result-box {
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .result-title {
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .result-value {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin: 2px 0;
-        }
-
-        .result-summary {
-            font-size: 0.7rem;
-            color: #4a5568;
-        }
-
-        /* テーブルエリア（1画面に収めるため、表示行数を減らす調整） */
-        .table-container {
-            max-height: 180px;
-            overflow-y: auto;
+        .matrix-container {
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 12px;
             background: #fff;
-            position: relative;
-            /* スクロール端での親要素への伝播を防止 */
-            overscroll-behavior: contain; 
-            -webkit-overflow-scrolling: touch;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        table {
+        .matrix-container table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.75rem;
             text-align: center;
+            table-layout: fixed;
         }
 
-        th {
+        .matrix-container th, .matrix-container td {
+            padding: 8px 2px;
+            border: 1px solid #edf2f7;
+            height: 40px;
+            width: 25%;
+            word-break: break-all;
+        }
+
+        .matrix-container th {
             background: #edf2f7;
-            position: sticky;
-            top: 0;
-            padding: 5px;
             font-weight: bold;
             color: #4a5568;
-            z-index: 10;
         }
 
-        td {
-            padding: 4px;
-            border-top: 1px solid #edf2f7;
+        .center-header {
+            background: var(--primary) !important;
+            color: #fff !important;
         }
 
-        .match-row {
-            background-color: #f0fdf4;
+        .center-cell {
             font-weight: bold;
-            color: #166534;
-            border: 2px solid #22c55e;
+            color: var(--primary);
+            background-color: rgba(0, 0, 0, 0.01);
         }
 
-        /* フッターのスタイル設定 */
         .footer {
             margin-top: 12px;
             font-size: 0.7rem;
@@ -260,7 +241,7 @@
 <body>
 
 <div class="container">
-    <h1>ドラクエ5(PS2版) HP確率計算ツール[ver1]</h1>
+    <h1>ドラクエ5(PS2版) HP確率計算ツール[ver2.2]</h1>
 
     <div class="grid">
         <!-- キャラクター選択 (ボタン形式) -->
@@ -281,36 +262,23 @@
             </div>
         </div>
 
-        <!-- 開始時のHP -->
+        <!-- 開始HP -->
         <div class="form-group">
-            <label for="startHp">開始時のHP</label>
-            <select id="startHp" onchange="calculate()"></select>
+            <label for="startHp">開始HP</label>
+            <select id="startHp" onchange="onStartHpChange()"></select>
         </div>
 
-        <!-- 目標HP (選択式に変更) -->
+        <!-- 目標HP -->
         <div class="form-group">
-            <label for="targetHp">目標HP（未満の確率）</label>
-            <select id="targetHp" onchange="calculate()"></select>
-        </div>
-
-        <!-- 命の木の実 -->
-        <div class="form-group full-width">
-            <label for="nutsCount">命の木の実 使用回数 (0〜6回)</label>
-            <select id="nutsCount" onchange="calculate()"></select>
+            <label for="targetHp">目標HP（未満になる確率が下表）</label>
+            <select id="targetHp" onchange="onTargetHpChange()"></select>
         </div>
     </div>
 
-    <!-- 確率計算結果 -->
-    <div class="result-box" id="resultBox">
-        <div class="result-title" id="resultTitle">HP - 未満になる確率</div>
-        <div class="result-value" id="probValue">0.00%</div>
-        <div class="result-summary" id="summaryText">最小: - / 最大: - / 平均: -</div>
-    </div>
+    <!-- 21マスの確率マトリックス表を出力するコンテナ -->
+    <div class="matrix-container" id="matrixContainer"></div>
 
-    <!-- 詳細一覧 -->
-    <div class="table-container" id="tableContainer"></div>
-
-    <!-- 指定されたフッター行の追加 -->
+    <!-- 指定されたフッター行 -->
     <div class="footer">
         制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
         調査と仮説：<a href="https://uniright2.github.io/ancient/dq5/" target="_blank" rel="noopener">https://uniright2.github.io/ancient/dq5/</a>
@@ -319,7 +287,7 @@
 
 <script>
 // ==========================================
-// 1. 確率パターンの定義 (分数表記でのベタ打ち)
+// 1. 確率パターンの定義
 // ==========================================
 const growthPatterns = {
     0:  { 0: 1 },
@@ -346,9 +314,9 @@ for (let id in growthPatterns) {
 }
 
 // ==========================================
-// 2. キャラクター別の基本データ・固有レベル範囲定義
+// 2. キャラクター別の基本データ
 // ==========================================
-const charNames = ["主人公", "アプール", "ピエール", "男の子", "女の子", "サンチョ"];
+const charNames = ["主人公", "ピエール", "アプール", "男の子", "女の子", "サンチョ"];
 
 const charInitialHp = {
     "主人公": 24, "アプール": 90, "ピエール": 40, "男の子": 74, "女の子": 67, "サンチョ": 214
@@ -372,9 +340,16 @@ const charThemes = {
     "サンチョ": { primary: "#78350f", bg: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", border: "#fcd34d", text: "#78350f" }  
 };
 
-// ==========================================
-// 3. キャラクター別 レベルアップ成長データ
-// ==========================================
+// 新設：キャラクターごとの独立した選択状況を保存するメモリ
+let charStates = {
+    "主人公":   { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
+    "ピエール": { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
+    "アプール": { startLv: 1,  endLv: 20, startHp: null, targetHp: 216 },
+    "男の子":   { startLv: 5,  endLv: 27, startHp: null, targetHp: 216 },
+    "女の子":   { startLv: 5,  endLv: 27, startHp: null, targetHp: 216 },
+    "サンチョ": { startLv: 20, endLv: 27, startHp: null, targetHp: 216 }
+};
+
 const characterGrowthSettings = {
     "主人公": {
         1: 4, 2: 4, 3: 4, 4: 4, 5: 7, 6: 7, 7: 7, 8: 7, 9: 8, 10: 8,
@@ -406,7 +381,6 @@ const characterGrowthSettings = {
 };
 
 let selectedChar = "男の子";
-let isInitialBoot = true; 
 
 // ==========================================
 // 4. UIの初期化処理
@@ -422,28 +396,16 @@ function init() {
         btnContainer.appendChild(btn);
     });
 
-    const nutsSelect = document.getElementById('nutsCount');
-    for (let i = 0; i <= 6; i++) {
-        let opt = document.createElement('option');
-        opt.value = i; opt.textContent = `${i} 回`;
-        if (i === 4) opt.selected = true; 
-        nutsSelect.appendChild(opt);
-    }
-
-    // 目標HPのセレクトボックス生成 (24から333)
     const targetHpSelect = document.getElementById('targetHp');
     for (let hp = 24; hp <= 333; hp++) {
         let opt = document.createElement('option');
         opt.value = hp;
         opt.textContent = hp;
-        if (hp === 216) opt.selected = true; // デフォルトを216に
         targetHpSelect.appendChild(opt);
     }
 
     selectCharacter(selectedChar);
-    isInitialBoot = false; 
 
-    // サービスワーカーの登録
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').then(() => {
             console.log('Service Worker Registered');
@@ -451,6 +413,7 @@ function init() {
     }
 }
 
+// 変更点：キャラクター切り替え時に、そのキャラ専用の保存値をUIへ復元
 function selectCharacter(name) {
     selectedChar = name;
     
@@ -477,20 +440,17 @@ function selectCharacter(name) {
     endLvInput.min = bounds.min;
     endLvInput.max = bounds.max;
 
-    if (isInitialBoot && selectedChar === "男の子") {
-        startLvInput.value = 5;
-        endLvInput.value = 27;
-        document.getElementById('targetHp').value = 216;
-    } else {
-        startLvInput.value = bounds.min;
-        endLvInput.value = Math.min(27, bounds.max);
-    }
+    // 保存されている各ステータスをUIにロード
+    const state = charStates[selectedChar];
+    startLvInput.value = state.startLv;
+    endLvInput.value = state.endLv;
+    document.getElementById('targetHp').value = state.targetHp;
 
     updateSliderUI();
 }
 
 // ==========================================
-// 5. スライダー制御・カラーテーマ制御
+// 5. スライダー制御・データ保存連動
 // ==========================================
 function controlStartSlider() {
     const startLv = document.getElementById('startLv');
@@ -498,6 +458,8 @@ function controlStartSlider() {
     if (parseInt(startLv.value) > parseInt(endLv.value)) {
         startLv.value = endLv.value;
     }
+    // 現在のキャラクターの値を保存
+    charStates[selectedChar].startLv = parseInt(startLv.value);
     updateSliderUI();
 }
 
@@ -507,24 +469,19 @@ function controlEndSlider() {
     if (parseInt(endLv.value) < parseInt(startLv.value)) {
         endLv.value = startLv.value;
     }
+    // 現在のキャラクターの値を保存
+    charStates[selectedChar].endLv = parseInt(endLv.value);
     updateSliderUI();
 }
 
 function updateSliderUI() {
-    const startLv = document.getElementById('startLv').value;
-    const endLv = document.getElementById('endLv').value;
+    const startLv = charStates[selectedChar].startLv;
+    const endLv = charStates[selectedChar].endLv;
     
-    document.getElementById('lvRangeTitle').innerText = `レベルアップ Lv ${startLv} → Lv ${endLv}`;
+    document.getElementById('lvRangeTitle').innerHTML = `レベルアップ Lv <span class="lv-highlight">${startLv}</span> → Lv <span class="lv-highlight">${endLv}</span>`;
 
     const theme = charThemes[selectedChar];
     document.documentElement.style.setProperty('--primary', theme.primary);
-    
-    const resultBox = document.getElementById('resultBox');
-    resultBox.style.background = theme.bg;
-    resultBox.style.borderColor = theme.border;
-    
-    document.getElementById('resultTitle').style.color = theme.text;
-    document.getElementById('probValue').style.color = theme.text;
 
     const bounds = charLvBounds[selectedChar];
     const totalRange = bounds.max - bounds.min;
@@ -539,10 +496,10 @@ function updateSliderUI() {
 }
 
 // ==========================================
-// 7. 開始時HPの動的生成
+// 6. 開始HPの動的生成・保存値の維持
 // ==========================================
 function updateStartHpOptions() {
-    const startLv = parseInt(document.getElementById('startLv').value);
+    const startLv = charStates[selectedChar].startLv;
     const startHpSelect = document.getElementById('startHp');
     const bounds = charLvBounds[selectedChar];
 
@@ -561,18 +518,42 @@ function updateStartHpOptions() {
     const allowedMaxHp = maxHp + 36; 
 
     startHpSelect.innerHTML = "";
+    const savedHp = charStates[selectedChar].startHp;
+    let hasSavedHp = false;
+
     for (let hp = minHp; hp <= allowedMaxHp; hp++) {
         let opt = document.createElement('option');
         opt.value = hp; opt.textContent = hp;
-        if (hp === midHp) opt.selected = true;
+        // 以前保存した値が今回のレベル範囲に存在すればそれを選択
+        if (savedHp !== null && hp === savedHp) {
+            opt.selected = true;
+            hasSavedHp = true;
+        }
         startHpSelect.appendChild(opt);
+    }
+
+    // 保存データがない、またはレベル変更により範囲外になった場合は中央値で自動補正
+    if (!hasSavedHp) {
+        startHpSelect.value = midHp;
+        charStates[selectedChar].startHp = midHp;
     }
 
     calculate();
 }
 
+// 変更点：ドロップダウン変更を検知して記憶に書き込む関数
+function onStartHpChange() {
+    charStates[selectedChar].startHp = parseInt(document.getElementById('startHp').value);
+    calculate();
+}
+
+function onTargetHpChange() {
+    charStates[selectedChar].targetHp = parseInt(document.getElementById('targetHp').value);
+    calculate();
+}
+
 // ==========================================
-// 8. 確率計算ロジック（畳み込み）
+// 7. 確率計算ロジック（畳み込み）
 // ==========================================
 function convolve(dist, pattern) {
     let nextDist = {};
@@ -590,88 +571,79 @@ function convolve(dist, pattern) {
 }
 
 function calculate() {
-    const startLv = parseInt(document.getElementById('startLv').value);
-    const endLv = parseInt(document.getElementById('endLv').value);
-    const startHp = parseInt(document.getElementById('startHp').value);
-    const targetHp = parseInt(document.getElementById('targetHp').value);
-    const nutsCount = parseInt(document.getElementById('nutsCount').value);
+    const startLv = charStates[selectedChar].startLv;
+    const targetEndLv = charStates[selectedChar].endLv;
+    const startHp = charStates[selectedChar].startHp;
+    const targetHp = charStates[selectedChar].targetHp;
 
-    if (isNaN(startHp) || isNaN(targetHp)) return;
+    if (startHp === null || isNaN(startHp) || isNaN(targetHp)) return;
 
-    let currentDist = { [startHp]: 1.0 };
+    const bounds = charLvBounds[selectedChar];
+    const endLvs = [targetEndLv - 1, targetEndLv, targetEndLv + 1];
 
-    for (let lv = startLv; lv < endLv; lv++) {
-        const patternId = characterGrowthSettings[selectedChar][lv];
-        const pattern = growthPatterns[patternId];
-        if (pattern) currentDist = convolve(currentDist, pattern);
-    }
+    let baseDists = [];
+    endLvs.forEach(lv => {
+        if (lv < bounds.min || lv > bounds.max || lv < startLv) {
+            baseDists.push({ lv: lv, valid: false });
+            return;
+        }
+        
+        let currentDist = { [startHp]: 1.0 };
+        for (let l = startLv; l < lv; l++) {
+            const patternId = characterGrowthSettings[selectedChar][l];
+            const pattern = growthPatterns[patternId];
+            if (pattern) currentDist = convolve(currentDist, pattern);
+        }
+        baseDists.push({ lv: lv, dist: currentDist, valid: true });
+    });
+
+    let matrixHtml = `<table><thead><tr><th>命の木の実</th>`;
+    endLvs.forEach((lv, idx) => {
+        const isCenter = (idx === 1); 
+        const headerClass = isCenter ? ' class="center-header"' : '';
+        const rangeText = baseDists[idx].valid ? '' : '<br><span style="font-size:0.6rem;font-weight:normal;">(範囲外)</span>';
+        matrixHtml += `<th${headerClass}>Lv ${lv}${rangeText}</th>`;
+    });
+    matrixHtml += `</tr></thead><tbody>`;
 
     const nutsPattern = growthPatterns['nuts'];
-    for (let i = 0; i < nutsCount; i++) {
-        if (nutsPattern) currentDist = convolve(currentDist, nutsPattern);
-    }
 
-    displayResults(currentDist, targetHp);
-}
-
-// ==========================================
-// 9. 結果表示 & スクロール制御
-// ==========================================
-function displayResults(dist, targetHp) {
-    const hps = Object.keys(dist).map(Number).sort((a, b) => a - b);
-    if (hps.length === 0) return;
-
-    let cumulativeProb = 0;
-    let targetLessProb = 0; 
-    let minHp = hps[0];
-    let maxHp = hps[hps.length - 1];
-    let expectedHp = 0;
-
-    let tableHtml = `<table><tr><th>HP</th><th>その値以下の確率</th><th>そこになる確率</th></tr>`;
-    let midRowAssigned = false;
-
-    hps.forEach(hp => {
-        let prob = dist[hp];
-        cumulativeProb += prob;
-        expectedHp += hp * prob;
-
-        if (hp < targetHp) {
-            targetLessProb = cumulativeProb;
-        }
-
-        let probStr = (prob * 100).toFixed(2) + "%";
-        let cumStr = (cumulativeProb * 100).toFixed(2) + "%";
+    for (let nuts = 0; nuts <= 6; nuts++) {
+        matrixHtml += `<tr><td style="font-weight: bold; background: #f8fafc;">${nuts}個追加</td>`;
         
-        let rowAttrs = "";
-        if (hp === targetHp - 1) {
-            rowAttrs += ' class="match-row"';
+        for (let idx = 0; idx < 3; idx++) {
+            const cellInfo = baseDists[idx];
+            const isCenter = (idx === 1);
+            const cellClass = isCenter ? ' class="center-cell"' : '';
+            
+            if (!cellInfo.valid) {
+                matrixHtml += `<td${cellClass}>-</td>`;
+                continue;
+            }
+            
+            let nutsDist = { ...cellInfo.dist };
+            for (let i = 0; i < nuts; i++) {
+                nutsDist = convolve(nutsDist, nutsPattern);
+            }
+            
+            let lessProb = 0;
+            for (let hpStr in nutsDist) {
+                if (parseInt(hpStr) < targetHp) {
+                    lessProb += nutsDist[hpStr];
+                }
+            }
+            
+            if (lessProb > 1.0) lessProb = 1.0;
+            if (lessProb < 0) lessProb = 0;
+            
+            const probStr = (lessProb * 100).toFixed(2) + "%";
+            matrixHtml += `<td${cellClass}>${probStr}</td>`;
         }
-        
-        if (!midRowAssigned && cumulativeProb >= 0.5) {
-            rowAttrs += ' id="mid-hp-row"';
-            midRowAssigned = true;
-        }
-
-        tableHtml += `<tr${rowAttrs}><td>${hp}</td><td>${cumStr}</td><td>${probStr}</td></tr>`;
-    });
-    tableHtml += `</table>`;
-
-    if (targetHp > maxHp) targetLessProb = 1.0;
-    if (targetHp <= minHp) targetLessProb = 0.0;
-
-    const displayTarget = isNaN(targetHp) ? "-" : targetHp;
-    document.getElementById('resultTitle').innerText = `HP ${displayTarget} 未満になる確率`;
-    
-    document.getElementById('probValue').innerText = (targetLessProb * 100).toFixed(2) + "%";
-    document.getElementById('summaryText').innerText = `最小HP: ${minHp} / 最大HP: ${maxHp} / 平均HP: ${expectedHp.toFixed(1)}`;
-    
-    const container = document.getElementById('tableContainer');
-    container.innerHTML = tableHtml;
-
-    const midRow = document.getElementById('mid-hp-row');
-    if (container && midRow) {
-        container.scrollTop = midRow.offsetTop - (container.clientHeight / 2) + (midRow.clientHeight / 2);
+        matrixHtml += `</tr>`;
     }
+    matrixHtml += `</tbody></table>`;
+
+    document.getElementById('matrixContainer').innerHTML = matrixHtml;
 }
 
 window.onload = init;
