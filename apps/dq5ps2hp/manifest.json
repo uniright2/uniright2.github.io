@@ -1,6 +1,12 @@
 {
-  "short_name": "DQ5[PS2]HP確率",
-  "name": "ドラクエ5(PS2版) HP確率計算ツール",
+  "name": "ドラクエ5 HP確率計算ツール",
+  "short_name": "DQ5 HP計算",
+  "description": "ドラクエ5(PS2版)のレベルアップ時のHP上昇確率を計算するツールです。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#06b6d4",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.svg",
@@ -15,9 +21,4 @@
       "purpose": "maskable"
     }
   ]
-  "start_url": "index.html",
-  "background_color": "#f5f7fa",
-  "theme_color": "#06b6d4",
-  "display": "standalone",
-  "orientation": "portrait-primary"
 }
