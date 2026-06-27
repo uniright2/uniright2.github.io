@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dq5-hp-calc-v263';
+const CACHE_NAME = 'dq5-hp-calc-v31';
 // キャッシュするファイル一覧
 const ASSETS = [
   './',
