@@ -235,8 +235,9 @@
             word-break: break-all;
         }
 
+        /* ヘッダー：左右はテーマカラーの淡色トーン、中央はフル彩度 */
         .matrix-container th {
-            background: #edf2f7;
+            background: color-mix(in srgb, var(--primary) 18%, #fff);
             font-weight: bold;
             color: #4a5568;
         }
@@ -246,10 +247,22 @@
             color: #fff !important;
         }
 
+        /* データ行のゼブラ（薄い交互背景） */
+        .matrix-container tbody tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        /* 左端の行ラベル列：行見出しとして固定トーン＋太字（ゼブラ上書き） */
+        .matrix-container .row-label {
+            font-weight: bold;
+            background: color-mix(in srgb, var(--primary) 8%, #fff) !important;
+        }
+
+        /* 中央列：テーマ淡色の縦ハイライト帯＋黒字太字（ゼブラ上書き） */
         .center-cell {
             font-weight: bold;
-            color: var(--primary);
-            background-color: rgba(0, 0, 0, 0.01);
+            color: #1a202c;
+            background: color-mix(in srgb, var(--primary) 12%, #fff) !important;
         }
 
         /* ヘッダーのLv表記（セル寸法は変えずフォントのみ拡大） */
@@ -666,7 +679,7 @@ function calculate() {
 
     // 木の実 0〜6個追加時の確率をそれぞれ算出
     for (let nuts = 0; nuts <= 6; nuts++) {
-        matrixHtml += `<tr><td style="font-weight: bold; background: #f8fafc;">${nuts}個追加</td>`;
+        matrixHtml += `<tr><td class="row-label">${nuts}個追加</td>`;
         
         for (let idx = 0; idx < 3; idx++) {
             const cellInfo = baseDists[idx];
