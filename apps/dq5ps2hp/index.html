@@ -13,6 +13,24 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="icon.svg">
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        });
+        navigator.serviceWorker.register('sw.js').then((registration) => {
+            const checkUpdate = () => registration.update();
+            checkUpdate();
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkUpdate();
+            });
+        });
+    }
+    </script>
     
     <style>
         /* アプリ共通変数（テーマカラー等） */
@@ -419,21 +437,6 @@ function init() {
 
     // デフォルトキャラクターの読み込み
     selectCharacter(selectedChar);
-
-    // PWA用サービスワーカー登録
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then((registration) => {
-            registration.update();
-            registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-                        location.reload();
-                    }
-                });
-            });
-        });
-    }
 }
 
 // ==========================================
