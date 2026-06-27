@@ -276,6 +276,11 @@
             white-space: nowrap;
         }
 
+        /* 文字数が多い近似表記（<0.005% / >99.995%）のみ縮小 */
+        .prob-val-long {
+            font-size: 0.78rem;
+        }
+
         .footer {
             margin-top: 12px;
             font-size: 0.7rem;
@@ -326,7 +331,7 @@
     <div class="matrix-container" id="matrixContainer"></div>
 
     <div class="footer">
-        [ver3.4] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
+        [ver3.5] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
         調査と仮説：<a href="https://uniright2.github.io/ancient/dq5/" target="_blank" rel="noopener">https://uniright2.github.io/ancient/dq5/</a>
     </div>
 </div>
@@ -731,7 +736,10 @@ function calculate() {
                     probStr = t + "%";
                 }
             }
-            matrixHtml += `<td${cellClass}><span class="prob-val">${probStr}</span></td>`;
+            const probClass = (probStr === "<0.005%" || probStr === ">99.995%")
+                ? "prob-val prob-val-long"
+                : "prob-val";
+            matrixHtml += `<td${cellClass}><span class="${probClass}">${probStr}</span></td>`;
         }
         matrixHtml += `</tr>`;
     }
