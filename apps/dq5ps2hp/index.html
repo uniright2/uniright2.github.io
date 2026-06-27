@@ -422,8 +422,16 @@ function init() {
 
     // PWA用サービスワーカー登録
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => {
-            console.log('Service Worker Registered');
+        navigator.serviceWorker.register('sw.js').then((registration) => {
+            registration.update();
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                        location.reload();
+                    }
+                });
+            });
         });
     }
 }
