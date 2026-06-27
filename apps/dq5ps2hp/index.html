@@ -252,6 +252,17 @@
             background-color: rgba(0, 0, 0, 0.01);
         }
 
+        /* ヘッダーのLv表記（セル寸法は変えずフォントのみ拡大） */
+        .lv-head {
+            font-size: 0.95rem;
+        }
+
+        /* 確率セルの値（セル寸法は変えずフォントのみ拡大・1行維持） */
+        .prob-val {
+            font-size: 0.92rem;
+            white-space: nowrap;
+        }
+
         .footer {
             margin-top: 12px;
             font-size: 0.7rem;
@@ -302,7 +313,7 @@
     <div class="matrix-container" id="matrixContainer"></div>
 
     <div class="footer">
-        [ver3.2] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
+        [ver3.4] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a><br>
         調査と仮説：<a href="https://uniright2.github.io/ancient/dq5/" target="_blank" rel="noopener">https://uniright2.github.io/ancient/dq5/</a>
     </div>
 </div>
@@ -369,12 +380,12 @@ const charThemes = {
 
 // 各キャラクターの入力状態保持用
 let charStates = {
-    "主人公":   { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
-    "ピエール": { startLv: 1,  endLv: 27, startHp: null, targetHp: 216 },
-    "アプール": { startLv: 1,  endLv: 20, startHp: null, targetHp: 216 },
+    "主人公":   { startLv: 1,  endLv: 13, startHp: null, targetHp: 113 },
+    "ピエール": { startLv: 1,  endLv: 26, startHp: null, targetHp: 216 },
+    "アプール": { startLv: 1,  endLv: 20, startHp: null, targetHp: 170 },
     "男の子":   { startLv: 5,  endLv: 27, startHp: null, targetHp: 216 },
     "女の子":   { startLv: 5,  endLv: 27, startHp: null, targetHp: 216 },
-    "サンチョ": { startLv: 20, endLv: 27, startHp: null, targetHp: 216 }
+    "サンチョ": { startLv: 20, endLv: 29, startHp: null, targetHp: 344 }
 };
 
 // レベルごとの成長パターン割り当てテーブル
@@ -428,7 +439,7 @@ function init() {
 
     // 目標HPセレクトボックスの選択肢生成（24〜333）
     const targetHpSelect = document.getElementById('targetHp');
-    for (let hp = 24; hp <= 333; hp++) {
+    for (let hp = 24; hp <= 360; hp++) {
         let opt = document.createElement('option');
         opt.value = hp;
         opt.textContent = hp;
@@ -525,6 +536,10 @@ function updateSliderUI(forceResetHp = false) {
     const track = document.getElementById('sliderTrack');
     track.style.background = `linear-gradient(to right, #e2e8f0 ${p1}%, var(--primary) ${p1}%, var(--primary) ${p2}%, #e2e8f0 ${p2}%)`;
 
+    // 右端で2本のつまみが重なると、DOM後勝ちで右(endLv)しか掴めなくなる。
+    // 開始Lvが最大位置にある＝右端重なり時のみ、左(startLv)を前面化して操作可能にする。
+    document.getElementById('startLv').style.zIndex = (startLv >= bounds.max) ? 4 : 2;
+
     // 開始HPのドロップダウンメニューを再構築
     updateStartHpOptions(forceResetHp);
 }
@@ -550,7 +565,8 @@ function updateStartHpOptions(forceMidHp = false) {
     }
 
     const midHp = Math.round((minHp + maxHp) / 2);
-    const allowedMaxHp = maxHp + 36; // ドーピングを考慮した上限幅
+    // 上限は「中央値の累積で成長した場合の1.25倍の切り捨て」（下限minHpは据え置き）
+    const allowedMaxHp = Math.floor(midHp * 1.25);
 
     startHpSelect.innerHTML = "";
     const savedHp = charStates[selectedChar].startHp;
@@ -639,8 +655,10 @@ function calculate() {
     endLvs.forEach((lv, idx) => {
         const isCenter = (idx === 1); 
         const headerClass = isCenter ? ' class="center-header"' : '';
-        const rangeText = baseDists[idx].valid ? '' : '<br><span style="font-size:0.6rem;font-weight:normal;">(範囲外)</span>';
-        matrixHtml += `<th${headerClass}>Lv ${lv}${rangeText}</th>`;
+        const headerText = baseDists[idx].valid
+            ? `<span class="lv-head">Lv ${lv}</span>`
+            : `(範囲外)`;
+        matrixHtml += `<th${headerClass}>${headerText}</th>`;
     });
     matrixHtml += `</tr></thead><tbody>`;
 
@@ -664,20 +682,43 @@ function calculate() {
             for (let i = 0; i < nuts; i++) {
                 nutsDist = convolve(nutsDist, nutsPattern);
             }
-            
-            // 「目標HP以上」になる確率の合計を算出
-            let gteProb = 0;
-            for (let hpStr in nutsDist) {
-                if (parseInt(hpStr) >= targetHp) {
-                    gteProb += nutsDist[hpStr];
+
+            // 厳密な0/1は、理論上の到達HP範囲（分布のmin/maxキー）から判定する。
+            // 分布の全キーは確率>0なので、min/maxが厳密な理論境界になる（浮動小数点誤差を回避）。
+            const hpKeys = Object.keys(nutsDist).map(Number);
+            const maxHpPossible = Math.max(...hpKeys);
+            const minHpPossible = Math.min(...hpKeys);
+
+            let probStr;
+            if (maxHpPossible < targetHp) {
+                // 最大でも目標に届かない＝厳密に0
+                probStr = "不可能";
+            } else if (minHpPossible >= targetHp) {
+                // 最小でも目標を満たす＝厳密に1
+                probStr = "確実";
+            } else {
+                // 「目標HP以上」になる確率の合計を算出
+                let gteProb = 0;
+                for (let hpStr in nutsDist) {
+                    if (parseInt(hpStr) >= targetHp) {
+                        gteProb += nutsDist[hpStr];
+                    }
+                }
+                if (gteProb > 1.0) gteProb = 1.0;
+                if (gteProb < 0) gteProb = 0;
+
+                const t = (gteProb * 100).toFixed(2);
+                if (t === "0.00") {
+                    // 厳密0ではないが四捨五入で0.00%になる
+                    probStr = "<0.005%";
+                } else if (t === "100.00") {
+                    // 厳密1ではないが四捨五入で100.00%になる
+                    probStr = ">99.995%";
+                } else {
+                    probStr = t + "%";
                 }
             }
-            
-            if (gteProb > 1.0) gteProb = 1.0;
-            if (gteProb < 0) gteProb = 0;
-            
-            const probStr = (gteProb * 100).toFixed(2) + "%";
-            matrixHtml += `<td${cellClass}>${probStr}</td>`;
+            matrixHtml += `<td${cellClass}><span class="prob-val">${probStr}</span></td>`;
         }
         matrixHtml += `</tr>`;
     }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dq5-hp-calc-v33';
+const CACHE_NAME = 'dq5-hp-calc-v34';
 // 静的アセットのみ事前キャッシュ（HTMLは常にネットワークから取得）
 const ASSETS = [
   './manifest.json',
