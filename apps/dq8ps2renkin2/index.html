@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ドラクエ8(PS2版) 中盤の錬金シミュレータ(制限4種：ver2、適当版)</title>
+<style>
+:root{
+  --bg:#eef0f4;
+  --panel:#ffffff;
+  --line:#c9ccd4;
+  --ink:#23262e;
+  --sub:#6b7280;
+  --seg:#d6d8de;
+  --seg-b:#b3b7c1;
+  --var:#f7efd6;
+  --var-b:#d9c68d;
+  --tab:#e8d493;
+  --err:#c8342b;
+  --ok:#1f8a5b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font:13px/1.5 "Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.dragging{user-select:none;cursor:grabbing}
+
+/* ---------- header ---------- */
+header{
+  padding:14px 20px 10px;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:60;
+}
+h1{margin:0 0 6px;font-size:16px;letter-spacing:.04em}
+h1 small{font-weight:400;color:var(--sub);font-size:11px;margin-left:8px;letter-spacing:0}
+.tools{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tools label{color:var(--sub);font-size:11px;display:flex;align-items:center;gap:6px}
+input[type=range]{width:150px}
+button{
+  font:inherit;font-size:12px;padding:4px 11px;border-radius:5px;
+  border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;
+}
+button:hover{background:#f4f5f8}
+details.help{margin-top:8px;font-size:11.5px;color:var(--sub)}
+details.help summary{cursor:pointer;color:#4a5568}
+details.help ul{margin:6px 0 0;padding-left:18px}
+details.help li{margin:2px 0}
+
+/* ---------- layout ---------- */
+main{display:flex;align-items:flex-start;gap:22px;padding:18px 20px 60px}
+#stageWrap{flex:0 0 auto}
+#stage{position:relative;width:544px}
+
+/* ---------- ruler ---------- */
+.tick{position:absolute;left:0;width:36px;text-align:right;font-size:10px;color:#3d4450;
+  transform:translateY(-50%);padding-right:4px;font-variant-numeric:tabular-nums}
+.tick.major{color:#111318;font-weight:700}
+.tickline{position:absolute;left:36px;height:0;border-top:1px solid #dfe2e8}
+.tickline.major{border-top-color:#cfd3db}
+
+/* ---------- track / segments ---------- */
+#track{position:absolute;left:42px;width:176px;top:0}
+.seg{
+  position:absolute;left:0;right:0;
+  background:var(--seg);border:1px solid var(--seg-b);border-radius:3px;
+  /* 可変進行のタブが左へはみ出すので overflow は seg-in 側で止める */
+}
+.seg.lock{
+  background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 5px,transparent 5px 11px);
+}
+.seg.varseg{background:var(--var);border-color:var(--var-b);left:14px;cursor:grab}
+.seg.varseg:active{cursor:grabbing}
+.seg.varseg:hover{background:#faf3e0}
+.seg.varseg.lock{background-image:none}
+.seg.drag{box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:30;border-color:#a98c2f}
+.seg-in{height:100%;padding:3px 5px;display:flex;flex-direction:column;justify-content:center;gap:1px;
+  overflow:hidden;border-radius:2px}
+.seg-row{display:flex;align-items:baseline;gap:4px;white-space:nowrap;overflow:hidden}
+.seg-no{
+  flex:0 0 auto;display:inline-block;min-width:14px;text-align:center;
+  font-size:9.5px;color:#fff;background:#8b909b;border-radius:3px;padding:0 3px;line-height:14px;
+}
+.varseg .seg-no{background:#b79a3f;min-width:0;padding:0 4px;letter-spacing:.02em}
+.seg-name{flex:1 1 auto;font-size:11px;font-weight:700;color:#111318;overflow:hidden;text-overflow:ellipsis}
+.seg-d{flex:0 0 auto;font-size:11px;font-weight:700;color:#111318;font-variant-numeric:tabular-nums}
+.seg-note{font-size:9.5px;color:#3d4450;white-space:nowrap;overflow:hidden}
+.seg.short .seg-in{padding:0 4px}
+.seg.short .seg-name{font-size:10.5px}
+.seg.short .seg-note{display:none}
+.seg.tiny .seg-in{padding:0 3px}
+.seg.tiny .seg-name,.seg.tiny .seg-d{font-size:9.5px}
+.seg.tiny .seg-no{font-size:8.5px;line-height:11px;min-width:13px}
+.seg.tiny .seg-row{gap:3px}
+
+.vartab{
+  position:absolute;left:-15px;top:-1px;bottom:-1px;width:15px;z-index:5;
+  background:var(--tab);border:1px solid var(--var-b);border-right:none;
+  border-radius:4px 0 0 4px;cursor:grab;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:-1px 1px 2px rgba(0,0,0,.10);
+}
+.vartab:hover{background:#f0dfa8}
+.vartab:active{cursor:grabbing}
+.vartab i{display:block;width:5px;height:5px;border-radius:50%;background:#7d6717;
+  box-shadow:0 -7px 0 #7d6717,0 7px 0 #7d6717}
+.seg.varseg.short .vartab i{box-shadow:0 -5px 0 #7d6717,0 5px 0 #7d6717}
+.seg.varseg.tiny .vartab i{width:4px;height:4px;box-shadow:0 -4px 0 #7d6717,0 4px 0 #7d6717}
+
+/* forbidden zone while dragging a variable block */
+#forbid{position:absolute;left:30px;right:0;top:0;display:none;z-index:25;
+  background:repeating-linear-gradient(45deg,rgba(200,52,43,.10) 0 7px,rgba(200,52,43,.03) 7px 14px);
+  border-bottom:2px dashed rgba(200,52,43,.55);pointer-events:none;border-radius:3px}
+#forbid span{position:absolute;right:6px;bottom:4px;font-size:10px;color:var(--err);font-weight:600}
+
+/* ---------- item lines ---------- */
+.itemline{position:absolute;left:218px;right:0;height:0;border-top:1px dashed var(--ic);pointer-events:none}
+.itempill{
+  position:absolute;left:222px;transform:translateY(-50%);
+  font-size:10.5px;padding:2px 8px 2px 4px;border-radius:12px;white-space:nowrap;
+  background:#fff;border:1px solid var(--ic);color:var(--ic);font-weight:600;
+  display:flex;align-items:center;gap:4px;
+}
+/* ---------- goal ---------- */
+#goal{position:absolute;left:30px;right:0;height:0;border-top:2px solid #3b4252}
+#goal span{position:absolute;left:0;top:3px;font-size:10px;color:#3b4252;font-weight:700}
+
+/* ---------- alchemy bars ---------- */
+.bar{
+  position:absolute;width:66px;border-radius:4px;overflow:hidden;cursor:pointer;
+  background:var(--c);border:1px solid rgba(0,0,0,.22);color:#fff;
+  display:flex;flex-direction:column;align-items:center;padding:3px 2px;
+  box-shadow:0 1px 3px rgba(0,0,0,.18);
+}
+.bar.bad{outline:2px solid var(--err);outline-offset:-2px;background:
+  linear-gradient(var(--c),var(--c)) padding-box}
+.bar.bad::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(200,52,43,.55) 0 6px,transparent 6px 13px);
+  pointer-events:none;
+}
+.bar:hover{filter:brightness(1.08)}
+.bar-t,.bar-b{font-size:10px;font-variant-numeric:tabular-nums;background:rgba(0,0,0,.22);
+  border-radius:3px;padding:0 5px;line-height:15px;letter-spacing:.02em}
+.bar-name{flex:1 1 auto;min-height:0;writing-mode:vertical-rl;white-space:nowrap;
+  font-size:12px;font-weight:700;
+  letter-spacing:.08em;display:flex;align-items:center;justify-content:center;
+  text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.bar-need{display:flex;gap:3px;margin-bottom:3px}
+
+/* アイテムの絵記号：常に黒。濃い色のカード上でも読めるよう白いチップに載せる */
+.ico{display:inline-flex;align-items:center;justify-content:center;color:#000;line-height:0}
+.ico svg{display:block}
+.ico.chip{background:#fff;border-radius:4px;padding:2px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.bar-warn{position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:17px;height:17px;border-radius:50%;background:var(--err);color:#fff;
+  font-size:12px;font-weight:700;line-height:17px;text-align:center;z-index:2;
+  box-shadow:0 0 0 2px #fff}
+.overrun{position:absolute;width:66px;border-radius:0 0 4px 4px;
+  background:repeating-linear-gradient(45deg,rgba(200,52,43,.35) 0 6px,rgba(200,52,43,.12) 6px 12px);
+  border:1px dashed var(--err);border-top:none;pointer-events:none}
+
+/* ---------- ghost ---------- */
+#ghost{position:absolute;width:66px;border-radius:4px;display:none;z-index:50;
+  border:2px dashed var(--gc);background:rgba(255,255,255,.5);pointer-events:none;
+  color:#2a2d34;font-size:10px;text-align:center;padding-top:2px;font-variant-numeric:tabular-nums}
+#ghost.bad{background:rgba(255,232,230,.85);color:var(--err);font-weight:700}
+#ghostline{position:absolute;left:30px;right:0;height:0;border-top:1px solid var(--gc);
+  display:none;z-index:50;pointer-events:none}
+
+/* ---------- side ---------- */
+#side{
+  flex:0 0 330px;position:sticky;top:96px;
+  max-height:calc(100vh - 120px);overflow-y:auto;
+  display:flex;flex-direction:column;gap:14px;
+}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:11px 12px}
+.card h2{margin:0 0 9px;font-size:12px;letter-spacing:.06em;color:#4a5568}
+#palette{display:flex;gap:4px;align-items:flex-start;flex-wrap:wrap}
+.pal{
+  width:47px;border-radius:4px;background:var(--c);color:#fff;cursor:pointer;
+  border:1px solid rgba(0,0,0,.22);display:flex;flex-direction:column;align-items:center;
+  padding:4px 2px;position:relative;
+}
+.pal:hover{filter:brightness(1.08)}
+/* 配置済みは色を持たせず、一律に薄いグレーの抜け殻にする */
+.pal.used{background:#dcdee3;border-color:#c3c6cd;color:#7b808a;box-shadow:none}
+.pal.used:hover{filter:none;background:#d2d5db}
+.pal.used .pal-name{text-shadow:none}
+.pal.used .pal-d{background:rgba(0,0,0,.10);color:#6f747e}
+.pal.used .ico.chip{background:#f2f3f5;box-shadow:0 0 0 1px rgba(0,0,0,.12);opacity:.6}
+.pal-d{font-size:10px;background:rgba(0,0,0,.22);border-radius:3px;padding:0 5px;line-height:15px}
+.pal-name{flex:1 1 auto;min-height:0;writing-mode:vertical-rl;white-space:nowrap;
+  font-size:11.5px;font-weight:700;letter-spacing:.06em;
+  display:flex;align-items:center;justify-content:center;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.pal-need{display:flex;gap:3px;margin-top:3px}
+.pal-tag{position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-size:9px;
+  background:#23262e;color:#fff;border-radius:8px;padding:0 6px;line-height:14px;white-space:nowrap}
+
+.stat{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
+.stat b{font-variant-numeric:tabular-nums}
+.bad-txt{color:var(--err);font-weight:700}
+.ok-txt{color:var(--ok);font-weight:700}
+.probs{margin:8px 0 0;padding:0;list-style:none;font-size:11.5px}
+.probs li{padding:4px 7px;border-radius:4px;background:#fdeceb;color:#8f2620;margin-top:4px;
+  border-left:3px solid var(--err)}
+.probs li.info{background:#eef2fb;color:#334a72;border-left-color:#5b7fc7}
+.legend{font-size:11px;color:var(--sub)}
+.legend div{display:flex;align-items:center;gap:6px;padding:3px 0}
+
+/* ---------- score ---------- */
+.score-row{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#6b7280;
+  padding:4px 0;border-bottom:1px solid #eef0f3}
+.score-row.got{color:var(--ink)}
+.score-pt{flex:0 0 auto;font-size:11.5px;font-variant-numeric:tabular-nums}
+.score-row.got .score-pt{color:var(--ok)}
+.score-txt{flex:1 1 auto}
+.score-sum{display:flex;justify-content:space-between;align-items:baseline;
+  margin-top:8px;font-size:12px}
+.score-sum b{font-size:15px;font-variant-numeric:tabular-nums}
+.score-sum.full b{color:var(--ok)}
+
+/* ---------- clear ---------- */
+#clear{
+  position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+  background:rgba(24,27,34,.52);backdrop-filter:blur(3px);
+  animation:clearFade .18s ease-out;
+}
+#clear[hidden]{display:none}
+.clear-card{
+  background:#fff;border-radius:16px;padding:34px 44px 26px;text-align:center;
+  box-shadow:0 26px 70px rgba(0,0,0,.42);max-width:440px;
+  animation:clearPop .32s cubic-bezier(.2,1.5,.5,1);
+}
+.clear-title{
+  font-size:58px;font-weight:800;letter-spacing:.06em;line-height:1.1;
+  color:#1f8a5b;text-shadow:0 2px 0 rgba(31,138,91,.18);
+}
+.clear-sub{margin-top:6px;font-size:14px;color:#4a5568;font-weight:600}
+.clear-list{
+  margin:18px 0 0;padding:0;list-style:none;text-align:left;
+  border-top:1px solid #e6e8ec;
+}
+.clear-list li{
+  display:flex;justify-content:space-between;gap:14px;font-size:12.5px;
+  padding:6px 2px;border-bottom:1px solid #f0f1f4;
+}
+.clear-list b{font-variant-numeric:tabular-nums;color:#2f3540}
+.clear-foot{margin-top:12px;font-size:12px;color:#6b7280;font-variant-numeric:tabular-nums}
+.clear-close{margin-top:18px;padding:7px 26px;font-size:13px}
+@keyframes clearPop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes clearFade{from{opacity:0}to{opacity:1}}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-140%);
+  z-index:200;background:var(--err);color:#fff;font-size:13.5px;font-weight:700;
+  padding:11px 22px;border-radius:7px;box-shadow:0 8px 26px rgba(0,0,0,.3);
+  transition:transform .18s ease-out;pointer-events:none;max-width:70vw;text-align:center;
+  visibility:hidden;
+}
+#toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+#toast.info{background:#3b4252}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div id="clear" hidden>
+  <div class="clear-card" role="dialog" aria-label="クリア">
+    <div class="clear-title">クリア！</div>
+    <div class="clear-sub">６つすべて完成、評価も ５ / ５ 点</div>
+    <ol class="clear-list"></ol>
+    <div class="clear-foot"></div>
+    <button class="clear-close">とじる</button>
+  </div>
+</div>
+
+<header>
+  <h1>ドラクエ8(PS2版) 錬金ならべかえパズル2 [PC向き/スマホ非対応]<small>（ver2,制限4種を想定,いろいろ不正確）</small></h1>
+  <div class="tools">
+    <label>拡大 <input type="range" id="zoom" min="40" max="150" step="5"></label>
+    <button id="btnClear">錬金だけクリア</button>
+    <button id="btnReset">進行順序もクリアして最初から</button>
+  </div>
+  <details class="help">
+    <summary>ルール</summary>
+    <ul>
+      <li>グレー＝固定の進行。クリーム色＝可変進行で、ボックスのどこを掴んでも上下にドラッグして挿入位置を変えられます（制約より前には行けません／進行8と9の間には入れません／Esc で取り消し）。</li>
+      <li>右の錬金カードをクリックすると、その錬金を始められる最も早い位置に配置されます。カーソルを載せると入る位置が点線で見えます。</li>
+      <li>置いた錬金は動かせません。外すときは年表の上の錬金か、灰色になったカードをクリック。位置を変えたいときは可変進行のほうを動かします。</li>
+      <li>斜線の区間は「錬金の切り替え不可」。その区間では区間の先頭にしか錬金を置けません。</li>
+    </ul>
+  </details>
+</header>
+
+<main>
+  <div id="stageWrap"><div id="stage"></div></div>
+
+  <aside id="side">
+    <div class="card">
+      <h2>錬金（クリックで配置）</h2>
+      <div id="palette"></div>
+    </div>
+    <div class="card">
+      <h2>状態</h2>
+      <div id="status"></div>
+    </div>
+    <div class="card">
+      <h2>アイテム</h2>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card">
+      <h2>得点</h2>
+      <div id="score"></div>
+    </div>
+  </aside>
+</main>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   データ  ※距離はすべて 0.1 単位の整数で保持する（浮動小数の誤差を避けるため）
+   ========================================================================= */
+
+const ITEMS = {
+  ring : {name:"命の指輪",           short:"命指輪", color:"#cc2b2b"},  // 赤
+  tail : {name:"悪魔の尻尾",         short:"尻尾",   color:"#7a3fa8"},  // 紫
+  wing : {name:"コウモリの羽",       short:"羽",     color:"#22262e"},  // 黒
+  dress: {name:"スパンコールドレス", short:"スパコ", color:"#e07c18"},  // オレンジ
+  gear : {name:"アイアンヘッドギア", short:"ギア",   color:"#7b818c"},  // グレー
+  dark : {name:"やみのころも",       short:"闇衣",   color:"#5a3d7a"},  // 暗い紫
+};
+
+const FIXED = [
+  {id:"F1",  no:1,  name:"ライドンの塔まで",  d:35, sw:true,  item:null},
+  {id:"F2",  no:2,  name:"ライドンの塔",      d:15, sw:false, item:"ring"},
+  {id:"F3",  no:3,  name:"リーザス地方",      d:3,  sw:true,  item:null},
+  {id:"F4",  no:4,  name:"リーザス像の塔",    d:6,  sw:false, item:null},
+  {id:"F5",  no:5,  name:"ゼシカ復帰まで",    d:4,  sw:true,  item:null},
+  {id:"F6",  no:6,  name:"オークニスまで",    d:23, sw:true,  item:[{key:"gear", off:18}, {key:"wing", off:21}]},
+  {id:"F7",  no:7,  name:"薬草園の洞窟まで",  d:5,  sw:true,  item:null},
+  {id:"F8",  no:8,  name:"薬草園の洞窟",      d:20, sw:false, item:"tail"},
+  {id:"F9",  no:9,  name:"オークニス帰還",    d:3,  sw:true,  item:null},
+  {id:"F10", no:10, name:"メディのイベント",  d:2,  sw:true,  item:null},
+  {id:"F11", no:11, name:"海賊の洞窟",        d:20, sw:false, item:null},
+  {id:"F12", no:12, name:"レティシアまで",    d:15, sw:true,  item:null},
+];
+
+const VARS = [
+  {id:"V1", no:1, name:"ギャリング邸回収",     d:3,  sw:true, item:"dress", after:5},
+  {id:"V2", no:2, name:"オークニス南の回収",   d:6,  sw:true, item:null,    after:6},
+  {id:"V3", no:3, name:"最後の鍵5箇所回収",    d:17, sw:true, item:null,    after:10},
+];
+
+const RECIPES = [
+  {id:"A1", name:"ダンシングメイル", d:30, need:[],               color:"#b58a90"},  // グレーがかったピンク
+  {id:"A2", name:"ドラゴンシールド", d:20, need:[],               color:"#2f9e4a"},  // 緑
+  {id:"A3", name:"命のブレスレット", d:30, need:["ring"],         color:"#c0392b"},  // 赤
+  {id:"A4", name:"やみのころも",     d:30, need:["wing","tail"],  color:"#6f3f9e", product:"dark"},  // 紫。完成時にアイテムとしても入手
+  {id:"A5", name:"ひかりのドレス",   d:30, need:["dress"],        color:"#e0a020"},  // 山吹
+  {id:"A6", name:"ファントムマスク", d:30, need:["gear","dark"],  color:"#3db8d4"},  // 水色
+];
+
+/* アイテムの絵記号（24x24 の viewBox）。色は付けず、すべて黒で描く */
+const ICONS = {
+  // ハート
+  ring : '<path d="M12 21.1l-1.3-1.2C5.5 15.2 2.2 12.2 2.2 8.5 2.2 5.5 4.6 3.1 7.6 3.1c1.7 0 3.3.8 4.4 2 1.1-1.2 2.7-2 4.4-2 3 0 5.4 2.4 5.4 5.4 0 3.7-3.3 6.7-8.5 11.4L12 21.1z"/>',
+  // 悪魔のしっぽ（先が矢じり状）
+  tail : '<path d="M6.2 2.3c-1.2 5.9 1 8.8 4 10.8 1.6 1 2.6 1.8 3.1 2.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
+       + '<path d="M11.2 12.9l10.6 2.2-6.1 6.6z"/>',
+  // コウモリの羽
+  wing : '<g transform="translate(12 12) scale(1.25) translate(-12 -12)">'
+       + '<path d="M12 6.4c1 0 1.9.9 2.5 2.1 1.2-1.7 2.7-2.7 4.6-3 1.3-.2 2.5-.1 3.4.3-1.1.9-1.5 2-1.5 3.4 0 2.7-1.4 4.8-3.5 5.7-1.6.6-3.2-.1-3.8-1.4L12 15.9l-1.7-2.4c-.6 1.3-2.2 2-3.8 1.4-2.1-.9-3.5-3-3.5-5.7 0-1.4-.4-2.5-1.5-3.4.9-.4 2.1-.5 3.4-.3 1.9.3 3.4 1.3 4.6 3C10.1 7.3 11 6.4 12 6.4z"/></g>',
+  // ドレス
+  dress: '<path d="M9 2.4l3 2 3-2 2.6 3.5-2.5 2 .6 3.1L20.3 21.6H3.7L8.3 11l.6-3.1-2.5-2z"/>',
+  // 兜
+  gear : '<path d="M12 2.1c-5.5 0-9 3.5-9 9.1V13h18v-1.8c0-5.6-3.5-9.1-9-9.1z"/>'
+       + '<path d="M3.2 13.6h17.6v2.6c0 .7-.5 1.2-1.2 1.2H4.4c-.7 0-1.2-.5-1.2-1.2z"/>'
+       + '<path d="M6.2 12.2h11.6v1.8H6.2z"/>'
+       + '<path d="M7.6 17.4h8.8l.7 3.1c.1.5-.3.9-.8.9H7.7c-.5 0-.9-.4-.8-.9z"/>',
+  // マント
+  dark : '<path d="M12 2.3c1 0 1.8.7 2.1 1.6 3.1.4 5.6 2.3 6.5 5.2-2.3.7-4 2.5-4.7 5.2C15.1 17.2 13.6 21 12 22.1 10.4 21 8.9 17.2 8.1 14.3c-.7-2.7-2.4-4.5-4.7-5.2.9-2.9 3.4-4.8 6.5-5.2C10.2 3 11 2.3 12 2.3z"/>'
+       + '<circle cx="12" cy="4.4" r="1.5"/>',
+};
+
+/* 最初から持っているものは「距離 0 で入手」として扱う。ほかのアイテムと同じ土俵に乗る */
+const START_ITEMS = ["dark"];
+
+/* 得点：rid があればその錬金が進行 beforeSeg の始まるまでに完成していれば 1 点。
+   item があれば、その進行が始まる時点で min 個以上持っていれば 1 点。
+   beforeSeg は距離ではなく「進行の番号」なので、可変進行の入れ方で期限が動く */
+const SCORING = [
+  {rid:"A2", beforeSeg:5,  label:"呪われし戦で、ドラゴンシールド"},
+  {rid:"A1", beforeSeg:5,  label:"呪われし戦で、ダンシングメイル"},
+  {rid:"A3", beforeSeg:11, label:"クロウ戦で、命のブレスレット(3個目)"},
+  {item:"dark", min:1, beforeSeg:11, label:"クロウ戦で、やみのころも"},
+  {rid:"A6", beforeSeg:11, label:"クロウ戦で、ファントムマスク"},
+];
+
+const SEG = {};
+FIXED.forEach(s => SEG[s.id] = s);
+VARS .forEach(s => { s.isVar = true; SEG[s.id] = s; });
+const REC = {};
+RECIPES.forEach(r => REC[r.id] = r);
+
+/** この順の固定進行のあいだには可変を挟めない */
+const GLUED = [["F8", "F9"]];
+
+/* レイアウト定数（px） */
+const RULER_W = 36, TRACK_L = 42, TRACK_W = 176;
+const ITEM_L  = 222, LANE_L = 326, LANE_W = 66, LANE_GAP = 8;
+const PAL_PX_PER_UNIT = 5.2;   // パレットは固定縮尺（常に画面に収めるため）
+
+/* =========================================================================
+   状態
+   ========================================================================= */
+
+const STORE_KEY = "dq8-renkin-v3";
+
+function defaultOrder(){
+  const o = FIXED.map(f => f.id);
+  for (const v of VARS) o.splice(o.indexOf("F" + v.after) + 1, 0, v.id);
+  return o;
+}
+
+const state = {
+  order: defaultOrder(),
+  place: {},          // recipeId -> {seg, off}   off は 0.1 単位の整数
+  scale: 80,          // 距離 1.0 あたりの px
+};
+
+function save(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      order: state.order, place: state.place, scale: state.scale
+    }));
+  }catch(e){ /* プライベートモード等では保存を諦める */ }
+}
+
+function load(){
+  let raw; try{ raw = localStorage.getItem(STORE_KEY); }catch(e){ return; }
+  if(!raw) return;
+  try{
+    const o = JSON.parse(raw);
+    const ok = Array.isArray(o.order)
+      && o.order.length === Object.keys(SEG).length
+      && o.order.every(id => SEG[id]);
+    if(ok && orderIsLegal(o.order)) state.order = o.order;
+    if(o.place && typeof o.place === "object"){
+      for(const [rid, p] of Object.entries(o.place)){
+        if(REC[rid] && p && SEG[p.seg] && Number.isInteger(p.off)) state.place[rid] = {seg:p.seg, off:p.off};
+      }
+    }
+    if(typeof o.scale === "number") state.scale = Math.min(150, Math.max(40, o.scale));
+  }catch(e){ /* 壊れた保存データは無視 */ }
+}
+
+function orderIsLegal(order){
+  if(!VARS.every(v => order.indexOf(v.id) > order.indexOf("F" + v.after))) return false;
+  // 進行8と9の間には可変を挟めない
+  return GLUED.every(([a, b]) => order.indexOf(b) === order.indexOf(a) + 1);
+}
+
+/* =========================================================================
+   計算
+   ========================================================================= */
+
+function layout(order = state.order){
+  let acc = 0; const pos = {}, list = [];
+  for(const id of order){
+    const seg = SEG[id];
+    const e = {seg, start:acc, end:acc + seg.d};
+    acc += seg.d; pos[id] = e; list.push(e);
+  }
+  return {pos, list, total:acc};
+}
+
+function itemSpecs(seg){
+  if(!seg.item) return [];
+  const arr = Array.isArray(seg.item) ? seg.item : [seg.item];
+  return arr.map(it => typeof it === "string" ? {key:it} : it);
+}
+
+function dropsOf(e){
+  return itemSpecs(e.seg).map(it => ({
+    t: it.off == null ? e.end : e.start + it.off,
+    key: it.key,
+  }));
+}
+
+/**
+ * 配置された錬金を開始順にシミュレートする。
+ * アイテムは進行の末尾で入手し、錬金の開始時に消費する。
+ * 錬金に product があれば、問題なく完成した時点でも入手する。
+ */
+function simulate(place = state.place, order = state.order){
+  const L = layout(order);
+  const runs = [];
+  for(const r of RECIPES){
+    const p = place[r.id]; if(!p) continue;
+    const base = L.pos[p.seg].start;
+    runs.push({r, start:base + p.off, end:base + p.off + r.d});
+  }
+  runs.sort((a,b) => a.start - b.start || RECIPES.indexOf(a.r) - RECIPES.indexOf(b.r));
+
+  const inv = {};
+  // 入手タイミング。距離 0 の初期所持ぶんを先頭に置くので、この配列は時刻順に並ぶ
+  const gained = START_ITEMS.map(k => ({t:0, key:k}));
+  for(const e of L.list){
+    for(const g of dropsOf(e)) gained.push(g);
+  }
+  gained.sort((a, b) => a.t - b.t);
+
+  // 重なりは双方に印を付ける（あとから置いたほうだけを咎めると、
+  // 既存の錬金より前に割り込む配置がすり抜けてしまう）
+  const overlap = {};
+  for(let i = 0; i < runs.length; i++){
+    for(let j = i + 1; j < runs.length; j++){
+      if(runs[i].start < runs[j].end && runs[j].start < runs[i].end){
+        overlap[runs[i].r.id] = overlap[runs[i].r.id] || runs[j].r.name;
+        overlap[runs[j].r.id] = overlap[runs[j].r.id] || runs[i].r.name;
+      }
+    }
+  }
+
+  const res = {};
+  let gi = 0;
+  const products = [];
+  for(const run of runs){
+    while(gi < gained.length && gained[gi].t <= run.start){
+      const k = gained[gi].key; inv[k] = (inv[k] || 0) + 1; gi++;
+    }
+    for(const p of products){
+      if(!p.applied && p.t <= run.start){
+        inv[p.key] = (inv[p.key] || 0) + 1;
+        p.applied = true;
+      }
+    }
+    const missing = run.r.need.filter(k => !(inv[k] > 0));
+    if(missing.length === 0) run.r.need.forEach(k => inv[k]--);
+    const st = {
+      start   : run.start,
+      end     : run.end,
+      missing : missing,
+      overlap : overlap[run.r.id] || null,
+      short   : Math.max(0, run.end - L.total),
+    };
+    res[run.r.id] = st;
+    if(run.r.product && !missing.length && !st.overlap && !st.short){
+      products.push({t:run.end, key:run.r.product, applied:false});
+    }
+  }
+  const allGained = gained.concat(products.map(p => ({t:p.t, key:p.key})));
+  allGained.sort((a, b) => a.t - b.t);
+  return {L, res, runs, gained:allGained};
+}
+
+/** 全体距離のうち、ある位置がどの進行に属するか */
+function segAt(L, t){
+  t = Math.max(0, Math.min(L.total, t));
+  for(const e of L.list) if(t < e.end) return e;
+  return L.list[L.list.length - 1];
+}
+
+/** 全体位置 t（0.1単位）を「区間＋オフセット」の配置に変換する。切替不可なら区間の先頭へ寄せる */
+function resolve(L, t){
+  t = Math.round(Math.max(0, Math.min(L.total, t)));
+  const e = segAt(L, t);
+  if(!e.seg.sw) return {seg:e.seg.id, off:0, snapped:(t !== e.start), snapTo:e.start};
+  return {seg:e.seg.id, off:t - e.start, snapped:false};
+}
+
+const fmt = t => (t / 10).toFixed(1);
+const px  = () => state.scale / 10;   // 0.1 距離あたりの px
+
+/** アイテムの絵記号。色分けはせず、常に黒で描く */
+function itemIcon(key, size, chip){
+  const s = document.createElement("span");
+  s.className = "ico" + (chip ? " chip" : "");
+  s.innerHTML = '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="currentColor">'
+              + ICONS[key] + '</svg>';
+  s.title = ITEMS[key].name;
+  return s;
+}
+
+/* =========================================================================
+   トースト
+   ========================================================================= */
+const toastEl = document.getElementById("toast");
+let toastTimer = null;
+function toast(msg, kind){
+  toastEl.textContent = msg;
+  toastEl.className = "show" + (kind === "info" ? " info" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.className = ""; toastEl.textContent = "";
+  }, kind === "info" ? 2200 : 3000);
+}
+
+/* =========================================================================
+   描画
+   ========================================================================= */
+
+const stage    = document.getElementById("stage");
+const paletteEl= document.getElementById("palette");
+const statusEl = document.getElementById("status");
+const legendEl = document.getElementById("legend");
+const scoreEl  = document.getElementById("score");
+
+const ghost     = document.createElement("div"); ghost.id = "ghost";
+const ghostLine = document.createElement("div"); ghostLine.id = "ghostline";
+
+let trackEl = null, forbidEl = null;
+
+function render(){
+  const sim = simulate();
+  const L = sim.L, P = px();
+
+  // 距離不足ではみ出す錬金があれば、その分だけ舞台を伸ばす
+  let maxEnd = L.total;
+  for(const k in sim.res) maxEnd = Math.max(maxEnd, sim.res[k].end);
+  const H = maxEnd * P + 34;
+  stage.style.height = H + "px";
+  stage.textContent = "";
+
+  const frag = document.createDocumentFragment();
+
+  /* --- 目盛り --- */
+  for(let t = 0; t <= maxEnd; t += 5){
+    const major = (t % 10 === 0);
+    const line = document.createElement("div");
+    line.className = "tickline" + (major ? " major" : "");
+    line.style.top = (t * P) + "px";
+    line.style.right = "0";
+    frag.appendChild(line);
+    if(major){
+      const lab = document.createElement("div");
+      lab.className = "tick major";
+      lab.style.top = (t * P) + "px";
+      lab.textContent = fmt(t);
+      frag.appendChild(lab);
+    }
+  }
+
+  /* --- 進行の年表 --- */
+  const track = document.createElement("div");
+  track.id = "track";
+  track.style.height = (L.total * P) + "px";
+
+  for(const e of L.list){
+    const s = e.seg;
+    const h = s.d * P;
+    const box = document.createElement("div");
+    box.className = "seg" + (s.isVar ? " varseg" : "") + (s.sw ? "" : " lock")
+      + (h < 34 ? " short" : "") + (h < 21 ? " tiny" : "");
+    box.style.top = (e.start * P) + "px";
+    box.style.height = h + "px";
+    box.dataset.seg = s.id;
+
+    if(s.isVar){
+      const tab = document.createElement("div");
+      tab.className = "vartab";
+      tab.appendChild(document.createElement("i"));
+      box.appendChild(tab);
+      // タブは目印。ボックスのどこを掴んでも動かせる
+      box.addEventListener("mousedown", ev => startVarDrag(ev, s.id));
+    }
+
+    const inner = document.createElement("div"); inner.className = "seg-in";
+    const row   = document.createElement("div"); row.className = "seg-row";
+    const no    = document.createElement("span"); no.className = "seg-no";
+    no.textContent = (s.isVar ? "可変" : "") + s.no;
+    const nm    = document.createElement("span"); nm.className = "seg-name"; nm.textContent = s.name;
+    const dd    = document.createElement("span"); dd.className = "seg-d";    dd.textContent = fmt(s.d);
+    row.append(no, nm, dd);
+    inner.appendChild(row);
+
+    const notes = [];
+    if(!s.sw) notes.push("錬金切替 不可");
+    if(s.isVar) notes.push("進行" + s.after + " より後");
+    if(s.isVar) notes.push("8と9の間は不可");
+    if(GLUED.some(([a]) => a === s.id)) notes.push("直後に可変 不可");
+    if(notes.length && h >= 34){
+      const n = document.createElement("div"); n.className = "seg-note";
+      n.textContent = notes.join(" / ");
+      inner.appendChild(n);
+    }
+    box.appendChild(inner);
+    const dropTxt = itemSpecs(s).map(it => {
+      const when = it.off == null ? "末尾で入手" : ("開始から " + fmt(it.off) + " で入手");
+      return "\n" + when + "：" + ITEMS[it.key].name;
+    }).join("");
+    const glueTxt = s.isVar ? "\n制約：進行 " + s.after + " より後／進行8と9の間には置けない"
+      : (GLUED.some(([a]) => a === s.id) ? "\n直後に可変進行は置けません" : "");
+    box.title = (s.isVar ? "可変進行 " : "進行 ") + s.no + "　" + s.name
+      + "\n距離 " + fmt(s.d) + "（" + fmt(e.start) + " → " + fmt(e.end) + "）"
+      + "\n錬金の切り替え：" + (s.sw ? "可能（区間内の任意の位置）" : "不可（区間の先頭のみ）")
+      + dropTxt
+      + glueTxt;
+    track.appendChild(box);
+  }
+  trackEl = track;
+  frag.appendChild(track);
+
+  /* --- ドラッグ中の禁止ゾーン --- */
+  forbidEl = document.createElement("div");
+  forbidEl.id = "forbid";
+  const fs = document.createElement("span"); fs.textContent = "ここより前には置けません";
+  forbidEl.appendChild(fs);
+  frag.appendChild(forbidEl);
+
+  /* --- アイテム入手ライン --- */
+  const groups = [];
+  const byT = new Map();
+  for(const g of sim.gained){
+    if(!byT.has(g.t)){
+      const arr = [];
+      byT.set(g.t, arr);
+      groups.push({t:g.t, keys:arr});
+    }
+    byT.get(g.t).push(g.key);
+  }
+  for(const {t, keys} of groups){
+    const c = ITEMS[keys[0]].color;
+    const ln = document.createElement("div");
+    ln.className = "itemline"; ln.style.setProperty("--ic", c);
+    ln.style.top = (t * P) + "px";
+    frag.appendChild(ln);
+    const pill = document.createElement("div");
+    pill.className = "itempill"; pill.style.setProperty("--ic", c);
+    pill.style.top = (t * P) + "px";
+    for(const k of keys) pill.appendChild(itemIcon(k, 17));
+    pill.append(keys.map(k => ITEMS[k].short).join("・") + " " + fmt(t));
+    pill.title = keys.map(k => ITEMS[k].name).join("、") + " を " + fmt(t) + " で入手";
+    frag.appendChild(pill);
+  }
+
+  /* --- 終点 --- */
+  const goal = document.createElement("div");
+  goal.id = "goal"; goal.style.top = (L.total * P) + "px";
+  const gl = document.createElement("span"); gl.textContent = "終点 " + fmt(L.total);
+  goal.appendChild(gl);
+  frag.appendChild(goal);
+
+  /* --- 配置済みの錬金（重なりがある場合だけレーンが増える） --- */
+  const laneEnd = [];
+  for(const run of sim.runs){
+    let lane = laneEnd.findIndex(v => v <= run.start);
+    if(lane < 0) lane = laneEnd.length;
+    laneEnd[lane] = run.end;
+
+    const st = sim.res[run.r.id];
+    const bad = st.missing.length || st.overlap || st.short;
+    const bar = document.createElement("div");
+    bar.className = "bar" + (bad ? " bad" : "");
+    bar.style.setProperty("--c", run.r.color);
+    bar.style.left = (LANE_L + lane * (LANE_W + LANE_GAP)) + "px";
+    bar.style.top = (run.start * P) + "px";
+    bar.style.height = (run.r.d * P) + "px";
+    bar.dataset.rid = run.r.id;
+
+    const t = document.createElement("div"); t.className = "bar-t"; t.textContent = "▲" + fmt(st.start);
+    const nm = document.createElement("div"); nm.className = "bar-name"; nm.textContent = run.r.name;
+    fitVertical(nm, run.r.name, run.r.d * P - (run.r.need.length ? 47 : 38));
+    const need = document.createElement("div"); need.className = "bar-need";
+    for(const k of run.r.need) need.appendChild(itemIcon(k, 17, true));
+    const b = document.createElement("div"); b.className = "bar-b"; b.textContent = "▼" + fmt(st.end);
+    bar.append(t, nm, need, b);
+
+    const msgs = problemsOf(run.r, st);
+    if(msgs.length){
+      const w = document.createElement("div"); w.className = "bar-warn"; w.textContent = "!";
+      bar.appendChild(w);
+    }
+    bar.title = run.r.name + "　必要距離 " + fmt(run.r.d)
+      + "\n" + fmt(st.start) + " → " + fmt(st.end)
+      + (run.r.need.length ? "\n素材：" + run.r.need.map(k => ITEMS[k].name).join("、") : "\n素材：なし")
+      + (run.r.product ? "\n完成時に入手：" + ITEMS[run.r.product].name : "")
+      + (msgs.length ? "\n\n⚠ " + msgs.join("\n⚠ ") : "")
+      + "\n\nクリックで取り外し";
+
+    bar.addEventListener("click", () => {
+      delete state.place[run.r.id];
+      toast(run.r.name + " を外しました", "info");
+      hideGhost(); render();
+    });
+    frag.appendChild(bar);
+
+    if(st.short > 0){   // 終点を越えた分
+      const ov = document.createElement("div");
+      ov.className = "overrun";
+      ov.style.left = bar.style.left;
+      ov.style.top = (L.total * P) + "px";
+      ov.style.height = (st.short * P) + "px";
+      frag.appendChild(ov);
+    }
+  }
+
+  stage.appendChild(frag);
+  stage.appendChild(ghostLine);
+  stage.appendChild(ghost);
+
+  renderPalette(sim);
+  renderStatus(sim);
+  renderLegend(sim);
+  renderScore(sim);
+  updateClear(sim);
+  save();
+}
+
+/** 縦書きの錬金名が枠に収まるよう文字サイズを詰める */
+function fitVertical(node, text, availPx){
+  const fs = Math.max(7, Math.min(12, Math.floor(availPx / text.length / 1.12)));
+  node.style.fontSize = fs + "px";
+  if(fs < 10) node.style.letterSpacing = "0";
+}
+
+function problemsOf(recipe, st){
+  const out = [];
+  if(st.missing.length) out.push(st.missing.map(k => ITEMS[k].name).join("、") + "がありません");
+  if(st.overlap)        out.push("「" + st.overlap + "」と同時進行になっています（錬金は一度にひとつ）");
+  if(st.short > 0)      out.push("距離が " + fmt(st.short) + " 足りません");
+  return out;
+}
+
+function renderPalette(sim){
+  paletteEl.textContent = "";
+  for(const r of RECIPES){
+    const placed = !!state.place[r.id];
+    const d = document.createElement("div");
+    d.className = "pal" + (placed ? " used" : "");
+    d.style.setProperty("--c", r.color);
+    d.style.height = (r.d * PAL_PX_PER_UNIT + 22) + "px";
+    const dd = document.createElement("div"); dd.className = "pal-d"; dd.textContent = fmt(r.d);
+    const nm = document.createElement("div"); nm.className = "pal-name"; nm.textContent = r.name;
+    fitVertical(nm, r.name, r.d * PAL_PX_PER_UNIT + 22 - (r.need.length ? 34 : 25));
+    const nd = document.createElement("div"); nd.className = "pal-need";
+    for(const k of r.need) nd.appendChild(itemIcon(k, 17, true));
+    d.append(dd, nm, nd);
+    if(placed){
+      const tag = document.createElement("div"); tag.className = "pal-tag";
+      tag.textContent = fmt(sim.res[r.id].start) + "→" + fmt(sim.res[r.id].end);
+      d.appendChild(tag);
+    }
+    d.title = r.name + "\n必要距離 " + fmt(r.d)
+      + (r.need.length ? "\n素材：" + r.need.map(k => ITEMS[k].name).join("、") : "\n素材：なし")
+      + (r.product ? "\n完成時に入手：" + ITEMS[r.product].name : "")
+      + (placed ? "\n\nクリックで取り外し" : "\n\nクリックで配置（この錬金を始められる最も早い位置に入ります）");
+    if(placed){
+      d.addEventListener("click", () => { delete state.place[r.id]; hideGhost(); render(); });
+    }else{
+      d.addEventListener("click", () => placeAtEarliest(r.id));
+      d.addEventListener("mouseenter", () => previewEarliest(r.id));
+      d.addEventListener("mouseleave", hideGhost);
+    }
+    paletteEl.appendChild(d);
+  }
+}
+
+function renderStatus(sim){
+  statusEl.textContent = "";
+  const placedIds = Object.keys(state.place);
+  const used = placedIds.reduce((a, id) => a + REC[id].d, 0);
+  const need = RECIPES.reduce((a, r) => a + r.d, 0);
+
+  const rows = [
+    ["配置済み", placedIds.length + " / " + RECIPES.length],
+    ["総距離",   fmt(sim.L.total)],
+    ["使用距離", fmt(used) + "（残り " + fmt(sim.L.total - used) + "）"],
+    ["全部作るのに必要", fmt(need)],
+  ];
+  for(const [k, v] of rows){
+    const row = document.createElement("div"); row.className = "stat";
+    const a = document.createElement("span"); a.textContent = k;
+    const b = document.createElement("b"); b.textContent = v;
+    row.append(a, b); statusEl.appendChild(row);
+  }
+
+  const probs = [];
+  for(const r of RECIPES){
+    const st = sim.res[r.id]; if(!st) continue;
+    for(const m of problemsOf(r, st)) probs.push({t: r.name + "：" + m});
+  }
+  const list = document.createElement("ul"); list.className = "probs";
+  if(probs.length === 0 && placedIds.length === RECIPES.length){
+    const li = document.createElement("li"); li.className = "info";
+    li.textContent = "✓ " + RECIPES.length + "つすべて、距離も素材も足りています。";
+    list.appendChild(li);
+  }else if(probs.length === 0){
+    const li = document.createElement("li"); li.className = "info";
+    li.textContent = "配置済みの錬金に問題はありません。";
+    list.appendChild(li);
+  }else{
+    for(const p of probs){
+      const li = document.createElement("li"); li.textContent = p.t; list.appendChild(li);
+    }
+  }
+  statusEl.appendChild(list);
+}
+
+/** 時刻 t の時点で持っている個数（t までに入手し、t までに開始した錬金で消費したあと） */
+function inventoryAt(sim, t){
+  const inv = {};
+  for(const g of sim.gained){
+    if(g.t <= t) inv[g.key] = (inv[g.key] || 0) + 1;
+  }
+  for(const run of sim.runs){
+    if(run.start <= t){
+      const st = sim.res[run.r.id];
+      if(st.missing.length === 0){
+        for(const k of run.r.need) inv[k] = (inv[k] || 0) - 1;
+      }
+    }
+  }
+  return inv;
+}
+
+/** 得点。問題なく成立している錬金だけを採点する。所持条件は進行の開始時点 */
+function scoreOf(sim){
+  return SCORING.map(rule => {
+    const gate = sim.L.pos["F" + rule.beforeSeg].start;   // 進行 N が始まる距離
+    if(rule.item){
+      const n = inventoryAt(sim, gate)[rule.item] || 0;
+      return {rule, st:null, gate, got: n >= (rule.min || 1), count:n};
+    }
+    const st = sim.res[rule.rid];
+    const done = st && !problemsOf(REC[rule.rid], st).length;
+    return {rule, st, gate, got: !!(done && st.end <= gate)};
+  });
+}
+
+function renderScore(sim){
+  scoreEl.textContent = "";
+  const rows = scoreOf(sim);
+
+  for(const {rule, st, gate, got, count} of rows){
+    const row = document.createElement("div");
+    row.className = "score-row" + (got ? " got" : "");
+    const txt = document.createElement("span"); txt.className = "score-txt";
+    txt.textContent = "・" + rule.label;
+    const pt = document.createElement("b"); pt.className = "score-pt";
+    pt.textContent = (got ? "１点" : "０点");
+    row.append(txt, pt);
+    if(rule.item){
+      const it = ITEMS[rule.item];
+      row.title = "進行" + rule.beforeSeg + "（" + SEG["F" + rule.beforeSeg].name
+        + "）の開始 " + fmt(gate) + " の時点で " + it.name + " を "
+        + (rule.min || 1) + " 個持っていれば 1 点"
+        + "\n現在：" + count + " 個";
+    }else{
+      row.title = REC[rule.rid].name + " が 進行" + rule.beforeSeg + "（"
+        + SEG["F" + rule.beforeSeg].name + "）の開始 " + fmt(gate) + " までに完成していれば 1 点"
+        + "\n現在：" + (!st ? "未配置"
+          : problemsOf(REC[rule.rid], st).length ? "成立していません"
+          : "完成 " + fmt(st.end));
+    }
+    scoreEl.appendChild(row);
+  }
+
+  const total = rows.filter(r => r.got).length;
+  const sum = document.createElement("div");
+  sum.className = "score-sum" + (total === SCORING.length ? " full" : "");
+  const a = document.createElement("span"); a.textContent = "合計";
+  const b = document.createElement("b"); b.textContent = total + " / " + SCORING.length + " 点";
+  sum.append(a, b);
+  scoreEl.appendChild(sum);
+}
+
+/* =========================================================================
+   クリア演出：全部が問題なく成立し、かつ評価が満点のとき
+   ========================================================================= */
+
+const clearEl = document.getElementById("clear");
+let clearShown = false;      // 同じ達成で何度も出さないための記録
+let booting = true;          // 前回のクリア状態を読み込んだだけで出さないための印
+
+function isCleared(sim){
+  if(Object.keys(state.place).length !== RECIPES.length) return false;
+  if(RECIPES.some(r => problemsOf(r, sim.res[r.id]).length)) return false;
+  return scoreOf(sim).every(s => s.got);
+}
+
+function updateClear(sim){
+  if(!isCleared(sim)){ clearShown = false; clearEl.hidden = true; return; }
+  // 可変進行をドラッグしている最中に一瞬かすめても出さない。手を離してから出す
+  if(clearShown || dragging) return;
+  clearShown = true;
+  if(!booting) showClear(sim);
+}
+
+function showClear(sim){
+  const list = clearEl.querySelector(".clear-list");
+  list.textContent = "";
+  const done = RECIPES.map(r => ({r, st:sim.res[r.id]})).sort((a, b) => a.st.start - b.st.start);
+  for(const {r, st} of done){
+    const li = document.createElement("li");
+    const a = document.createElement("span"); a.textContent = r.name;
+    const b = document.createElement("b");    b.textContent = fmt(st.start) + " → " + fmt(st.end);
+    li.append(a, b); list.appendChild(li);
+  }
+  clearEl.querySelector(".clear-sub").textContent =
+    RECIPES.length + "つすべて完成、評価も " + SCORING.length + " / " + SCORING.length + " 点";
+  const last = done[done.length - 1].st.end;
+  clearEl.querySelector(".clear-foot").textContent =
+    "総距離 " + fmt(sim.L.total) + " のうち " + fmt(last) + " で完了（余り " + fmt(sim.L.total - last) + "）";
+  clearEl.hidden = false;
+}
+
+function hideClear(){ clearEl.hidden = true; }
+
+clearEl.addEventListener("click", ev => {
+  if(ev.target === clearEl || ev.target.classList.contains("clear-close")) hideClear();
+});
+
+function renderLegend(sim){
+  legendEl.textContent = "";
+  const at = {};
+  for(const g of sim.gained) (at[g.key] = at[g.key] || []).push(fmt(g.t));
+  for(const [k, v] of Object.entries(ITEMS)){
+    const d = document.createElement("div");
+    const src = at[k] ? at[k].map(t => t + " で入手").join(" / ") : "入手手段なし";
+    d.append(itemIcon(k, 19), v.name + "（" + v.short + "） … " + src);
+    legendEl.appendChild(d);
+  }
+}
+
+/* =========================================================================
+   年表クリックでの配置 / ゴースト表示
+   ========================================================================= */
+
+function stageTenths(clientY){
+  const rect = trackEl.getBoundingClientRect();
+  return (clientY - rect.top) / px();
+}
+
+function hideGhost(){ ghost.style.display = "none"; ghostLine.style.display = "none"; }
+
+/** 錬金を置ける開始位置を、先頭から順に並べたもの（切替可＝0.1刻み、不可＝区間の先頭のみ） */
+function legalStarts(L){
+  const out = [];
+  for(const e of L.list){
+    if(e.seg.sw){ for(let t = e.start; t < e.end; t++) out.push(t); }
+    else out.push(e.start);
+  }
+  return out;
+}
+
+/**
+ * その錬金を「いちばん早く始められる位置」。素材と重なりだけを見て、距離不足は見ない。
+ * 開始が遅いほど終わりも遅いので、ここで得た位置が距離的にも最善になる。
+ * 届かない場合はそのまま置いて、はみ出しを赤で見せる。
+ * どの位置にも置けないときは null。
+ */
+function earliestFeasible(rid){
+  const L = layout();
+  for(const t of legalStarts(L)){
+    const p = resolve(L, t);
+    const trial = Object.assign({}, state.place); trial[rid] = {seg:p.seg, off:p.off};
+    const st = simulate(trial).res[rid];
+    if(!st.missing.length && !st.overlap) return L.pos[p.seg].start + p.off;
+  }
+  return null;
+}
+
+/** 置けなかった理由を、素材不足か区間の空き不足かで言い分ける */
+function blockReason(rid){
+  const L = layout();
+  for(const t of legalStarts(L)){
+    const p = resolve(L, t);
+    const trial = Object.assign({}, state.place); trial[rid] = {seg:p.seg, off:p.off};
+    // 素材だけは足りる位置がどこかにあるなら、詰まっているのは区間のほう
+    if(!simulate(trial).res[rid].missing.length) return "ほかの錬金と重ならない区間がありません";
+  }
+  return REC[rid].need.map(k => ITEMS[k].name).join("、") + "がありません";
+}
+
+/** ドラッグ中のゴースト（置く前に可否が分かるよう、理由も出す） */
+function showGhost(rid, seg, off){
+  const L = layout(), P = px(), r = REC[rid];
+  const start = L.pos[seg].start + off;
+  const trial = Object.assign({}, state.place); trial[rid] = {seg, off};
+  const st = simulate(trial).res[rid];
+
+  let label = fmt(start) + "→" + fmt(start + r.d), bad = false;
+  if(st.overlap){ label = "錬金中"; bad = true; }
+  else if(st.missing.length){ label = st.missing.map(k => ITEMS[k].short).join("・") + "なし"; bad = true; }
+  else if(st.short > 0){ label = "距離 -" + fmt(st.short); bad = true; }
+
+  ghost.className = bad ? "bad" : "";
+  ghost.style.setProperty("--gc", bad ? "#c8342b" : r.color);
+  ghost.style.left = LANE_L + "px";
+  ghost.style.top = (start * P) + "px";
+  ghost.style.height = (r.d * P) + "px";
+  ghost.style.display = "block";
+  ghost.textContent = label;
+  ghostLine.style.setProperty("--gc", bad ? "#c8342b" : r.color);
+  ghostLine.style.top = (start * P) + "px";
+  ghostLine.style.display = "block";
+}
+
+
+/* =========================================================================
+   錬金カードの配置：クリックのみ
+
+   置ける位置はアプリ側が決める（その錬金を無理なく始められる最も早い位置）。
+   一度置いたカードは動かせない。動くのは可変進行を入れ替えたときだけ。
+   ========================================================================= */
+
+function earliestPlacement(rid){
+  const t = earliestFeasible(rid);
+  return t === null ? null : resolve(layout(), t);
+}
+
+function previewEarliest(rid){
+  const p = earliestPlacement(rid);
+  if(p) showGhost(rid, p.seg, p.off); else hideGhost();
+}
+
+function placeAtEarliest(rid){
+  hideGhost();
+  const p = earliestPlacement(rid);
+  if(!p){ toast(REC[rid].name + " を置ける位置がありません：" + blockReason(rid)); return; }
+  state.place[rid] = {seg:p.seg, off:p.off};
+  render();
+  scrollBarIntoView(rid);
+  const st = simulate().res[rid];
+  if(st.short > 0) toast(REC[rid].name + " は距離が " + fmt(st.short) + " 足りません", "info");
+}
+
+/** 置いた錬金が画面の外なら、見える位置までスクロールする */
+function scrollBarIntoView(rid){
+  const bar = stage.querySelector('.bar[data-rid="' + rid + '"]');
+  if(!bar) return;
+  const r = bar.getBoundingClientRect();
+  if(r.bottom > 150 && r.top < innerHeight - 40) return;   // 少しでも見えていれば動かさない
+  scrollBy({top: r.top - innerHeight * 0.35, behavior:"smooth"});
+}
+
+/* =========================================================================
+   ドラッグ：可変進行の並べ替え（ドラッグできるのはこれだけ）
+   ========================================================================= */
+
+let dragging = null;
+
+function startVarDrag(ev, id){
+  ev.preventDefault(); ev.stopPropagation();
+  const L = layout();
+  const rect = trackEl.getBoundingClientRect();
+  dragging = {
+    kind: "var", id,
+    grab: (ev.clientY - rect.top) - L.pos[id].start * px(),
+    backup: state.order.slice(),
+  };
+  document.body.classList.add("dragging");
+  hideGhost();
+  markVarDrag();
+  window.addEventListener("mousemove", onDragMove);
+  window.addEventListener("mouseup", onDragEnd);
+}
+
+function markVarDrag(){
+  const box = trackEl.querySelector('.seg[data-seg="' + dragging.id + '"]');
+  if(box) box.classList.add("drag");
+  const v = SEG[dragging.id];
+  const rest = state.order.filter(x => x !== dragging.id);
+  let limit = 0;
+  for(const sid of rest){ limit += SEG[sid].d; if(sid === "F" + v.after) break; }
+  forbidEl.style.display = "block";
+  forbidEl.style.height = (limit * px()) + "px";
+}
+
+function moveVar(clientY){
+  const v = SEG[dragging.id];
+  const rest = state.order.filter(x => x !== dragging.id);
+  const rect = trackEl.getBoundingClientRect();
+  const want = ((clientY - rect.top) - dragging.grab) / px();
+
+  const bounds = [0];
+  let acc = 0;
+  for(const sid of rest){ acc += SEG[sid].d; bounds.push(acc); }
+  const minIdx = rest.indexOf("F" + v.after) + 1;
+
+  let best = -1, bestDist = Infinity;
+  for(let i = minIdx; i < bounds.length; i++){
+    // 進行8と9の間には挿入しない
+    if(GLUED.some(([a, b]) => rest[i - 1] === a && rest[i] === b)) continue;
+    const dd = Math.abs(bounds[i] - want);
+    if(dd < bestDist){ bestDist = dd; best = i; }
+  }
+  if(best < 0) return;
+  const next = rest.slice(); next.splice(best, 0, dragging.id);
+  if(next.join() !== state.order.join()){
+    state.order = next;
+    render();
+    markVarDrag();
+  }
+}
+
+function onDragMove(ev){
+  if(dragging) moveVar(ev.clientY);
+}
+
+function onDragEnd(){
+  window.removeEventListener("mousemove", onDragMove);
+  window.removeEventListener("mouseup", onDragEnd);
+  document.body.classList.remove("dragging");
+  dragging = null;
+  render();
+}
+
+/* =========================================================================
+   ツールバー
+   ========================================================================= */
+
+const zoom = document.getElementById("zoom");
+zoom.value = state.scale;
+zoom.addEventListener("input", () => { state.scale = +zoom.value; hideGhost(); render(); });
+
+document.getElementById("btnClear").addEventListener("click", () => {
+  state.place = {}; hideGhost(); render();
+});
+document.getElementById("btnReset").addEventListener("click", () => {
+  state.order = defaultOrder(); state.place = {}; state.scale = 80;
+  zoom.value = 80; hideGhost(); render();
+});
+document.addEventListener("keydown", ev => {
+  if(ev.key !== "Escape") return;
+  if(!clearEl.hidden){ hideClear(); return; }
+  if(dragging){                          // 可変進行のドラッグを取り消す
+    state.order = dragging.backup;
+    onDragEnd();
+  }
+});
+
+/* =========================================================================
+   起動
+   ========================================================================= */
+load();
+zoom.value = state.scale;
+render();
+booting = false;
+</script>
+</body>
+</html>
