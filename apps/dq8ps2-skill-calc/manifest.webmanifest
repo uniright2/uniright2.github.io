@@ -1,0 +1,16 @@
+{
+  "name": "ドラクエ8 スキルポイント計算ツール（PS2版・Lv50未満）",
+  "short_name": "DQ8スキル計算",
+  "description": "ドラクエ8（PS2版）のスキルに必要なポイントと、到達レベルを計算するツール",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
