@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<meta name="theme-color" content="#ffffff">
+<meta name="format-detection" content="telephone=no">
+<title>ドラクエ8 スキルポイント計算ツール（PS2版・Lv50未満）</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="DQ8スキル計算">
+<style>
+/* ---- 寸法（整数pxは下のスクリプトが画面の高さから決めて上書きする） ---- */
+:root{
+  color-scheme:only light;
+  --ink:#231f1c;
+  --sub:#77716a;
+  --h-title:20px; --h-tabs:40px; --h-head:24px; --h-reset:32px; --h-result:90px; --h-foot:16px;
+  --ga:6px; --gb:8px; --gc:8px; --gd:6px; --rg:3px;
+  --rowh:36px;
+  --fs:clamp(11.5px,3.45vw,15px);    /* 特技名 */
+  --fs-n:clamp(9px,2.6vw,11px);      /* 左上のポイント数 */
+}
+
+/* ---- キャラクターの色（--c-on は --c で塗った上の文字色。山吹色は白文字が読めないので濃い色） ---- */
+[data-char="hero"]   {--c:#f8b500;--c-deep:#8a5f00;--c-tint:#fef6dc;--c-line:#f3d98a;--c-on:#3d2a00}
+[data-char="yangus"] {--c:#8d5b2e;--c-deep:#5e3a17;--c-tint:#f6eee6;--c-line:#e3d0bd;--c-on:#fff}
+[data-char="jessica"]{--c:#6166dc;--c-deep:#383da6;--c-tint:#eff0ff;--c-line:#c8caf6;--c-on:#fff}
+[data-char="kukule"] {--c:#7c8087;--c-deep:#474a50;--c-tint:#f1f2f4;--c-line:#d3d6da;--c-on:#fff}
+
+*{box-sizing:border-box}
+html{background:#fff;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  margin:0;background:#fff;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Noto Sans CJK JP","Yu Gothic UI",Meiryo,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+button{
+  font:inherit;color:inherit;margin:0;padding:0;border:0;background:none;
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+button:focus-visible{outline:2px solid var(--c-deep);outline-offset:1px}
+
+#probe{position:fixed;left:0;top:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none}
+
+.app{
+  width:100%;max-width:480px;margin:0 auto;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  touch-action:manipulation;
+}
+
+h1{
+  margin:0 0 var(--ga);height:var(--h-title);line-height:var(--h-title);
+  font-size:13px;font-weight:700;letter-spacing:.02em;
+  white-space:nowrap;overflow:hidden;
+}
+h1 small{font-size:.85em;font-weight:600;color:var(--sub)}
+.compact h1{font-size:11px}
+
+/* ---- キャラクター ---- */
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;height:var(--h-tabs);margin-bottom:var(--gb)}
+.tab{
+  border:1.5px solid var(--c);border-radius:999px;background:#fff;color:var(--c-deep);
+  font-size:14px;font-weight:700;white-space:nowrap;
+}
+.tab[aria-selected="true"]{background:var(--c);color:var(--c-on)}
+
+/* ---- 表 ---- */
+.grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-rows:var(--h-head) repeat(10,var(--rowh)) var(--h-reset);
+  column-gap:3px;row-gap:var(--rg);margin-bottom:var(--gc);
+}
+.hd{
+  display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;
+  background:var(--c-tint);color:var(--c-deep);border-radius:6px;
+  font-size:13px;font-weight:700;white-space:nowrap;
+}
+.cell{
+  position:relative;display:block;min-width:0;overflow:hidden;
+  background:#fff;border:1px solid var(--c-line);border-radius:6px;color:var(--ink);
+  transition:background-color .09s,border-color .09s,color .09s;
+}
+.cell .n{
+  position:absolute;left:4px;top:3px;
+  font-size:var(--fs-n);line-height:1;font-weight:700;color:var(--c-deep);
+  font-variant-numeric:tabular-nums;
+}
+.cell .lb{
+  position:absolute;left:2px;right:2px;top:calc(var(--fs-n) + 3px);bottom:1px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs);font-weight:600;line-height:1.12;white-space:nowrap;
+}
+.cell .lb.two{top:1px;flex-direction:column}
+.cell .lb.two.low{top:calc(var(--fs-n) + 3px)}
+.cell .lb.two .ln{position:relative}
+.cell.on{background:var(--f,var(--c));border-color:var(--f,var(--c));color:var(--t,var(--c-on))}
+.cell.on .n{color:var(--t,var(--c-on))}
+
+.rs{
+  margin-top:2px;border:1px solid var(--c-line);border-radius:999px;background:#fff;color:var(--c-deep);
+  font-size:11.5px;font-weight:600;white-space:nowrap;
+}
+.rs.idle,.all.idle{opacity:.45}
+
+/* ---- 結果 ---- */
+.result{
+  height:var(--h-result);display:grid;gap:4px;
+  grid-template-columns:clamp(50px,14.5vw,62px) clamp(66px,19vw,84px) minmax(0,1fr) clamp(48px,13.5vw,58px);
+  padding:5px;background:var(--c-tint);border-radius:10px;
+}
+/* 必要SP・種なし・種+n の上下の余白は揃える（種なしの枠線1.5px＋内側2.5px＝4px）。最下段のSPが同じ高さになる */
+.k{font-size:12px;font-weight:600;line-height:16px;color:var(--c-deep);white-space:nowrap}
+.need{display:grid;grid-template-rows:auto minmax(0,1fr);justify-items:center;min-width:0;padding:4px 0}
+.need .k{font-size:13px;font-weight:700;line-height:1.1;text-align:center}
+.need b{align-self:end;margin-bottom:-1px;font-size:28px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.blk{display:grid;grid-template-rows:16px minmax(0,1fr) 18px;justify-items:center;align-items:center;min-width:0}
+.lv{font-weight:800;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lv i{font-style:normal;font-weight:700;font-size:.42em;margin-right:1px}
+.lv.na i{display:none}
+.sp{align-self:end;font-size:12px;font-weight:600;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sp i{font-style:normal;font-size:10px;font-weight:600;color:var(--sub);margin-right:2px}
+.base{min-width:0;padding:2.5px 3px;background:#fff;border:1.5px solid var(--c);border-radius:7px}
+.base .lv{font-size:34px;color:var(--c-deep)}
+.base .sp{font-size:14px}
+.seeds{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(5,minmax(0,1fr))}
+.seeds .blk{padding:4px 0}
+.seeds .blk + .blk{border-left:1px solid var(--c-line)}
+.seeds .lv{font-size:clamp(13px,3.8vw,17px);font-weight:700}
+.seeds .lv i{font-size:8px;margin-right:0}
+.ov{display:none;font-weight:700;line-height:1.15;text-align:center;white-space:nowrap;color:var(--c-deep)}
+.base .ov{font-size:14px}
+.seeds .ov{font-size:11px}
+.blk.over .lv,.blk.over .sp{display:none}
+.blk.over .ov{display:block;grid-row:2 / 4}
+.all{
+  width:100%;border:1px solid var(--c-line);border-radius:8px;background:#fff;color:var(--c-deep);
+  font-size:clamp(10.5px,3.1vw,12.5px);font-weight:700;line-height:1.4;
+}
+.compact .need b{font-size:26px}
+.compact .base .lv{font-size:30px}
+
+.foot{
+  margin-top:var(--gd);height:var(--h-foot);line-height:var(--h-foot);
+  font-size:11px;color:var(--sub);text-align:center;white-space:nowrap;overflow:hidden;
+}
+.foot a{color:#4d4843;text-decoration:underline}
+.compact .foot{font-size:10px}
+
+@media (prefers-reduced-motion:reduce){.cell{transition:none}}
+</style>
+</head>
+<body>
+<div id="probe"></div>
+<div class="app" id="app" data-char="hero">
+  <h1 id="title">ドラクエ8 スキルポイント計算ツール<small>（PS2版・Lv50未満）</small></h1>
+  <div class="tabs" id="tabs" role="tablist" aria-label="キャラクター"></div>
+  <div class="grid" id="grid"></div>
+  <section class="result" aria-live="polite">
+    <div class="need"><span class="k">必要<br>SP</span><b id="need">0</b></div>
+    <div class="blk base"><span class="k">種なし</span><b class="lv" id="lv0"><i>Lv</i><span></span></b><span class="sp"><i>SP</i><span id="sp0"></span></span><span class="ov">Lv50<br>以上</span></div>
+    <div class="seeds" id="seeds"></div>
+    <button class="all" id="all" type="button">すべて<br>リセット</button>
+  </section>
+  <div class="foot">[ver1.1] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= データ（PS2版） =================
+   lv0  : 加入時のレベル
+   cum  : lv0 から Lv49 までの累計スキルポイント
+   sk   : [スキル名, "必要ポイント 略称, …"]  略称の「|」は2行にするときの区切り
+   1スキルに振れる上限は Lv×2+25。スキルのたねは1個で+5。 */
+var SEED_SP = 5, SEED_MAX = 6;
+var ORDER = ['hero','yangus','jessica','kukule'];
+var DATA = {
+  hero:{name:'主人公', lv0:1,
+    cum:[0,0,0,2,4,7,9,12,14, 17,20,23,27,32,38,44,49,54,59, 63,68,74,80,85,90,95,100,106,112,
+         117,122,128,135,142,150,158,165,173,181, 189,196,203,209,215,222,226,229,231,234],
+    sk:[
+      ['剣','4 攻+5,9 ドラゴン|斬り,15 火炎斬り,22 攻+10,30 メタル斬り,40 会心,52 はやぶさ|斬り,66 攻+25,82 ミラクル|ソード,100 ギガ|スラッシュ'],
+      ['ヤリ','3 攻+5,7 しっぷう|突き,12 一閃突き,18 攻+10,25 さみだれ|突き,34 会心,45 なぎ払い,59 雷光|一閃突き,77 攻+25,100 ジゴ|スパーク'],
+      ['ブーメラン','6 クロス|カッター,12 攻+5,18 パワフル|スロー,25 攻+10,32 バーニング|バード,40 攻+15,52 超パワフル|スロー,66 攻+20,82 シャイン|スコール,100 ギガスロー'],
+      ['格闘','4 攻+5,11 大防御,17 石つぶて,24 正拳突き,33 攻+20,42 しんくうは,52 会心,70 ばくれつ|けん,82 岩石おとし,100 攻+50'],
+      ['ゆうき','8 ルーラ,16 キアリク,28 トヘロス,40 マホトーン,48 ライデイン,56 MP3/4,70 メガンテ,82 ベホマズン,90 MP1/2,100 ギガデイン']
+    ]},
+  yangus:{name:'ヤンガス', lv0:1,
+    cum:[0,0,0,3,6,10,14,19,24, 30,36,43,51,60,68,74,78,81,84, 87,90,92,94,97,101,106,111,117,123,
+         130,137,145,153,161,169,176,183,189,195, 202,209,215,220,224,227,229,231,234,238],
+    sk:[
+      ['オノ','6 かぶとわり,12 攻+5,19 魔神斬り,26 会心,34 攻+10,42 蒼天魔斬,54 オノむそう,66 大魔神斬り,82 攻+20,100 烈風獣神斬'],
+      ['打撃','9 攻+5,19 ハート|ブレイク,25 ゴールド|ハンマー,32 ドラム|クラッシュ,48 攻+10,59 会心,71 マインド|ブレイク,82 攻+25,93 ゴールド|ラッシュ,100 デビル|クラッシュ'],
+      ['鎌','12 攻+5,22 ぬすっと|刈り,32 かまいたち,42 攻+10,50 死神のかま,60 会心,70 大どろぼう|のかま,80 攻+25,90 冥王のかま,100 ビッグバン'],
+      ['格闘','3 攻+5,7 素早さ+10,12 正拳突き,18 会心,25 攻+20,33 しのび|ばしり,42 しんくうは,60 ばくれつ|けん,77 攻+45,100 岩石おとし'],
+      ['にんじょう','4 くちぶえ,10 ホイミ,16 とうぞく|のはな,22 おたけび,32 マホアゲル,42 スクルト,55 ステテコ|ダンス,68 ベホイミ,82 メガザル,100 おっさん|呼び']
+    ]},
+  jessica:{name:'ゼシカ', lv0:9,
+    cum:[0, 9,18,26,33,39,45,50,55,59,63, 67,70,74,79,84,90,97,105,113,120,
+         127,133,139,146,153,161,169,178,188,198, 207,215,221,227,231,234,236,238,240,242],
+    sk:[
+      ['短剣','4 攻+5,9 ポイズン|ダガー,15 攻+10,22 アサシン|アタック,30 長剣|装備可,40 会心,52 攻+20,66 ポイズン|ソード,82 攻+30,100 ライトニング|デス'],
+      ['ムチ','5 攻+5,10 しびれ打ち,16 攻+10,23 双竜打ち,32 レディ|ウィップ,43 攻+15,55 愛のムチ,68 攻+25,82 クィーン|ウィップ,100 地這い大蛇'],
+      ['杖','3 ピオリム,7 ルカナン,13 MP+20,21 マホカンタ,31 マジック|バリア,44 MP+50,57 祝福の杖,70 MP|自然回復,84 MP+100,100 ザオリク'],
+      ['格闘','5 攻+5,13 素早さ+10,19 石つぶて,28 会心,35 攻+20,45 ムーン|サルト,52 回避,68 しんくうは,85 攻+35,100 マダンテ'],
+      ['おいろけ','8 投げキッス,18 みとれ,26 メダパニ,38 ぱふぱふ,48 ヒップ|アタック,54 セクシー|ビーム,68 ラリホーマ,78 よくみとれ,88 ピンク|タイフーン,100 ハッスル|ダンス']
+    ]},
+  kukule:{name:'ククール', lv0:12,
+    cum:[0,3,6,10,14,18,23,28, 33,37,41,44,47,51,55,60,65,71,
+         77,83,89,95,102,109,116,124,132,140, 149,158,167,175,183,191,198,204,209,215],
+    sk:[
+      ['剣','4 攻+5,9 火炎斬り,15 攻+10,22 メタル斬り,30 攻+20,40 はやぶさ|斬り,52 会心,66 ミラクル|ソード,82 攻+25,100 ジゴ|スパーク'],
+      ['弓','6 ラリホー|アロー,18 妖精の矢,25 ニードル|ショット,32 攻+10,44 さみだれ|うち,59 会心,66 精霊の矢,76 攻+25,88 シャイニング|ボウ,100 ニードル|ラッシュ'],
+      ['杖','3 マヌーサ,6 マホトーン,9 マホカンタ,12 マホトラ,28 MP+20,48 祝福の杖,56 ザラキーマ,65 バイキルト,80 MP+50,100 MP|自然回復'],
+      ['格闘','7 攻+7,14 素早さ+10,21 回避,28 攻+15,35 正拳突き,42 ムーン|サルト,54 会心,68 大防御,82 攻+40,100 ミラクル|ムーン'],
+      ['カリスマ','3 キアリー,7 メダパニ,13 皮肉な笑い,19 天使の|眼差し,27 ディバイン|スペル,39 ペスカトレ,52 冷たい笑み,66 メダパニーマ,81 みわくの|眼差し,100 グランド|クロス']
+    ]}
+};
+ORDER.forEach(function(id){
+  DATA[id].sk = DATA[id].sk.map(function(s){
+    return {name:s[0], steps:s[1].split(',').map(function(t){
+      var i = t.indexOf(' ');
+      return {pt:+t.slice(0,i), parts:t.slice(i+1).split('|')};
+    })};
+  });
+});
+
+/* ================= 状態 =================
+   sel[キャラ][列] = その列で選んでいる段（0=なし、1〜10）。再読み込みで消える。 */
+var sel = {};
+ORDER.forEach(function(id){ sel[id] = [0,0,0,0,0]; });
+var cur = 'hero';
+
+/* ================= 計算 ================= */
+function calc(id){
+  var ch = DATA[id], s = sel[id], need = 0, top = 0;
+  for (var c = 0; c < 5; c++) if (s[c]) {
+    var p = ch.sk[c].steps[s[c]-1].pt;
+    need += p; if (p > top) top = p;
+  }
+  var res = [];
+  for (var n = 0; n <= SEED_MAX; n++) {
+    var hit = null;
+    if (need > 0) for (var i = 0; i < ch.cum.length; i++) {
+      var lv = ch.lv0 + i, sp = ch.cum[i] + n * SEED_SP;
+      if (sp >= need && lv * 2 + 25 >= top) { hit = {lv:lv, sp:sp}; break; }
+    }
+    res.push(hit);
+  }
+  return {need:need, res:res};
+}
+
+/* ================= 画面の部品 ================= */
+function el(tag, cls, text){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+var app = document.getElementById('app'), grid = document.getElementById('grid'),
+    tabsEl = document.getElementById('tabs'), seedsEl = document.getElementById('seeds'),
+    probe = document.getElementById('probe'), allBtn = document.getElementById('all'),
+    title = document.getElementById('title'), needEl = document.getElementById('need');
+var tabs = {}, heads = [], cells = [], resets = [], lvEls = [], spEls = [], ovEls = [];
+
+ORDER.forEach(function(id){
+  var b = el('button', 'tab', DATA[id].name);
+  b.type = 'button'; b.setAttribute('role','tab'); b.dataset.char = id;
+  tabsEl.appendChild(b); tabs[id] = b;
+});
+(function(){
+  var c, r;
+  for (c = 0; c < 5; c++) { var h = el('button','hd'); h.type = 'button'; h.dataset.reset = c; h.appendChild(el('span')); grid.appendChild(h); heads.push(h); }
+  for (r = 0; r < 10; r++) for (c = 0; c < 5; c++) {
+    var b = el('button','cell'); b.type = 'button'; b.dataset.c = c; b.dataset.r = r + 1;
+    b.appendChild(el('span','n')); b.appendChild(el('span','lb'));
+    grid.appendChild(b); (cells[c] = cells[c] || []).push(b);
+  }
+  for (c = 0; c < 5; c++) { var x = el('button','rs','リセット'); x.type = 'button'; x.dataset.reset = c; grid.appendChild(x); resets.push(x); }
+
+  var lv0 = document.getElementById('lv0');
+  lvEls.push(lv0); spEls.push(document.getElementById('sp0')); ovEls.push(lv0.parentNode.querySelector('.ov'));
+  for (var n = 1; n <= SEED_MAX; n++) {
+    var k = el('div','blk');
+    k.appendChild(el('span','k', (n === 1 ? '種' : '') + '+' + n));
+    var lv = el('b','lv'); if (n === 1) lv.appendChild(el('i','', 'Lv')); lv.appendChild(el('span'));
+    var sp = el('span','sp');
+    var ov = el('span','ov'); ov.appendChild(document.createTextNode('Lv50')); ov.appendChild(el('br')); ov.appendChild(document.createTextNode('以上'));
+    k.appendChild(lv); k.appendChild(sp); k.appendChild(ov); seedsEl.appendChild(k);
+    lvEls.push(lv); spEls.push(sp); ovEls.push(ov);
+  }
+})();
+
+/* ================= 塗りの濃さ =================
+   選んだセルの塗りを、特技のポイント数で10段階にする（行の位置ではない。1〜10pt が最も薄く、91〜100pt が最も濃い）。
+   SHADE_RANGE は最も薄い段と最も濃い段の濃さ（0＝白、1＝--c、1より上は --c-deep 側へ寄せる）。
+   文字色は黒（--ink）と白のうち、その塗りの上で読みやすい方。 */
+var SHADE_RANGE = {hero:[0.3, 1.3], yangus:[0.2, 1], jessica:[0.2, 1], kukule:[0.2, 1]};
+function rgb(s){
+  s = s.trim().replace('#', '');
+  if (s.length === 3) s = s.replace(/./g, '$&$&');
+  return [0, 2, 4].map(function(i){ return parseInt(s.substr(i, 2), 16); });
+}
+function mixRgb(a, b, t){ return a.map(function(v, i){ return Math.round(v + (b[i] - v) * t); }); }
+function lum(c){
+  var l = c.map(function(v){ v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2];
+}
+function contrast(a, b){ var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+function makeShades(id){
+  var cs = getComputedStyle(app), c = rgb(cs.getPropertyValue('--c')), deep = rgb(cs.getPropertyValue('--c-deep')),
+      ink = rgb(cs.getPropertyValue('--ink')), white = [255, 255, 255],
+      lo = SHADE_RANGE[id][0], hi = SHADE_RANGE[id][1], out = [];
+  for (var g = 1; g <= 10; g++) {
+    var a = lo + (hi - lo) * (g - 1) / 9;
+    var f = a <= 1 ? mixRgb(white, c, a) : mixRgb(c, deep, a - 1);
+    out[g] = {f:'rgb(' + f + ')', t:'rgb(' + (contrast(f, white) > contrast(f, ink) ? white : ink) + ')'};
+  }
+  return out;
+}
+
+/* ================= 描画 ================= */
+function paintChar(){
+  var ch = DATA[cur];
+  app.dataset.char = cur;
+  var shade = makeShades(cur);
+  ORDER.forEach(function(id){ tabs[id].setAttribute('aria-selected', id === cur ? 'true' : 'false'); });
+  for (var c = 0; c < 5; c++) {
+    heads[c].firstChild.textContent = ch.sk[c].name;
+    heads[c].setAttribute('aria-label', ch.sk[c].name + 'をリセット');
+    for (var r = 0; r < 10; r++) {
+      var st = ch.sk[c].steps[r], b = cells[c][r], lb = b.lastChild;
+      var sh = shade[Math.ceil(st.pt / 10)];
+      b.style.setProperty('--f', sh.f); b.style.setProperty('--t', sh.t);
+      b.firstChild.textContent = st.pt;
+      lb.textContent = '';
+      st.parts.forEach(function(p){ lb.appendChild(el('span','ln',p)); });
+      b.setAttribute('aria-label', ch.sk[c].name + ' ' + st.pt + ' ' + st.parts.join(''));
+    }
+  }
+  fit();
+  paintSel();
+}
+function paintSel(){
+  var s = sel[cur], any = false;
+  for (var c = 0; c < 5; c++) {
+    for (var r = 0; r < 10; r++) {
+      var on = r < s[c];
+      cells[c][r].classList.toggle('on', on);
+      cells[c][r].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    resets[c].classList.toggle('idle', !s[c]);
+    if (s[c]) any = true;
+  }
+  allBtn.classList.toggle('idle', !any);
+  var out = calc(cur);
+  needEl.textContent = out.need;
+  for (var n = 0; n <= SEED_MAX; n++) {
+    var h = out.res[n];
+    lvEls[n].parentNode.classList.toggle('over', !h && out.need > 0);   /* Lv49 までに届かない */
+    lvEls[n].classList.toggle('na', !h);
+    lvEls[n].lastChild.textContent = h ? h.lv : '—';
+    spEls[n].textContent = h ? h.sp : '—';
+  }
+  fitResult();
+}
+function fitResult(){
+  var list = lvEls.concat(spEls.slice(1), ovEls, [needEl]);
+  list.forEach(function(e){ e.style.fontSize = ''; });
+  var m = list.map(function(e){ return [e.parentNode.clientWidth - 4, e.getBoundingClientRect().width, parseFloat(getComputedStyle(e).fontSize)]; });
+  list.forEach(function(e, k){
+    if (m[k][1] > m[k][0]) e.style.fontSize = Math.floor(m[k][2] * m[k][0] / m[k][1] * 10) / 10 + 'px';
+  });
+}
+
+/* 特技名をセルに収める：1行で入れば1行、縮めすぎになるものは区切りで2行にする */
+function fit(){
+  var i, c, r, lbs = [];
+  for (c = 0; c < 5; c++) for (r = 0; r < 10; r++) lbs.push(cells[c][r].lastChild);
+  lbs.forEach(function(lb){ lb.classList.remove('two', 'low'); lb.style.fontSize = ''; });
+  heads.forEach(function(h){ h.firstChild.style.fontSize = ''; });
+
+  var base = parseFloat(getComputedStyle(lbs[0]).fontSize);
+  var W = lbs[0].clientWidth - 1, Hb = lbs[0].clientHeight, H = lbs[0].parentNode.clientHeight - 2;
+  /* 左上の数字が占める幅（ラベルの左端から）。2行のときは1行目をこの右に置く */
+  var keep = lbs.map(function(lb){ return 2 + lb.previousSibling.getBoundingClientRect().width + 3; });
+  var widths = lbs.map(function(lb){
+    var a = []; for (i = 0; i < lb.children.length; i++) a.push(lb.children[i].getBoundingClientRect().width);
+    return a;
+  });
+  var hw = heads.map(function(h){ return [h.clientWidth - 6, h.firstChild.getBoundingClientRect().width, parseFloat(getComputedStyle(h).fontSize)]; });
+
+  lbs.forEach(function(lb, k){
+    var w = widths[k], total = w.reduce(function(a,b){ return a + b; }, 0);
+    if (total <= W) return;
+    var f1 = Math.floor(base * W / total * 10) / 10;            /* 1行のまま縮める */
+    if (w.length === 2 && f1 < base * 0.74) {
+      /* 2行・1行目を数字の右に置く */
+      var f2 = Math.floor(Math.min(base * 0.88, base * (W - keep[k]) / w[0], base * W / w[1], H / (2 * 1.12)) * 10) / 10;
+      /* 2行・数字の下に置く */
+      var f3 = Math.floor(Math.min(base * 0.88, base * W / Math.max(w[0], w[1]), (Hb - 1) / (2 * 1.12)) * 10) / 10;
+      if (f2 > f1 && f2 >= f3 * 0.9) {
+        var w0 = w[0] * f2 / base, dx = Math.max(0, keep[k] - (W - w0) / 2);
+        lb.classList.add('two'); lb.style.fontSize = f2 + 'px';
+        lb.firstChild.style.left = Math.ceil(dx) + 'px';
+        return;
+      }
+      if (f3 > f1) { lb.classList.add('two', 'low'); lb.style.fontSize = f3 + 'px'; return; }
+    }
+    lb.style.fontSize = f1 + 'px';
+  });
+  heads.forEach(function(h, k){
+    if (hw[k][1] > hw[k][0]) h.firstChild.style.fontSize = Math.floor(hw[k][2] * hw[k][0] / hw[k][1] * 10) / 10 + 'px';
+  });
+}
+
+/* 画面の高さ（ツールバーが出ているときの高さ＝スクロールしても変わらない）から、
+   行の高さを整数pxで決める。1画面に収まり、タップ中に表が動かない。 */
+var lastKey = '';
+function layout(){
+  var vh = probe.getBoundingClientRect().height || window.innerHeight;
+  var key = vh + 'x' + document.documentElement.clientWidth;
+  if (key === lastKey) return;
+  lastKey = key;
+  var cs = getComputedStyle(app), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  var compact = vh < 620;
+  var t = compact ? {title:15, tabs:34, head:22, reset:28, result:82, foot:14, ga:4, gb:6, gc:6, gd:4, rg:2}
+                  : {title:20, tabs:40, head:24, reset:32, result:90, foot:16, ga:6, gb:8, gc:8, gd:6, rg:3};
+  var fixed = pad + t.title + t.ga + t.tabs + t.gb + t.head + t.rg * 11 + t.reset + t.gc + t.result + t.gd + t.foot;
+  var rowh = Math.max(28, Math.min(54, Math.floor((vh - fixed) / 10)));
+  var st = app.style;
+  st.setProperty('--h-title', t.title + 'px'); st.setProperty('--h-tabs', t.tabs + 'px');
+  st.setProperty('--h-head', t.head + 'px');   st.setProperty('--h-reset', t.reset + 'px');
+  st.setProperty('--h-result', t.result + 'px'); st.setProperty('--h-foot', t.foot + 'px');
+  st.setProperty('--ga', t.ga + 'px'); st.setProperty('--gb', t.gb + 'px');
+  st.setProperty('--gc', t.gc + 'px'); st.setProperty('--gd', t.gd + 'px');
+  st.setProperty('--rg', t.rg + 'px');
+  st.setProperty('--rowh', rowh + 'px');
+  app.classList.toggle('compact', compact);
+  fitTitle();
+  fit();
+  fitResult();
+}
+function fitTitle(){
+  title.style.fontSize = '';
+  var w = title.clientWidth, sw = title.scrollWidth;
+  if (sw > w) title.style.fontSize = Math.floor(parseFloat(getComputedStyle(title).fontSize) * w / sw * 10) / 10 + 'px';
+}
+
+/* ================= 操作 ================= */
+tabsEl.addEventListener('click', function(e){
+  var b = e.target.closest('.tab'); if (!b || b.dataset.char === cur) return;
+  cur = b.dataset.char; paintChar();
+});
+grid.addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.reset != null) sel[cur][+b.dataset.reset] = 0;
+  else {
+    /* その段まで（上の段もすべて）選ぶ。いま一番先の段を押したら列を空にする */
+    var c = +b.dataset.c, r = +b.dataset.r;
+    sel[cur][c] = sel[cur][c] === r ? 0 : r;
+  }
+  paintSel();
+});
+allBtn.addEventListener('click', function(){ sel[cur] = [0,0,0,0,0]; paintSel(); });
+
+var raf = 0;
+function onResize(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(layout); }
+window.addEventListener('resize', onResize);
+window.addEventListener('orientationchange', onResize);
+
+layout();
+paintChar();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js'); });
+}
+})();
+</script>
+</body>
+</html>
