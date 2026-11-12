@@ -6,9 +6,12 @@
 <meta name="color-scheme" content="only light">
 <meta name="theme-color" content="#ffffff">
 <meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>ドラクエ8 スキルポイント計算ツール（PS2版・Lv50未満）</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <meta name="apple-mobile-web-app-title" content="DQ8スキル計算">
 <style>
 /* ---- 寸法（整数pxは下のスクリプトが画面の高さから決めて上書きする） ---- */
@@ -16,7 +19,7 @@
   color-scheme:only light;
   --ink:#231f1c;
   --sub:#77716a;
-  --h-title:20px; --h-tabs:40px; --h-head:24px; --h-reset:32px; --h-result:90px; --h-foot:16px;
+  --h-title:22px; --h-tabs:40px; --h-head:24px; --h-reset:32px; --h-result:90px; --h-foot:16px;
   --ga:6px; --gb:8px; --gc:8px; --gd:6px; --rg:3px;
   --rowh:36px;
   --fs:clamp(11.5px,3.45vw,15px);    /* 特技名 */
@@ -55,11 +58,12 @@ button:focus-visible{outline:2px solid var(--c-deep);outline-offset:1px}
 
 h1{
   margin:0 0 var(--ga);height:var(--h-title);line-height:var(--h-title);
-  font-size:13px;font-weight:700;letter-spacing:.02em;
+  font-size:15px;font-weight:700;letter-spacing:.02em;
   white-space:nowrap;overflow:hidden;
 }
-h1 small{font-size:.85em;font-weight:600;color:var(--sub)}
-.compact h1{font-size:11px}
+h1 small{font-size:11px;font-weight:600;color:var(--sub)}
+.compact h1{font-size:13px}
+.compact h1 small{font-size:9.35px}
 
 /* ---- キャラクター ---- */
 .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;height:var(--h-tabs);margin-bottom:var(--gb)}
@@ -166,7 +170,7 @@ h1 small{font-size:.85em;font-weight:600;color:var(--sub)}
     <div class="seeds" id="seeds"></div>
     <button class="all" id="all" type="button">すべて<br>リセット</button>
   </section>
-  <div class="foot">[ver1.1] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a></div>
+  <div class="foot">[ver1.2] 制作：右弐 / <a href="https://x.com/uniright2" target="_blank" rel="noopener">https://x.com/uniright2</a></div>
 </div>
 
 <script>
@@ -176,7 +180,7 @@ h1 small{font-size:.85em;font-weight:600;color:var(--sub)}
 /* ================= データ（PS2版） =================
    lv0  : 加入時のレベル
    cum  : lv0 から Lv49 までの累計スキルポイント
-   sk   : [スキル名, "必要ポイント 略称, …"]  略称の「|」は2行にするときの区切り
+   sk   : [スキル名, "必要ポイント 略称, …"]  略称の「|」は2行にするときの区切り（収まるなら1行）。「||」は必ず改行する
    1スキルに振れる上限は Lv×2+25。スキルのたねは1個で+5。 */
 var SEED_SP = 5, SEED_MAX = 6;
 var ORDER = ['hero','yangus','jessica','kukule'];
@@ -185,48 +189,48 @@ var DATA = {
     cum:[0,0,0,2,4,7,9,12,14, 17,20,23,27,32,38,44,49,54,59, 63,68,74,80,85,90,95,100,106,112,
          117,122,128,135,142,150,158,165,173,181, 189,196,203,209,215,222,226,229,231,234],
     sk:[
-      ['剣','4 攻+5,9 ドラゴン|斬り,15 火炎斬り,22 攻+10,30 メタル斬り,40 会心,52 はやぶさ|斬り,66 攻+25,82 ミラクル|ソード,100 ギガ|スラッシュ'],
-      ['ヤリ','3 攻+5,7 しっぷう|突き,12 一閃突き,18 攻+10,25 さみだれ|突き,34 会心,45 なぎ払い,59 雷光|一閃突き,77 攻+25,100 ジゴ|スパーク'],
+      ['剣','4 攻+5,9 ドラゴン|斬り,15 かえん斬り,22 攻+10,30 メタル斬り,40 会心率UP,52 はやぶさ|斬り,66 攻+25,82 ミラクル|ソード,100 ギガ|スラッシュ'],
+      ['ヤリ','3 攻+5,7 しっぷう|突き,12 一閃突き,18 攻+10,25 さみだれ|突き,34 会心率UP,45 なぎ払い,59 雷光|一閃突き,77 攻+25,100 ジゴ|スパーク'],
       ['ブーメラン','6 クロス|カッター,12 攻+5,18 パワフル|スロー,25 攻+10,32 バーニング|バード,40 攻+15,52 超パワフル|スロー,66 攻+20,82 シャイン|スコール,100 ギガスロー'],
-      ['格闘','4 攻+5,11 大防御,17 石つぶて,24 正拳突き,33 攻+20,42 しんくうは,52 会心,70 ばくれつ|けん,82 岩石おとし,100 攻+50'],
-      ['ゆうき','8 ルーラ,16 キアリク,28 トヘロス,40 マホトーン,48 ライデイン,56 MP3/4,70 メガンテ,82 ベホマズン,90 MP1/2,100 ギガデイン']
+      ['格闘','4 攻+5,11 大ぼうぎょ,17 石つぶて,24 せいけん突き,33 攻+20,42 しんくうは,52 会心率UP,70 ばくれつ|けん,82 岩石おとし,100 攻+50'],
+      ['ゆうき','8 ルーラ,16 キアリク,28 トヘロス,40 マホトーン,48 ライデイン,56 MP消費|3/4,70 メガンテ,82 ベホマズン,90 MP消費|1/2,100 ギガデイン||ギガスラッシュ']
     ]},
   yangus:{name:'ヤンガス', lv0:1,
     cum:[0,0,0,3,6,10,14,19,24, 30,36,43,51,60,68,74,78,81,84, 87,90,92,94,97,101,106,111,117,123,
          130,137,145,153,161,169,176,183,189,195, 202,209,215,220,224,227,229,231,234,238],
     sk:[
-      ['オノ','6 かぶとわり,12 攻+5,19 魔神斬り,26 会心,34 攻+10,42 蒼天魔斬,54 オノむそう,66 大魔神斬り,82 攻+20,100 烈風獣神斬'],
-      ['打撃','9 攻+5,19 ハート|ブレイク,25 ゴールド|ハンマー,32 ドラム|クラッシュ,48 攻+10,59 会心,71 マインド|ブレイク,82 攻+25,93 ゴールド|ラッシュ,100 デビル|クラッシュ'],
-      ['鎌','12 攻+5,22 ぬすっと|刈り,32 かまいたち,42 攻+10,50 死神のかま,60 会心,70 大どろぼう|のかま,80 攻+25,90 冥王のかま,100 ビッグバン'],
-      ['格闘','3 攻+5,7 素早さ+10,12 正拳突き,18 会心,25 攻+20,33 しのび|ばしり,42 しんくうは,60 ばくれつ|けん,77 攻+45,100 岩石おとし'],
+      ['オノ','6 かぶとわり,12 攻+5,19 まじん斬り,26 会心率UP,34 攻+10,42 蒼天魔斬,54 オノむそう,66 大まじん斬り,82 攻+20,100 烈風獣神斬'],
+      ['打撃','9 攻+5,19 ハート|ブレイク,25 ゴールド|ハンマー,32 ドラム|クラッシュ,48 攻+10,59 会心率UP,71 マインド|ブレイク,82 攻+25,93 ゴールド|ラッシュ,100 デビル|クラッシュ'],
+      ['鎌','12 攻+5,22 ぬすっと|刈り,32 かまいたち,42 攻+10,50 死神のかま,60 会心率UP,70 大どろぼう|のかま,80 攻+25,90 冥王のかま,100 ビッグバン'],
+      ['格闘','3 攻+5,7 素早さ+10,12 せいけん突き,18 会心率UP,25 攻+20,33 しのび|ばしり,42 しんくうは,60 ばくれつ|けん,77 攻+45,100 岩石おとし'],
       ['にんじょう','4 くちぶえ,10 ホイミ,16 とうぞく|のはな,22 おたけび,32 マホアゲル,42 スクルト,55 ステテコ|ダンス,68 ベホイミ,82 メガザル,100 おっさん|呼び']
     ]},
   jessica:{name:'ゼシカ', lv0:9,
     cum:[0, 9,18,26,33,39,45,50,55,59,63, 67,70,74,79,84,90,97,105,113,120,
          127,133,139,146,153,161,169,178,188,198, 207,215,221,227,231,234,236,238,240,242],
     sk:[
-      ['短剣','4 攻+5,9 ポイズン|ダガー,15 攻+10,22 アサシン|アタック,30 長剣|装備可,40 会心,52 攻+20,66 ポイズン|ソード,82 攻+30,100 ライトニング|デス'],
+      ['短剣','4 攻+5,9 ポイズン|ダガー,15 攻+10,22 アサシン|アタック,30 剣も装備可,40 会心率UP,52 攻+20,66 ポイズン|ソード,82 攻+30,100 ライトニング|デス'],
       ['ムチ','5 攻+5,10 しびれ打ち,16 攻+10,23 双竜打ち,32 レディ|ウィップ,43 攻+15,55 愛のムチ,68 攻+25,82 クィーン|ウィップ,100 地這い大蛇'],
       ['杖','3 ピオリム,7 ルカナン,13 MP+20,21 マホカンタ,31 マジック|バリア,44 MP+50,57 祝福の杖,70 MP|自然回復,84 MP+100,100 ザオリク'],
-      ['格闘','5 攻+5,13 素早さ+10,19 石つぶて,28 会心,35 攻+20,45 ムーン|サルト,52 回避,68 しんくうは,85 攻+35,100 マダンテ'],
+      ['格闘','5 攻+5,13 素早さ+10,19 石つぶて,28 会心率UP,35 攻+20,45 ムーン|サルト,52 回避率UP,68 しんくうは,85 攻+35,100 マダンテ'],
       ['おいろけ','8 投げキッス,18 みとれ,26 メダパニ,38 ぱふぱふ,48 ヒップ|アタック,54 セクシー|ビーム,68 ラリホーマ,78 よくみとれ,88 ピンク|タイフーン,100 ハッスル|ダンス']
     ]},
   kukule:{name:'ククール', lv0:12,
     cum:[0,3,6,10,14,18,23,28, 33,37,41,44,47,51,55,60,65,71,
          77,83,89,95,102,109,116,124,132,140, 149,158,167,175,183,191,198,204,209,215],
     sk:[
-      ['剣','4 攻+5,9 火炎斬り,15 攻+10,22 メタル斬り,30 攻+20,40 はやぶさ|斬り,52 会心,66 ミラクル|ソード,82 攻+25,100 ジゴ|スパーク'],
-      ['弓','6 ラリホー|アロー,18 妖精の矢,25 ニードル|ショット,32 攻+10,44 さみだれ|うち,59 会心,66 精霊の矢,76 攻+25,88 シャイニング|ボウ,100 ニードル|ラッシュ'],
+      ['剣','4 攻+5,9 かえん斬り,15 攻+10,22 メタル斬り,30 攻+20,40 はやぶさ|斬り,52 会心率UP,66 ミラクル|ソード,82 攻+25,100 ジゴ|スパーク'],
+      ['弓','6 ラリホー|アロー,18 妖精の矢,25 ニードル|ショット,32 攻+10,44 さみだれ|うち,59 会心率UP,66 精霊の矢,76 攻+25,88 シャイニング|ボウ,100 ニードル|ラッシュ'],
       ['杖','3 マヌーサ,6 マホトーン,9 マホカンタ,12 マホトラ,28 MP+20,48 祝福の杖,56 ザラキーマ,65 バイキルト,80 MP+50,100 MP|自然回復'],
-      ['格闘','7 攻+7,14 素早さ+10,21 回避,28 攻+15,35 正拳突き,42 ムーン|サルト,54 会心,68 大防御,82 攻+40,100 ミラクル|ムーン'],
+      ['格闘','7 攻+7,14 素早さ+10,21 回避率UP,28 攻+15,35 せいけん突き,42 ムーン|サルト,54 会心率UP,68 大ぼうぎょ,82 攻+40,100 ミラクル|ムーン'],
       ['カリスマ','3 キアリー,7 メダパニ,13 皮肉な笑い,19 天使の|眼差し,27 ディバイン|スペル,39 ペスカトレ,52 冷たい笑み,66 メダパニーマ,81 みわくの|眼差し,100 グランド|クロス']
     ]}
 };
 ORDER.forEach(function(id){
   DATA[id].sk = DATA[id].sk.map(function(s){
     return {name:s[0], steps:s[1].split(',').map(function(t){
-      var i = t.indexOf(' ');
-      return {pt:+t.slice(0,i), parts:t.slice(i+1).split('|')};
+      var i = t.indexOf(' '), body = t.slice(i + 1), force = body.indexOf('||') !== -1;
+      return {pt:+t.slice(0, i), force:force, parts:body.split(force ? '||' : '|')};
     })};
   });
 });
@@ -340,8 +344,9 @@ function paintChar(){
       b.style.setProperty('--f', sh.f); b.style.setProperty('--t', sh.t);
       b.firstChild.textContent = st.pt;
       lb.textContent = '';
+      if (st.force) lb.dataset.force = '1'; else delete lb.dataset.force;
       st.parts.forEach(function(p){ lb.appendChild(el('span','ln',p)); });
-      b.setAttribute('aria-label', ch.sk[c].name + ' ' + st.pt + ' ' + st.parts.join(''));
+      b.setAttribute('aria-label', ch.sk[c].name + ' ' + st.pt + ' ' + st.parts.join(st.force ? ' ' : ''));
     }
   }
   fit();
@@ -383,11 +388,15 @@ function fitResult(){
 function fit(){
   var i, c, r, lbs = [];
   for (c = 0; c < 5; c++) for (r = 0; r < 10; r++) lbs.push(cells[c][r].lastChild);
-  lbs.forEach(function(lb){ lb.classList.remove('two', 'low'); lb.style.fontSize = ''; });
+  lbs.forEach(function(lb){
+    lb.classList.remove('two', 'low'); lb.style.fontSize = '';
+    if (lb.firstChild) lb.firstChild.style.left = '';
+  });
   heads.forEach(function(h){ h.firstChild.style.fontSize = ''; });
 
   var base = parseFloat(getComputedStyle(lbs[0]).fontSize);
   var W = lbs[0].clientWidth - 1, Hb = lbs[0].clientHeight, H = lbs[0].parentNode.clientHeight - 2;
+  var fh = Math.floor((Hb - 1) / 1.12 * 10) / 10;   /* 1行のとき数字の下に収まる文字の大きさの上限 */
   /* 左上の数字が占める幅（ラベルの左端から）。2行のときは1行目をこの右に置く */
   var keep = lbs.map(function(lb){ return 2 + lb.previousSibling.getBoundingClientRect().width + 3; });
   var widths = lbs.map(function(lb){
@@ -398,22 +407,23 @@ function fit(){
 
   lbs.forEach(function(lb, k){
     var w = widths[k], total = w.reduce(function(a,b){ return a + b; }, 0);
-    if (total <= W) return;
-    var f1 = Math.floor(base * W / total * 10) / 10;            /* 1行のまま縮める */
-    if (w.length === 2 && f1 < base * 0.74) {
+    var force = lb.dataset.force === '1' && w.length === 2;
+    if (!force && total <= W && base <= fh) return;
+    var f1 = Math.floor(Math.min(base * W / Math.max(total, 1), fh) * 10) / 10;   /* 1行のまま縮める */
+    if (w.length === 2 && (force || f1 < base * 0.74)) {
       /* 2行・1行目を数字の右に置く */
       var f2 = Math.floor(Math.min(base * 0.88, base * (W - keep[k]) / w[0], base * W / w[1], H / (2 * 1.12)) * 10) / 10;
       /* 2行・数字の下に置く */
       var f3 = Math.floor(Math.min(base * 0.88, base * W / Math.max(w[0], w[1]), (Hb - 1) / (2 * 1.12)) * 10) / 10;
-      if (f2 > f1 && f2 >= f3 * 0.9) {
+      if ((force || f2 > f1) && f2 >= f3 * 0.9) {
         var w0 = w[0] * f2 / base, dx = Math.max(0, keep[k] - (W - w0) / 2);
         lb.classList.add('two'); lb.style.fontSize = f2 + 'px';
         lb.firstChild.style.left = Math.ceil(dx) + 'px';
         return;
       }
-      if (f3 > f1) { lb.classList.add('two', 'low'); lb.style.fontSize = f3 + 'px'; return; }
+      if (force || f3 > f1) { lb.classList.add('two', 'low'); lb.style.fontSize = f3 + 'px'; return; }
     }
-    lb.style.fontSize = f1 + 'px';
+    if (!force) lb.style.fontSize = f1 + 'px';
   });
   heads.forEach(function(h, k){
     if (hw[k][1] > hw[k][0]) h.firstChild.style.fontSize = Math.floor(hw[k][2] * hw[k][0] / hw[k][1] * 10) / 10 + 'px';
@@ -421,7 +431,7 @@ function fit(){
 }
 
 /* 画面の高さ（ツールバーが出ているときの高さ＝スクロールしても変わらない）から、
-   行の高さを整数pxで決める。1画面に収まり、タップ中に表が動かない。 */
+   行の高さを整数pxで決める。結果の数値表までは1画面に収め、一番下のリンク行は見切れてもよい。 */
 var lastKey = '';
 function layout(){
   var vh = probe.getBoundingClientRect().height || window.innerHeight;
@@ -430,10 +440,13 @@ function layout(){
   lastKey = key;
   var cs = getComputedStyle(app), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
   var compact = vh < 620;
-  var t = compact ? {title:15, tabs:34, head:22, reset:28, result:82, foot:14, ga:4, gb:6, gc:6, gd:4, rg:2}
-                  : {title:20, tabs:40, head:24, reset:32, result:90, foot:16, ga:6, gb:8, gc:8, gd:6, rg:3};
-  var fixed = pad + t.title + t.ga + t.tabs + t.gb + t.head + t.rg * 11 + t.reset + t.gc + t.result + t.gd + t.foot;
-  var rowh = Math.max(28, Math.min(54, Math.floor((vh - fixed) / 10)));
+  var t = compact ? {title:17, tabs:34, head:22, reset:28, result:82, foot:14, ga:4, gb:6, gc:6, gd:4, rg:2}
+                  : {title:22, tabs:40, head:24, reset:32, result:90, foot:16, ga:6, gb:8, gc:8, gd:6, rg:3};
+  var must = pad + t.title + t.ga + t.tabs + t.gb + t.head + t.rg * 11 + t.reset + t.gc + t.result;
+  var full = must + t.gd + t.foot;
+  var rowh = Math.min(54, Math.floor((vh - full) / 10));
+  if (rowh < 28) rowh = Math.min(54, Math.floor((vh - must) / 10));
+  if (rowh < 28) rowh = 28;   /* 横向きなどで足りないときは縦にスクロールさせる */
   var st = app.style;
   st.setProperty('--h-title', t.title + 'px'); st.setProperty('--h-tabs', t.tabs + 'px');
   st.setProperty('--h-head', t.head + 'px');   st.setProperty('--h-reset', t.reset + 'px');
@@ -448,9 +461,20 @@ function layout(){
   fitResult();
 }
 function fitTitle(){
+  var small = title.querySelector('small');
   title.style.fontSize = '';
-  var w = title.clientWidth, sw = title.scrollWidth;
-  if (sw > w) title.style.fontSize = Math.floor(parseFloat(getComputedStyle(title).fontSize) * w / sw * 10) / 10 + 'px';
+  if (small) small.style.fontSize = '';
+  var w = title.clientWidth;
+  if (title.scrollWidth <= w + 0.5) return;
+  var base = parseFloat(getComputedStyle(title).fontSize);
+  var smallW = small ? small.getBoundingClientRect().width : 0;
+  var mainW = Math.max(1, title.scrollWidth - smallW);
+  var size = Math.floor(base * Math.max(1, w - smallW) / mainW * 10) / 10;
+  title.style.fontSize = size + 'px';
+  while (title.scrollWidth > w + 0.5 && size > 1) {
+    size = Math.round((size - 0.1) * 10) / 10;
+    title.style.fontSize = size + 'px';
+  }
 }
 
 /* ================= 操作 ================= */
@@ -479,7 +503,7 @@ layout();
 paintChar();
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js'); });
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 })();
 </script>
